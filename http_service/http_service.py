@@ -20,8 +20,6 @@ def login():
 
     return jsonify(tuples)
 
-
-
 if __name__ == '__main__':
     app.run()
 
