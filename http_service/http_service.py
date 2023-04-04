@@ -5,10 +5,12 @@ import mysql.connector
 
 app = Flask(__name__)
 
+# Serve HTML instructions
 @app.route('/')
 def home():
     return render_template('index.html')
 
+# POST content to Database to register a new user
 @app.route('/register', methods=['POST'])
 def register():
     newUser = request.json
@@ -30,7 +32,7 @@ def register():
         print("MYSQL EXECUTION ERROR: {}".format(e))
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
         
-
+# Send email and password to DB to see if desired user exists, and that credentials are valid
 @app.route('/login', methods=['GET'])
 def login():
     email = request.args.get('email')
@@ -47,6 +49,23 @@ def login():
     else:
         return json.dumps({'success':False}), 401, {'ContentType':'application/json'}
 
+# Used to search for a single User out of all Users.
+@app.route('/searchuser', methods=['GET'])
+def searchuser():
+    fName = request.args.get('fName')
+    lName = request.args.get('lName')
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    query = f'SELECT userID, fName, lName FROM User WHERE fName LIKE"{fName}%" AND lName LIKE "{lName}%"'
+
+    cursor.execute(query)
+    tuples = cursor.fetchall()
+
+    return jsonify(tuples)
+
+# Search for friends, out of User's _Existing_ friends
 @app.route('/searchfriend', methods=['GET'])
 def searchfriend():
     uid = request.args.get('uid')
@@ -63,6 +82,7 @@ def searchfriend():
 
     return jsonify(tuples)
 
+# Get reccomended friends and sort in descending order by number of mutual friends.
 @app.route('/friendrec', methods=['GET'])
 def friendrec():
     uid = request.args.get('uid')
@@ -82,6 +102,7 @@ def friendrec():
 
     return jsonify(tuples)
 
+# Calculate contribution score for given user
 @app.route('/contrib', methods=['GET'])
 def contrib():
     uid = request.args.get('uid')
@@ -120,6 +141,21 @@ def addalbum():
         print("MYSQL EXECUTION ERROR: {}".format(e))
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
 
+# Search for a user's album. Used in ensuring Album exists when posting photo, or when looking through users albums.
+@app.route('/searchalbum', methods=['GET'])
+def searchalbum():
+    uid = request.args.get('uid')
+    aName = request.args.get("albumName")
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    cursor.execute(f'SELECT albumID, name FROM Album WHERE name LIKE "%{aName}%" AND userID = {uid}')
+    tuples = cursor.fetchall()
+
+    return jsonify(tuples)
+
+
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')
 
