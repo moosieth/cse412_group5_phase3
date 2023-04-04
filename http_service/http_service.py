@@ -67,11 +67,32 @@ def friendrec():
     cursor = con.cursor()
 
     #TODO: Needs to ensure that does not reccomend friends that user already has made
-    #TODO: Organize by count of occurances!!!
-    query = f'SELECT userID, fName, lName FROM User WHERE userID IN (SELECT friendID FROM Friends WHERE userID IN (SELECT friendID FROM Friends WHERE userID={uid})) AND userID!={uid}'
+    query1 = f'CREATE VIEW {uid}mutuals AS (SELECT friendID FROM Friends WHERE userID IN (SELECT friendID FROM Friends WHERE userID={uid}))'
+    query2 = f'SELECT userID, fName, lName, COUNT({uid}mutuals.friendID) FROM User INNER JOIN {uid}mutuals WHERE User.userID = {uid}mutuals.friendID GROUP BY userID ORDER BY COUNT({uid}mutuals.friendID) DESC;'
 
-    cursor.execute(query)
+    cursor.execute(query1)
+    cursor.execute(query2)
     tuples = cursor.fetchall()
+
+    cursor.execute(f'DROP VIEW {uid}mutuals')
+
+    return jsonify(tuples)
+
+@app.route('/contrib', methods=['GET'])
+def contrib():
+    uid = request.args.get('uid')
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    query1 = f'CREATE VIEW {uid}contribution AS (SELECT COUNT(commentID) FROM Comment WHERE Comment.userID = {uid} GROUP BY Comment.commentID UNION (SELECT COUNT(photoID) FROM Photo WHERE albumID IN (SELECT albumID FROM Album WHERE userID = {uid})))'
+    query2 = f'SELECT COUNT(*) FROM {uid}contribution'
+
+    cursor.execute(query1)
+    cursor.execute(query2)
+    tuples = cursor.fetchall()
+
+    cursor.execute(f'DROP VIEW {uid}contribution')
 
     return jsonify(tuples)
 
