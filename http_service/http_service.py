@@ -67,6 +67,7 @@ def friendrec():
     cursor = con.cursor()
 
     #TODO: Needs to ensure that does not reccomend friends that user already has made
+    #TODO: Organize by count of occurances!!!
     query = f'SELECT userID, fName, lName FROM User WHERE userID IN (SELECT friendID FROM Friends WHERE userID IN (SELECT friendID FROM Friends WHERE userID={uid})) AND userID!={uid}'
 
     cursor.execute(query)
