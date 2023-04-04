@@ -1,9 +1,13 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import hashlib
 import json
 import mysql.connector
 
 app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -12,7 +16,7 @@ def register():
     con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
     cursor = con.cursor()
 
-    query = f'INSERT INTO User VALUES({newUser["userID"]}, "{newUser["fName"]}", "{newUser["lName"]}", "{newUser["town"]}", "{newUser["gender"]}", "{newUser["pw"]}", "{newUser["email"]}", "{newUser["dob"]}")'
+    query = f'INSERT INTO User (fName, lName, town, gender, pw, email, dob) VALUES("{newUser["fName"]}", "{newUser["lName"]}", "{newUser["town"]}", "{newUser["gender"]}", "{newUser["pw"]}", "{newUser["email"]}", "{newUser["dob"]}")'
     print(query)
 
     try:
@@ -95,6 +99,26 @@ def contrib():
     cursor.execute(f'DROP VIEW {uid}contribution')
 
     return jsonify(tuples)
+
+@app.route('/addalbum', methods=['POST'])
+def addalbum():
+    newAlbum = request.json
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    query = f'INSERT INTO Album (userID, name, dateCreated) VALUES({newAlbum["userID"]}, "{newAlbum["name"]}", "{newAlbum["dateCreated"]}")'
+
+    try:
+        cursor.execute(query)
+        con.commit()
+        cursor.close()
+        con.close()
+
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+    except mysql.connector.Error as e:
+        print("MYSQL EXECUTION ERROR: {}".format(e))
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
 
 if __name__ == '__main__':
     app.run()
