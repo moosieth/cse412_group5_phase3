@@ -29,22 +29,50 @@ def register():
 
 @app.route('/login', methods=['GET'])
 def login():
-    uid = request.args.get('email')
+    email = request.args.get('email')
     password = request.args.get('password')
-
-    print(uid)
-    print(password)
 
     con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
     cursor = con.cursor()
 
-    cursor.execute(f'SELECT userID, pw FROM User WHERE email="{uid}" AND pw="{password}"')
+    cursor.execute(f'SELECT userID, pw FROM User WHERE email="{email}" AND pw="{password}"')
     tuples = cursor.fetchall()
 
     if(tuples):
         return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
     else:
         return json.dumps({'success':False}), 401, {'ContentType':'application/json'}
+
+@app.route('/searchfriend', methods=['GET'])
+def searchfriend():
+    uid = request.args.get('uid')
+    fName = request.args.get('fName')
+    lName = request.args.get('lName')
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    query = f'SELECT userID, fName, lName FROM User WHERE fName LIKE"{fName}%" AND lName LIKE "{lName}%" AND userID IN (SELECT friendID FROM Friends WHERE userID={uid})'
+
+    cursor.execute(query)
+    tuples = cursor.fetchall()
+
+    return jsonify(tuples)
+
+@app.route('/friendrec', methods=['GET'])
+def friendrec():
+    uid = request.args.get('uid')
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    #TODO: Needs to ensure that does not reccomend friends that user already has made
+    query = f'SELECT userID, fName, lName FROM User WHERE userID IN (SELECT friendID FROM Friends WHERE userID IN (SELECT friendID FROM Friends WHERE userID={uid})) AND userID!={uid}'
+
+    cursor.execute(query)
+    tuples = cursor.fetchall()
+
+    return jsonify(tuples)
 
 if __name__ == '__main__':
     app.run()
