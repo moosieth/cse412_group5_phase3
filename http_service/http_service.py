@@ -35,11 +35,11 @@ def login():
     con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
     cursor = con.cursor()
 
-    cursor.execute(f'SELECT userID, pw FROM User WHERE email="{email}" AND pw="{password}"')
+    cursor.execute(f'SELECT userID FROM User WHERE email="{email}" AND pw="{password}"')
     tuples = cursor.fetchall()
 
     if(tuples):
-        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+        return jsonify(tuples)
     else:
         return json.dumps({'success':False}), 401, {'ContentType':'application/json'}
 
