@@ -155,6 +155,27 @@ def searchalbum():
 
     return jsonify(tuples)
 
+@app.route('/addphoto', methods=['POST'])
+def addphoto():
+    newPhoto = request.json
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+    
+    query = f'INSERT INTO Photo (albumID, caption, data) VALUES({newPhoto["albumID"]}, "{newPhoto["caption"]}", "{newPhoto["data"]}")'
+
+    try:
+        cursor.execute(query)
+        con.commit()
+        cursor.close()
+        con.close()
+
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+    except mysql.connector.Error as e:
+        print("MYSQL EXECUTION ERROR: {}".format(e))
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+
+
 
 if __name__ == '__main__':
     app.run()
