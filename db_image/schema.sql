@@ -89,16 +89,16 @@ INSERT INTO db.User (fName, lName, town, gender, pw, email, dob) VALUES
 	('Marc','Spector','Cairo','M','9kl0mn','notmarcspector@gmail.com','1992-09-19 00:00:00');
 
 INSERT INTO db.Album (userID, name, dateCreated) VALUES 
-	(100009,'"Art"','2023-01-30 00:00:00'),
-	(100002,'"Suits"','2023-01-30 00:00:00'),
-	(100003,'"Fitness"','2023-01-31 00:00:00'),
-	(100009,'"Food"','2023-01-31 00:00:00'),
-	(100005,'"Midgard"','2023-02-01 00:00:00'),
-	(100002,'"Travel"','2023-02-02 00:00:00'),
-	(100002,'"Cars"','2023-02-02 00:00:00'),
-	(100005,'"Asgard"','2023-02-02 00:00:00'),
-	(100006,'"Retro Tech"','2023-02-05 00:00:00'),
-	(100004,'"Science"','2023-02-05 00:00:00');
+	(100009,'Art','2023-01-30 00:00:00'),
+	(100002,'Suits','2023-01-30 00:00:00'),
+	(100003,'Fitness','2023-01-31 00:00:00'),
+	(100009,'Food','2023-01-31 00:00:00'),
+	(100005,'Midgard','2023-02-01 00:00:00'),
+	(100002,'Travel','2023-02-02 00:00:00'),
+	(100002,'Cars','2023-02-02 00:00:00'),
+	(100005,'Asgard','2023-02-02 00:00:00'),
+	(100006,'Retro Tech','2023-02-05 00:00:00'),
+	(100004,'Science','2023-02-05 00:00:00');
 
 INSERT INTO db.Friends VALUES 
 	(100001,100003,'2023-01-30 00:00:00'),
@@ -124,20 +124,20 @@ INSERT INTO db.Photo (albumID, caption, data) VALUES
 	(200007,'Yep. This is the last caption.','/path/to/photo10.jpg');
 
 INSERT INTO db.Tag VALUES ('"friends"',300001),
-	('"food"',300000),
-	('"fun"',300002),
-	('"food"',300003),
-	('"longweekend"',300003),
-	('"food"',300004),
-	('"drinks"',300005),
-	('"friends"',300006),
-	('"workout"',300007),
-	('"fitness"',300007),
-	('"friends"',300008),
-	('"food"',300009),
-	('"drinks"',300009),
-	('"fun"',300009),
-	('"friends"',300007);
+	('food',300000),
+	('fun',300002),
+	('food',300003),
+	('longweekend',300003),
+	('food',300004),
+	('drinks',300005),
+	('friends',300006),
+	('workout',300007),
+	('fitness',300007),
+	('friends',300008),
+	('food',300009),
+	('drinks',300009),
+	('fun',300009),
+	('friends',300007);
 
 INSERT INTO db.Comment (content, dateCreated, userID, photoID) VALUES 
 	('This is a comment','2023-01-31 00:00:00',100002,300003),
