@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS db.User(
 	lName VARCHAR(30),
 	town VARCHAR(30),
 	gender VARCHAR(1),
-	pw VARCHAR(50),
+	pw VARCHAR(64),
 	email VARCHAR(50),
 	dob DATE,
 	UNIQUE(userID),
