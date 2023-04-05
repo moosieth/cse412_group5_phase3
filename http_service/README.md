@@ -10,14 +10,16 @@ be containerized. In the meantime, though, you can stand up locally.
 
 Firstly, you'll need:
 
-1. Python (platform-specific instructions
+1. Docker (platform-specific instructions
+   [here](https://www.docker.com/products/docker-desktop/))
+2. Python (platform-specific instructions
    [here](https://www.python.org/downloads/))
-2. Flask
-3. Python's MySQL Connector
-4. The Database Image
+3. Flask
+4. Python's MySQL Connector
+5. The Database Image
 
-You can get 3 and 4 by executing the following command once you
-have Python installed:
+You can get 3 and 4 by executing the following command once you have Python
+installed:
 
 ```sh
 pip install flask flask-cors mysql-connector-python
@@ -26,7 +28,7 @@ pip install flask flask-cors mysql-connector-python
 To build the Database Image, do the following (from this directory):
 
 ```sh
-docker build -t 412_db:latest ../db_image/ 
+docker build -t 412_db:latest ../db_image/
 docker run -d -p 3306:3306 --name database 412_db:latest
 ```
 
