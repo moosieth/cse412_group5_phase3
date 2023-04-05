@@ -123,5 +123,39 @@
     <code>
       [100019,"Jim","Stevenson"] (Assuming John is Friends with Jim)
     </code>
+    <h2>Route: /friendrec</h2>
+    <p>
+      '/friendrec' allows for HTTP GET requests to be made that will return JSON
+      data about users that have mutual friends with the current user, as well
+      as how many mutual friends they share with the current user. It does so
+      with one parameter:
+    </p>
+    <h4>Parameter 1: uid</h4>
+    <p>This parameter should be the ID of the current user.</p>
+    <p>
+      Here's an example of a GET request that will return either a JSON
+      dictionary with data about all users with friends mutual to the current
+      user, as well as how many mutual friends they share with the user.
+    </p>
+    <code>
+      axios.get('http://127.0.0.1:5000/friendrec', { params: { uid: 100010 } })
+    </code>
+    <p>
+      Making this request will execute the following 3 queries on the Database:
+    </p>
+    <code>
+      CREATE VIEW 10010mutuals AS (SELECT friendID FROM Friends WHERE userID IN
+      (SELECT friendID FROM Friends WHERE userID=10010))
+    </code>
+    <code>
+      SELECT userID, fName, lName, COUNT(11010mutuals.friendID) FROM User INNER
+      JOIN 11010mutuals WHERE User.userID = 11010mutuals.friendID GROUP BY
+      userID ORDER BY COUNT(11010mutuals.friendID) DESC;'
+    </code>
+    <code> DROP VIEW 11010mutuals </code>
+    <p>The API would then reply with:</p>
+    <code>
+      [100019,"John","Tennison", 3] [100035,"Jake","Haven", 1] ...
+    </code>
   </body>
 </html>
