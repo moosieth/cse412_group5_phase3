@@ -1,0 +1,127 @@
+<html>
+  <head>
+    <title>CSE 412 Group 5 Project Phase III - API Tutorial</title>
+  </head>
+  <body>
+    <h1>CSE 412 Group 5 Project Phase III - API Tutorial</h1>
+    <p>
+      This page provdes instructions on how to use our API to interface with our
+      MySQL
+    </p>
+
+    <h2>Route: /register</h2>
+    <p>
+      '/register' allows for HTTP POST requests to be made that result in
+      registration of a new user within the Database. The data expected is of
+      the same schema as the `User` table in our Database.
+    </p>
+    <p>
+      Here's an example of a POST request that results in the creation of a new
+      User inside the Database:
+    </p>
+    <code>
+      axios.post('http://127.0.0.1:5000/register', {fName: 'John', lName: 'Doe',
+      town: 'Phoenix', gender: 'M', pw: 'SHA256HashedPW', email: 'john@asu.edu',
+      dob: '2023-04-04 12:34:56' });
+    </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code>
+      INSERT INTO User (fName, lName, town, gender, pw, email, dob)
+      VALUES("John", "Doe", "Phoenix", "M", "SHA256HashedPW", "john@asu.edu",
+      "2023-04-04 12:34:56");
+    </code>
+
+    <h2>Route: /login</h2>
+    <p>
+      '/login' allows for HTTP GET requests to be made that will return JSON
+      that indicates if a user's credentials are valid or not. It does so with
+      several parameters:
+    </p>
+    <h4>Parameter 1: email</h4>
+    <p>This parameter should be the user's input email address.</p>
+    <h4>Parameter 2: password</h4>
+    <p>
+      This parameter should be the SHA256-Hashed version of the user's input
+      password.
+    </p>
+    <p>
+      Here's an example of a GET request that will return either `{[User's ID]}`
+      OR `{'success': False}`, depending on if the user's provided credentials
+      are valid or not.
+    </p>
+    <code>
+      axios.get('http://127.0.0.1:5000/login', { params: { email:
+      'john@asu.edu', password: 'AnSHA256HashedPW' } })
+    </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code>
+      SELECT userID FROM User WHERE email="john@asu.edu" AND
+      pw="AnSHA256HashedPW";
+    </code>
+    <p>The API would then reply with:</p>
+    <code> [[100010]] (Assuming John's User ID is 100010) </code>
+
+    <h2>Route: /searchuser</h2>
+    <p>
+      '/searchuser' allows for HTTP GET requests to be made that will return
+      JSON data about a matching user. `/searchuser` searches
+      <i>all</i> existing users in the database. It does so with two parameters:
+    </p>
+    <h4>Parameter 1: fName</h4>
+    <p>This parameter should be the first name input by a user.</p>
+    <h4>Parameter 2: lName</h4>
+    <p>This parameter should be the last name input by a user.</p>
+    <p>
+      Here's an example of a GET request that will return either a JSON
+      dictionary with the desired user's data, OR an empty JSON dictionary,
+      depending on if the provided parameters match an entry in the User table.
+    </p>
+    <code>
+      axios.get('http://127.0.0.1:5000/searchuser', { params: { fName: 'John',
+      lName: 'Doe' } })
+    </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code>
+      SELECT userID, fName, lName FROM User WHERE fName LIKE "John%" AND lName
+      LIKE "Doe%"
+    </code>
+    <p>The API would then reply with:</p>
+    <code>
+      [100010,"John","Doe"] (But could also return others, if their first name
+      starts with "John" and their last name starts with "Doe")
+    </code>
+
+    <h2>Route: /searchfriend</h2>
+    <p>
+      '/searchfriend' allows for HTTP GET requests to be made that will return
+      JSON data about aa given user's friends that match the input parameters.
+      `/searchfriend` <i>only</i> searches through a user's
+      <i>existing</i> friends, and does so with 3 parameters:
+    </p>
+    <h4>Parameter 1: uid</h4>
+    <p>This parameter should be the ID of the user requesting the search.</p>
+    <h4>Parameter 2: fName</h4>
+    <p>This parameter should be the first name input by a user.</p>
+    <h4>Parameter 3: lName</h4>
+    <p>This parameter should be the last name input by a user.</p>
+    <p>
+      Here's an example of a GET request that will return either a JSON
+      dictionary with the desired user's data, OR an empty JSON dictionary,
+      depending on if the provided parameters match an entry in the User table.
+    </p>
+    <code>
+      axios.get('http://127.0.0.1:5000/searchfriend', { params: { uid: 100010,
+      fName: 'Jim', lName: 'Stevenson' } })
+    </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code>
+      SELECT userID, fName, lName FROM User WHERE fName LIKE"{fName}%" AND lName
+      LIKE "{lName}%" AND userID IN (SELECT friendID FROM Friends WHERE
+      userID={uid})
+    </code>
+    <p>The API would then reply with:</p>
+    <code>
+      [100019,"Jim","Stevenson"] (Assuming John is Friends with Jim)
+    </code>
+  </body>
+</html>

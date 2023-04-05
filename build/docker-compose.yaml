@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  database:
+    build: ../db_image/
+    ports:
+      - 3306:3306
+  api:
+    build: ../http_service/
+    ports:
+      - 5000:5000
+    links:
+      - "database"
+    
