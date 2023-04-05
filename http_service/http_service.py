@@ -123,26 +123,6 @@ def contrib():
 
     return jsonify(tuples)
 
-@app.route('/addalbum', methods=['POST'])
-def addalbum():
-    newAlbum = request.json
-
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
-    cursor = con.cursor()
-
-    query = f'INSERT INTO Album (userID, name, dateCreated) VALUES({newAlbum["userID"]}, "{newAlbum["name"]}", "{newAlbum["dateCreated"]}")'
-
-    try:
-        cursor.execute(query)
-        con.commit()
-        cursor.close()
-        con.close()
-
-        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
-    except mysql.connector.Error as e:
-        print("MYSQL EXECUTION ERROR: {}".format(e))
-        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
-
 # Search for a user's album. Used in ensuring Album exists when posting photo, or when looking through users albums.
 @app.route('/searchalbum', methods=['GET'])
 def searchalbum():
@@ -157,14 +137,20 @@ def searchalbum():
 
     return jsonify(tuples)
 
-@app.route('/addphoto', methods=['POST'])
-def addphoto():
-    newPhoto = request.json
+@app.route('/add', methods=['POST'])
+def add():
+    newEntry = request.json
 
     con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
     cursor = con.cursor()
     
-    query = f'INSERT INTO Photo (albumID, caption, data) VALUES({newPhoto["albumID"]}, "{newPhoto["caption"]}", "{newPhoto["data"]}")'
+    if newEntry["target"] == 'photo':
+         query = f'INSERT INTO Photo (albumID, caption, data) VALUES({newEntry["albumID"]}, "{newEntry["caption"]}", "{newEntry["data"]}")'
+    elif newEntry["target"] == 'album':
+        query = f'INSERT INTO Album (userID, name, dateCreated) VALUES({newEntry["userID"]}, "{newEntry["name"]}", "{newEntry["dateCreated"]}")'
+    else:
+        print("SKILL ISSUE: User provided JSON not of correct format")
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
 
     try:
         cursor.execute(query)
@@ -176,7 +162,63 @@ def addphoto():
     except mysql.connector.Error as e:
         print("MYSQL EXECUTION ERROR: {}".format(e))
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+    
+@app.route('/remove', methods=['POST'])
+def remove():
+    data = request.json
 
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    if data["target"] == 'photo':
+        query = f'DELETE FROM Photo WHERE photoID={data["id"]}'
+    elif data["target"] == 'album':
+        query = f'DELETE FROM Album WHERE albumID={data["id"]}'
+    else:
+        print("SKILL ISSUE: User provided JSON not of correct format")
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+    
+    try:
+        cursor.execute(query)
+        con.commit()
+        cursor.close()
+        con.close()
+
+        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+    except mysql.connector.Error as e:
+        print("MYSQL EXECUTION ERROR: {}".format(e))
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+
+@app.route('/photobytag', methods=['GET'])
+def photobytag():
+    tagName = request.args.get("name")
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    query = f'SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN Tag ON Photo.photoID = Tag.photoID WHERE Tag.name = "{tagName}"'
+
+    cursor.execute(query)
+    tuples = cursor.fetchall()
+
+    if(tuples):
+        return jsonify(tuples)
+    else:
+        return json.dumps({'success':False}), 401, {'ContentType':'application/json'}
+    
+@app.route('/trendingtags', methods=['GET'])
+def trendingtags():
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    # TODO: Not getting 10 results, need 2 fix
+    cursor.execute('SELECT name, COUNT(name) FROM Tag GROUP BY name ORDER BY COUNT(name) DESC LIMIT 10')
+    tuples = cursor.fetchall()
+
+    if(tuples):
+        return jsonify(tuples)
+    else:
+        return json.dumps({'success':False}), 500, {'ContentType':'application/json'}
 
 
 if __name__ == '__main__':
