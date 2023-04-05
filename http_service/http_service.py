@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 import hashlib
 import json
 import mysql.connector
 
 app = Flask(__name__)
+CORS(app)               # Allows Apps from same origin to access this API
 
 # Serve HTML instructions
 @app.route('/')
