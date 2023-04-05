@@ -20,7 +20,7 @@ You can get 3 and 4 by executing the following command once you
 have Python installed:
 
 ```sh
-pip install flask mysql-connector-python
+pip install flask flask-cors mysql-connector-python
 ```
 
 To build the Database Image, do the following (from this directory):
