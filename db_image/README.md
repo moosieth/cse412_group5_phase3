@@ -30,4 +30,4 @@ docker stop database
 
 The primary use of this image is to host the Database that our API connects to.
 
-Our API can be found in the [http_service directory](#../http_service/README.md)
+Our API can be found in the [http_service directory](../http_service/README.md)
