@@ -204,7 +204,7 @@ def photobytag():
     if(tuples):
         return jsonify(tuples)
     else:
-        return json.dumps({'success':False}), 401, {'ContentType':'application/json'}
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
     
 @app.route('/trendingtags', methods=['GET'])
 def trendingtags():
@@ -220,6 +220,65 @@ def trendingtags():
     else:
         return json.dumps({'success':False}), 500, {'ContentType':'application/json'}
 
+@app.route('/searchcom', methods=['GET'])
+def searchcom():
+    content = request.args.get("content")
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    query1 = f'CREATE VIEW CommentSearch AS (SELECT userID FROM Comment WHERE content LIKE "%{content}%")'
+    query2 = f'SELECT User.fName, User.lName, COUNT(CommentSearch.userID) FROM User INNER JOIN CommentSearch ON User.userID = CommentSearch.userID GROUP BY fName, lName ORDER BY COUNT(CommentSearch.userID) DESC'
+
+    cursor.execute(query1)
+    cursor.execute(query2)
+    tuples = cursor.fetchall()
+
+    cursor.execute(f'DROP VIEW CommentSearch')
+
+    if(tuples):
+        return jsonify(tuples)
+    else:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+
+@app.route('/photorec', methods=['GET'])
+def photorec():
+    uid = request.args.get("uid")
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    query1 = f'CREATE VIEW {uid}Photos AS (SELECT Photo.photoID AS pid FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = {uid})'
+    query2 = f'CREATE VIEW {uid}Tags AS (SELECT Tag.name FROM Tag INNER JOIN Photo ON Tag.photoID = Photo.photoID WHERE Photo.photoID IN (SELECT pid FROM {uid}Photos) GROUP BY Tag.name ORDER BY COUNT(*) DESC LIMIT 5)'
+    query3 = f'SELECT * FROM Photo WHERE photoID IN (SELECT Tag.photoID FROM Tag INNER JOIN {uid}Tags ON Tag.name = {uid}Tags.name) AND photoID NOT IN (SELECT pid FROM {uid}Photos) GROUP BY photoID ORDER BY COUNT(*) DESC LIMIT 50'
+
+    cursor.execute(query1)
+    cursor.execute(query2)
+    cursor.execute(query3)
+    tuples = cursor.fetchall()
+
+    cursor.execute(f'DROP VIEW {uid}Tags')
+    cursor.execute(f'DROP VIEW {uid}Photos')
+
+    if(tuples):
+        return jsonify(tuples)
+    else:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+
+@app.route('/recentphotos', methods=['GET'])
+def recentphotos():
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    query = f'SELECT * FROM Photo ORDER BY photoID DESC LIMIT 50'
+
+    cursor.execute(query)
+    tuples = cursor.fetchall()
+
+    if(tuples):
+        return jsonify(tuples)
+    else:
+        return json.dumps({'success':False}), 500, {'ContentType':'application/json'}
 
 if __name__ == '__main__':
     app.run()
