@@ -32,6 +32,7 @@
         <ul>
           <li><a href="#Friend_Rec">/friendrec</a></li>
           <li><a href="#Photo_Rec">/photorec</a></li>
+          <li><a href="#Trend_Tags">/trendingtags</a></li>
         </ul>
         <li><a href="#Insertion_Deletion">Insertion / Deletion</a></li>
         <ul>
@@ -362,6 +363,26 @@
     <code>DROP VIEW 10010Photos; </code>
     <p>The API could then reply with:</p>
     <code> [300001, 200001, "A Photo Caption", "A Photo Path"] ... </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h2 id="Trend_Tags">Route: /trendingtags</h2>
+    <p>
+      '/recent' allows for HTTP GET requests to be made that will return JSON
+      data containing the 10 most frequently used tags.
+    </p>
+    <p>
+      Here's an example of a GET request that will return a JSON dictionary with
+      the 50 most-recently created photos.
+    </p>
+    <code> axios.get('http://127.0.0.1:5000/trendingtags') </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code>
+      SELECT name, COUNT(name) FROM Tag GROUP BY name ORDER BY COUNT(name) DESC
+      LIMIT 10;
+    </code>
+    <p>The API would then reply with:</p>
+    <code> ["Friends", 25], ["Food", 22], ... </code>
     <br /><br /><br />
 
     <br /><br /><br />
