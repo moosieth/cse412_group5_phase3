@@ -126,8 +126,8 @@ def contrib():
 # Search for a user's album. Used in ensuring Album exists when posting photo, or when looking through users albums.
 @app.route('/searchalbum', methods=['GET'])
 def searchalbum():
-    uid = request.args.get('uid')
-    aName = request.args.get("albumName")
+    uid = request.args.get("uid")
+    aName = request.args.get("name")
 
     con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
     cursor = con.cursor()
@@ -148,6 +148,12 @@ def add():
          query = f'INSERT INTO Photo (albumID, caption, data) VALUES({newEntry["albumID"]}, "{newEntry["caption"]}", "{newEntry["data"]}")'
     elif newEntry["target"] == 'album':
         query = f'INSERT INTO Album (userID, name, dateCreated) VALUES({newEntry["userID"]}, "{newEntry["name"]}", "{newEntry["dateCreated"]}")'
+    elif newEntry["target"] == 'friend':
+        query = f'INSERT INTO Friends VALUES({newEntry["userID"]}, "{newEntry["friendID"]}", "{newEntry["dateFormed"]}")'
+    elif newEntry["target"] == 'likes':
+        query = f'INSERT INTO Likes VALUES({newEntry["userID"]}, "{newEntry["photoID"]}")'
+    elif newEntry["target"] == 'comment':
+        query = f'INSERT INTO Comment (content, dateCreated, userID, photoID) VALUES({newEntry["content"]}, {newEntry["dateCreated"]}, {newEntry["userID"]}, "{newEntry["photoID"]}")'
     else:
         print("SKILL ISSUE: User provided JSON not of correct format")
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
@@ -163,17 +169,21 @@ def add():
         print("MYSQL EXECUTION ERROR: {}".format(e))
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
     
-@app.route('/remove', methods=['POST'])
+@app.route('/removebyid', methods=['POST'])
 def remove():
     data = request.json
 
     con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
     cursor = con.cursor()
 
-    if data["target"] == 'photo':
+    if data["target"] == 'user':
+        query = f'DELETE FROM User WHERE userID={data["id"]}'
+    elif data["target"] == 'photo':
         query = f'DELETE FROM Photo WHERE photoID={data["id"]}'
     elif data["target"] == 'album':
         query = f'DELETE FROM Album WHERE albumID={data["id"]}'
+    elif data["target"] == 'comment':
+        query = f'DELETE FROM Comment WHERE albumID={data["id"]}'
     else:
         print("SKILL ISSUE: User provided JSON not of correct format")
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
@@ -228,7 +238,7 @@ def searchcom():
     cursor = con.cursor()
 
     query1 = f'CREATE VIEW CommentSearch AS (SELECT userID FROM Comment WHERE content LIKE "%{content}%")'
-    query2 = f'SELECT User.fName, User.lName, COUNT(CommentSearch.userID) FROM User INNER JOIN CommentSearch ON User.userID = CommentSearch.userID GROUP BY fName, lName ORDER BY COUNT(CommentSearch.userID) DESC'
+    query2 = f'SELECTUser.fName, User.lName, COUNT(CommentSearch.userID) FROM User INNER JOIN CommentSearch ON User.userID = CommentSearch.userID GROUP BY fName, lName ORDER BY COUNT(CommentSearch.userID) DESC'
 
     cursor.execute(query1)
     cursor.execute(query2)

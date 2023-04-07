@@ -2,6 +2,7 @@
   <head>
     <title>CSE 412 Group 5 Project Phase III - API Tutorial</title>
   </head>
+
   <body>
     <h1>CSE 412 Group 5 Project Phase III - API Tutorial</h1>
     <p>
@@ -9,7 +10,45 @@
       MySQL
     </p>
 
-    <h2>Route: /register</h2>
+    <div id="toc_container">
+      <p class="toc_title">Table of Contents</p>
+      <ul class="toc_list">
+        <li>
+          <a href="#Account_Tools">User Account Tools</a>
+          <ul>
+            <li><a href="#Register">/register</a></li>
+            <li><a href="#Login">/login</a></li>
+          </ul>
+        </li>
+        <li><a href="#Entity_Search">Entity Search</a></li>
+        <ul>
+          <li><a href="#User_Search">/searchuser</a></li>
+          <li><a href="#Friend_Search">/searchfriend</a></li>
+          <li><a href="#Album_Search">/searchalbum</a></li>
+          <li><a href="#Photo_By_Tag">/photobytag</a></li>
+          <li><a href="#Com_Search">/searchcom</a></li>
+        </ul>
+        <li><a href="#Recs">Recommendations</a></li>
+        <ul>
+          <li><a href="#Friend_Rec">/friendrec</a></li>
+          <li><a href="#Photo_Rec">/photorec</a></li>
+        </ul>
+        <li><a href="#Insertion_Deletion">Insertion / Deletion</a></li>
+        <ul>
+          <li><a href="#Add">/add</a></li>
+          <li><a href="#Del_Id">/removebyid</a></li>
+        </ul>
+        <li><a href="#Misc">Miscellaneous</a></li>
+        <ul>
+          <li><a href="#Contrib">/contrib</a></li>
+        </ul>
+      </ul>
+    </div>
+
+    <h1 id="Account_Tools">User Account Tools</h1>
+
+    <br /><br /><br />
+    <h2 id="Register">Route: /register</h2>
     <p>
       '/register' allows for HTTP POST requests to be made that result in
       registration of a new user within the Database. The data expected is of
@@ -30,8 +69,10 @@
       VALUES("John", "Doe", "Phoenix", "M", "SHA256HashedPW", "john@asu.edu",
       "2023-04-04 12:34:56");
     </code>
+    <br /><br /><br />
 
-    <h2>Route: /login</h2>
+    <br /><br /><br />
+    <h2 id="Login">Route: /login</h2>
     <p>
       '/login' allows for HTTP GET requests to be made that will return JSON
       that indicates if a user's credentials are valid or not. It does so with
@@ -60,8 +101,12 @@
     </code>
     <p>The API would then reply with:</p>
     <code> [[100010]] (Assuming John's User ID is 100010) </code>
+    <br /><br /><br />
 
-    <h2>Route: /searchuser</h2>
+    <br /><br /><br />
+    <h1 id="Entity_Search">Entity Search</h1>
+
+    <h2 id="User_Search">Route: /searchuser</h2>
     <p>
       '/searchuser' allows for HTTP GET requests to be made that will return
       JSON data about a matching user. `/searchuser` searches
@@ -90,8 +135,10 @@
       [100010,"John","Doe"] (But could also return others, if their first name
       starts with "John" and their last name starts with "Doe")
     </code>
+    <br /><br /><br />
 
-    <h2>Route: /searchfriend</h2>
+    <br /><br /><br />
+    <h2 id="Friend_Search">Route: /searchfriend</h2>
     <p>
       '/searchfriend' allows for HTTP GET requests to be made that will return
       JSON data about aa given user's friends that match the input parameters.
@@ -123,7 +170,120 @@
     <code>
       [100019,"Jim","Stevenson"] (Assuming John is Friends with Jim)
     </code>
-    <h2>Route: /friendrec</h2>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h2 id="Album_Search">Route: /searchalbum</h2>
+    <p>
+      '/searchalbum' allows for HTTP GET requests to be made that will return
+      JSON data containing the targeted user's albums that match a given album
+      name. It does so with 2 parameters:
+    </p>
+    <h4>Parameter 1: uid</h4>
+    <p>
+      This parameter should be the ID of the user whose albums are being
+      searched through. If you wish for this to be a user other than the one
+      that is logged in, recall that you can use the
+      <code>/searchuser</code> route to get their userID.
+    </p>
+    <h4>Parameter 2: name</h4>
+    <p>
+      This parameter should be the input album name that is being searched for.
+    </p>
+    <p>
+      Here's an example of a GET request that will return a JSON dictionary with
+      the User's contribution score contained within it.
+    </p>
+    <code>
+      axios.get('http://127.0.0.1:5000/contrib', { params: { uid: 100010, name:
+      'Flowers' } })
+    </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code>
+      SELECT albumID, name FROM Album WHERE name LIKE "%Flowers%" AND userID =
+      100010;
+    </code>
+    <p>The API could then reply with:</p>
+    <code> [200001, PrettyFlowers] </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h2 id="Photo_By_Tag">Route: /photobytag</h2>
+    <p>
+      '/photobytag' allows for HTTP GET requests to be made that will return
+      JSON data containing data for Photos that are tagged by the input tag
+      name. It does so with one parameter:
+    </p>
+    <h4>Parameter 1: name</h4>
+    <p>
+      This parameter should be the name of the Tag that photos will be sorted
+      by.
+    </p>
+    <p>
+      Here's an example of a GET request that will return a JSON dictionary with
+      the User's contribution score contained within it.
+    </p>
+    <code>
+      axios.get('http://127.0.0.1:5000/photobytag', { params: { name: 'Friends'
+      } })
+    </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code>
+      SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN Tag
+      ON Photo.photoID = Tag.photoID WHERE Tag.name = "Friends"
+    </code>
+    <p>The API could then reply with:</p>
+    <code>
+      [200099, "The caption for a returned photo",
+      "/path/to/the/returned/photo"] ...
+    </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h2 id="Com_Search">Route: /searchcom</h2>
+    <p>
+      '/searchcom' allows for HTTP GET requests to be made that will return JSON
+      data containing data of Users that have commented comments that match the
+      input content, and how many Comments they have left that match the input
+      content. It does so with one parameter:
+    </p>
+    <h4>Parameter 1: content</h4>
+    <p>
+      This parameter should be the comment content that is desired to be
+      searched for.
+    </p>
+    <p>
+      Here's an example of a GET request that will return a JSON dictionary with
+      the User's contribution score contained within it.
+    </p>
+    <code>
+      axios.get('http://127.0.0.1:5000/searchcom', { params: { content: 'Comment
+      Content' } })
+    </code>
+    <p>
+      Making this request will execute the following 3 queries on the Database:
+    </p>
+    <code>
+      CREATE VIEW CommentSearch AS (SELECT userID FROM Comment WHERE content
+      LIKE "%Comment Content%");
+    </code>
+    <br />
+    <code>
+      SELECT User.fName, User.lName, COUNT(CommentSearch.userID) FROM User INNER
+      JOIN CommentSearch ON User.userID = CommentSearch.userID GROUP BY fName,
+      lName ORDER BY COUNT(CommentSearch.userID) DESC;
+    </code>
+    <br />
+    <code> DROP VIEW CommentSearch; </code>
+    <br />
+    <p>The API could then reply with:</p>
+    <code> ["John", "Doe", 15] ... </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h1 id="Recs">Recommendations</h1>
+
+    <h2 id="Friend_Rec">Route: /friendrec</h2>
     <p>
       '/friendrec' allows for HTTP GET requests to be made that will return JSON
       data about users that have mutual friends with the current user, as well
@@ -154,8 +314,184 @@
     </code>
     <code> DROP VIEW 11010mutuals </code>
     <p>The API would then reply with:</p>
+    <code> [100019,"John","Tennison", 3] [100035,"Jake","Haven", 1] ... </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h2 id="Photo_Rec">Route: /photorec</h2>
+    <p>
+      '/photorec' allows for HTTP GET requests to be made that will return JSON
+      data about photos to recommend to a given User based on that user's own
+      Tag usage. It does so with 1 parameter:
+    </p>
+    <h4>Parameter 1: uid</h4>
+    <p>
+      This parameter should be the ID of the current user (the user that will be
+      recommended photos).
+    </p>
+    <p>
+      Here's an example of a GET request that will return either a JSON
+      dictionary with data about all users with friends mutual to the current
+      user, as well as how many mutual friends they share with the user.
+    </p>
     <code>
-      [100019,"John","Tennison", 3] [100035,"Jake","Haven", 1] ...
+      axios.get('http://127.0.0.1:5000/photorec', { params: { uid: 100010 } })
     </code>
+    <p>
+      Making this request will execute the following 5 queries on the Database:
+    </p>
+    <code>
+      CREATE VIEW 10010Photos AS (SELECT Photo.photoID AS pid FROM Photo INNER
+      JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = 10010);
+    </code>
+    <br />
+    <code>
+      CREATE VIEW 10010Tags AS (SELECT Tag.name FROM Tag INNER JOIN Photo ON
+      Tag.photoID = Photo.photoID WHERE Photo.photoID IN (SELECT pid FROM
+      10010Photos) GROUP BY Tag.name ORDER BY COUNT(*) DESC LIMIT 5);
+    </code>
+    <br />
+    <code>
+      SELECT * FROM Photo WHERE photoID IN (SELECT Tag.photoID FROM Tag INNER
+      JOIN 10010Tags ON Tag.name = 10010Tags.name) AND photoID NOT IN (SELECT
+      pid FROM 10010Photos) GROUP BY photoID ORDER BY COUNT(*) DESC LIMIT 50;
+    </code>
+    <br />
+    <code> DROP VIEW 10010Tags; </code>
+    <br />
+    <code>DROP VIEW 10010Photos; </code>
+    <p>The API could then reply with:</p>
+    <code> [300001, 200001, "A Photo Caption", "A Photo Path"] ... </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h1 id="Insertion_Deletion">Insertion / Deletion</h1>
+
+    <h2 id="Add">Route: /add</h2>
+    <p>
+      '/add' allows for HTTP POST requests that result in the insertion of data
+      into <i>any</i> table in the Database (other than the User table). It does
+      so with a 'target' field, as well as the desired Table's schema.
+    </p>
+    <h4>Field 1: target</h4>
+    <p>
+      This field should be the name of the table that an entry is being inserted
+      into. Options are: <code>photo, album, friend, likes, </code> and
+      <code>comment</code>.
+    </p>
+    <h4>Remaining fields: Schema of Relation</h4>
+    <p>
+      The remaining fields should match the schema of the target relation in the
+      database. For example, if you want to insert a Photo into the Database,
+      your fields would be: <code>target, albumID, caption, </code> and
+      <code>data</code>. The database's Schema Definition can be found
+      <a
+        href="https://github.com/moosieth/cse412_group5_phase3/blob/main/db_image/schema.sql"
+        >here</a
+      >.
+    </p>
+    <p>
+      Here's a few examples of POST requests that will insert data into various
+      Tables in our Database:
+    </p>
+    <code>
+      axios.post('http://127.0.0.1:5000/add', { target: 'photo', albumID:
+      200054, caption: "A caption that got inserted with /add", data:
+      "/path/to/this/photo.jpg" } );
+    </code>
+    <br />
+    <code>
+      axios.post('http://127.0.0.1:5000/add', { target: "album", userID: 100009,
+      name: "AddedAlbum", dateCreated: "2023-04-07 00:00:00"} );
+    </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h2 id="Del_Id">Route: /removebyid</h2>
+    <p>
+      '/remove' allows for HTTP POST requests to be made that will remove data
+      with an ID from the Database. It works for the
+      <i>User, Photo, Album, and Comment</i> tables within the database. It does
+      so with a few JSON fields:
+    </p>
+    <h4>Field 1: target</h4>
+    <p>
+      This parameter should be the name of the table you desire to delete an
+      entry from. Options are: <code>user, photo, album,</code> and
+      <code>comment</code>.
+    </p>
+    <h4>Field 2: id</h4>
+    <p>This parameter should be the ID of the item you desire to delete.</p>
+    <p>
+      Here's a few examples of POST requests that will delete an entry from the
+      database:
+    </p>
+    <code>
+      axios.post('http://127.0.0.1:5000/removebyid', { target: 'user', id:
+      100010 } );
+    </code>
+    <br />
+    <code>
+      axios.post('http://127.0.0.1:5000/removebyid', { target: 'comment', id:
+      400000 } );
+    </code>
+    <br />
+    <code>
+      axios.post('http://127.0.0.1:5000/removebyid', { target: 'album', id:
+      200052 } );
+    </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h1 id="Misc">Miscellaneous</h1>
+
+    <h2 id="Contrib">Route: /contrib</h2>
+    <p>
+      '/contrib' allows for HTTP GET requests to be made that will return JSON
+      data containing the current user's Contribution Score. It does so with 1
+      parameter:
+    </p>
+    <h4>Parameter 1: uid</h4>
+    <p>This parameter should be the ID of the current user.</p>
+    <p>
+      Here's an example of a GET request that will return a JSON dictionary with
+      the User's contribution score contained within it.
+    </p>
+    <code>
+      axios.get('http://127.0.0.1:5000/contrib', { params: { uid: 100010 } })
+    </code>
+    <p>
+      Making this request will execute the following 2 queries on the Database:
+    </p>
+    <code>
+      CREATE VIEW 10010contribution AS (SELECT COUNT(commentID) FROM Comment
+      WHERE Comment.userID = 10010 GROUP BY Comment.commentID UNION (SELECT
+      COUNT(photoID) FROM Photo WHERE albumID IN (SELECT albumID FROM Album
+      WHERE userID = 10010)));
+    </code>
+    <code> SELECT COUNT(*) FROM 10010contribution; </code>
+    <p>The API would then reply with:</p>
+    <code> [3] </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h2 id="Recent_Photos">Route: /recentphotos</h2>
+    <p>
+      '/recent' allows for HTTP GET requests to be made that will return JSON
+      data containing the 50 most-recently created Photos.
+    </p>
+    <p>
+      Here's an example of a GET request that will return a JSON dictionary with
+      the 50 most-recently created photos.
+    </p>
+    <code> axios.get('http://127.0.0.1:5000/recentphotos') </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code> SELECT * FROM Photo ORDER BY photoID DESC LIMIT 50 </code>
+    <p>The API would then reply with:</p>
+    <code>
+      [300050, 200001, "Photo's caption", "/path/to/photo"], [300049, 200009,
+      "Another Photo's caption", "/path/to/another/photo"], ...
+    </code>
+    <br /><br /><br />
   </body>
 </html>
