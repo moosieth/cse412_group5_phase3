@@ -170,7 +170,7 @@ def add():
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
     
 @app.route('/removebyid', methods=['POST'])
-def remove():
+def removebyid():
     data = request.json
 
     con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
