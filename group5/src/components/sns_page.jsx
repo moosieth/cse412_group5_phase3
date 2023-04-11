@@ -1,4 +1,6 @@
 import React from "react";
+import "../css/sns.css";
+
 export default function SNS() {
   return (
     <div>
