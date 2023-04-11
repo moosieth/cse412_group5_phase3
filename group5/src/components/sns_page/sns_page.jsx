@@ -1,5 +1,5 @@
 import React from "react";
-import "../css/sns.css";
+import "./sns.css";
 
 export default function SNS() {
   return (

@@ -1,10 +1,10 @@
 import React from "react";
-import Sammy from "../img/sammy.jpeg";
-import { useNavigate } from 'react-router-dom';
+import Sammy from "../../img/sammy.jpeg";
+import { useNavigate } from "react-router-dom";
 import { createBrowserHistory } from "history"; // install history
 import { useState } from "react";
 import axios from "axios";
-import "../css/login.css";
+import "./login.css";
 
 export default function Welcome() {
   const [loginSuccess, setLoginSuccess] = useState(null);
@@ -21,7 +21,7 @@ export default function Welcome() {
       })
       .then((response) => {
         setLoginSuccess(true);
-        navigate('/social-network-service');
+        navigate("/social-network-service");
       })
       .catch((error) => {
         if (error.response.status === 401) {
@@ -32,6 +32,10 @@ export default function Welcome() {
       });
   };
 
+  const handleCreateAccount = () => {
+    navigate("/create-account");
+  };
+
   return (
     <div className="login">
       <div className="wrapper">
@@ -40,16 +44,19 @@ export default function Welcome() {
         <img src={Sammy} alt="Sammy Image" width={200} height={200} />
       </div>
       <div className="login_form">
-        <input
-          type="text"
-          placeholder="Please enter your email."
-          id="email"
-        />
+        <input type="text" placeholder="Please enter your email." id="email" />
         <input type="password" placeholder="Password" id="password" />
         <button className="login_btn" onClick={handleLogin}>
           Login
         </button>
         <span className="login_forgot_password"> Forgot password</span>
+        <hr className="login_separator" />
+        <button
+          className="login_create_account_btn"
+          onClick={handleCreateAccount}
+        >
+          Create an Account
+        </button>
         {loginSuccess === false && (
           <p style={{ color: "red" }}>User not found</p>
         )}
