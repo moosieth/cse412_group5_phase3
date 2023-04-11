@@ -1,10 +1,15 @@
+import React from "react";
 import Sammy from "../img/sammy.jpeg";
+import { useNavigate } from 'react-router-dom';
+import { createBrowserHistory } from "history"; // install history
 import { useState } from "react";
 import axios from "axios";
 import "../css/login.css";
 
 export default function Welcome() {
   const [loginSuccess, setLoginSuccess] = useState(null);
+  const history = createBrowserHistory();
+  const navigate = useNavigate();
 
   const handleLogin = () => {
     const email = document.getElementById("email").value;
@@ -16,6 +21,7 @@ export default function Welcome() {
       })
       .then((response) => {
         setLoginSuccess(true);
+        navigate('/social-network-service');
       })
       .catch((error) => {
         if (error.response.status === 401) {
@@ -34,7 +40,11 @@ export default function Welcome() {
         <img src={Sammy} alt="Sammy Image" width={200} height={200} />
       </div>
       <div className="login_form">
-        <input type="text" placeholder="Please enter your email." id="email" />
+        <input
+          type="text"
+          placeholder="Please enter your email."
+          id="email"
+        />
         <input type="password" placeholder="Password" id="password" />
         <button className="login_btn" onClick={handleLogin}>
           Login
