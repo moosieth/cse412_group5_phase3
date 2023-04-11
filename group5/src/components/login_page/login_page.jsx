@@ -1,5 +1,6 @@
 import React from "react";
-import Sammy from "../../img/sammy.jpeg";
+import logo from "../../data/logo.png"
+import Sammy from "../../data/sammy.jpeg";
 import { useNavigate } from "react-router-dom";
 import { createBrowserHistory } from "history"; // install history
 import { useState } from "react";
@@ -41,7 +42,7 @@ export default function Welcome() {
       <div className="wrapper">
         <h1>Welcome To My App</h1>
         <p>Group 5 SNS</p>
-        <img src={Sammy} alt="Sammy Image" width={200} height={200} />
+        <img src={logo} alt="Sammy Image" width={200}  />
       </div>
       <div className="login_form">
         <input type="text" placeholder="Please enter your email." id="email" />
