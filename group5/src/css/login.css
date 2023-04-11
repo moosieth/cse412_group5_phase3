@@ -13,12 +13,14 @@
   }
 
   .wrapper h1 {
+    font-family: 'Roboto', sans-serif; /* replace with desired font */
     font-size: 3rem;
     font-weight: bold;
     margin-bottom: 1rem;
   }
-
+  
   .wrapper p {
+    font-family: 'Roboto', sans-serif; /* replace with desired font */
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 1rem;
@@ -42,44 +44,49 @@
     padding: 1rem;
     margin-bottom: 1rem;
     font-size: 1rem;
-    border-radius: 0.25rem;
+    border-radius: 0.5rem; /* add rounded corners */
     border: 1px solid #ccc;
     outline: none;
   }
-
+  
   .login_form input[type="text"]:focus,
   .login_form input[type="password"]:focus {
     border-color: #0080ff;
   }
 
-  .login_forgot_password,
-  .login_signup {
+  .login_forgot_password {
     display: block;
-    margin-top: 1rem;
-    font-size: 0.8rem;
+    margin-top: 20px; /* add some margin to match the login button */
+    font-size: 16px; /* set the font size to match the login button */
     text-align: center;
     color: #0080ff;
     cursor: pointer;
+    background-color: transparent; /* remove the background color */
+    border: none; /* remove the border */
+    padding: 16px 32px; /* add padding to match the login button */
+    outline: none; /* remove the outline */
   }
-
-  .login_forgot_password:hover,
-  .login_signup:hover {
+  
+  .login_forgot_password:hover {
     text-decoration: underline;
   }
 
   .login_btn {
-    background-color: #008CBA; /* set the background color /
-    border: none; / remove the border /
-    color: white; / set the text color /
-    padding: 12px 24px; / add some padding /
-    text-align: center; / center the text /
-    text-decoration: none; / remove the underline /
+    background-color: turquoise;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    text-align: center;
+    text-decoration: none;
     display: inline-block;
-    font-size: 16px; / set the font size /
-    margin-top: 20px; / add some margin to the top /
-    cursor: pointer; / add a pointer cursor on hover /
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 0.5rem; /* add rounded corners */
+    width: 100%; /* increase width */
   }
-
+  
   .login_btn:hover {
-    background-color: #004c6d; / change the background color on hover */
+    background-color: #008CBA;
   }
+  
