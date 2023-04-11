@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import logo from "../../data/logo.png";
 import house from "../../data/house.png";
@@ -6,23 +6,13 @@ import heart from "../../data/heart.png";
 import person from "../../data/person.png";
 import plus from "../../data/plus.png";
 import "./header.css";
+import CreatePost from "../../components/create_post/create_post";
 
 export default function Header() {
+  const [showCreate, setShowCreate] = useState(false);
+
   const handleAddPhoto = () => {
-    //TODO: Need to change what we are targeting to add here.
-    axios
-      .post("http://127.0.0.1:5000/add", {
-        target: "photo",
-        albumID: 200054,
-        caption: "A caption that got inserted with /add",
-        data: "/path/to/this/photo.jpg",
-      })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    setShowCreate(true);
   };
 
   return (
@@ -52,6 +42,7 @@ export default function Header() {
           </li>
         </ul>
       </nav>
+      {showCreate && <CreatePost setShowCreate={setShowCreate} />}
     </header>
   );
 }
