@@ -1,0 +1,85 @@
+.login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f9f9f9;
+  }
+
+  .wrapper {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .wrapper h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  .wrapper p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  .login_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+    background-color: #fff;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+  }
+
+  .login_form input[type="text"],
+  .login_form input[type="password"] {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ccc;
+    outline: none;
+  }
+
+  .login_form input[type="text"]:focus,
+  .login_form input[type="password"]:focus {
+    border-color: #0080ff;
+  }
+
+  .login_forgot_password,
+  .login_signup {
+    display: block;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    text-align: center;
+    color: #0080ff;
+    cursor: pointer;
+  }
+
+  .login_forgot_password:hover,
+  .login_signup:hover {
+    text-decoration: underline;
+  }
+
+  .login_btn {
+    background-color: #008CBA; /* set the background color /
+    border: none; / remove the border /
+    color: white; / set the text color /
+    padding: 12px 24px; / add some padding /
+    text-align: center; / center the text /
+    text-decoration: none; / remove the underline /
+    display: inline-block;
+    font-size: 16px; / set the font size /
+    margin-top: 20px; / add some margin to the top /
+    cursor: pointer; / add a pointer cursor on hover /
+  }
+
+  .login_btn:hover {
+    background-color: #004c6d; / change the background color on hover */
+  }
