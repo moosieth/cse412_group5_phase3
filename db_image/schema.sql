@@ -123,6 +123,22 @@ INSERT INTO db.Photo (albumID, caption, data) VALUES
 	(200006,'Will the captions ever stop?','/path/to/photo9.jpg'),
 	(200007,'Yep. This is the last caption.','/path/to/photo10.jpg');
 
+INSERT INTO db.Likes VALUES (100000,300000),
+	(100009,300000),
+	(100001,300002),
+	(100001,300003),
+	(100004,300003),
+	(100005,300004),
+	(100000,300005),
+	(100002,300006),
+	(100002,300007),
+	(100008,300007),
+	(100006,300008),
+	(100000,300009),
+	(100009,300009),
+	(100005,300009),
+	(100003,300007);
+
 INSERT INTO db.Tag VALUES ('"friends"',300001),
 	('food',300000),
 	('fun',300002),

@@ -26,8 +26,15 @@
           <li><a href="#User_Search">/searchuser</a></li>
           <li><a href="#Friend_Search">/searchfriend</a></li>
           <li><a href="#Album_Search">/searchalbum</a></li>
-          <li><a href="#Photo_By_Tag">/photobytag</a></li>
           <li><a href="#Com_Search">/searchcom</a></li>
+        </ul>
+        <li><a href="#Browsing">Browsing</a></li>
+        <ul>
+          <li><a href="#Photo_By_Tag">/photobytag</a></li>
+          <li><a href="My_Photo_By_Tag">/myphotosbytag</a></li>
+          <li><a href="#Recent_Photos">/recentphotos</a></li>
+          <li><a href="#Photo_By_User">/photobyuser</a></li>
+          <li><a href="#Photo_By_Album">/photobyalbum</a></li>
         </ul>
         <li><a href="#Recs">Recommendations</a></li>
         <ul>
@@ -43,6 +50,8 @@
         <li><a href="#Misc">Miscellaneous</a></li>
         <ul>
           <li><a href="#Contrib">/contrib</a></li>
+          <li><a href="#Num_Like">/numlikes</a></li>
+          <li><a href="#Who_Like">/wholikes</a></li>
         </ul>
       </ul>
     </div>
@@ -147,7 +156,7 @@
       `/searchfriend` <i>only</i> searches through a user's
       <i>existing</i> friends, and does so with 3 parameters:
     </p>
-    <h4>Parameter 1: uid</h4>
+    <h4>Parameter 1: userID</h4>
     <p>This parameter should be the ID of the user requesting the search.</p>
     <h4>Parameter 2: fName</h4>
     <p>This parameter should be the first name input by a user.</p>
@@ -159,18 +168,18 @@
       depending on if the provided parameters match an entry in the User table.
     </p>
     <code>
-      axios.get('http://127.0.0.1:5000/searchfriend', { params: { uid: 100010,
+      axios.get('http://127.0.0.1:5000/searchfriend', { params: { userID: 100010,
       fName: 'Jim', lName: 'Stevenson' } })
     </code>
     <p>Making this request will execute the following query on the Database:</p>
     <code>
-      SELECT userID, fName, lName FROM User WHERE fName LIKE"{fName}%" AND lName
-      LIKE "{lName}%" AND userID IN (SELECT friendID FROM Friends WHERE
-      userID={uid})
+      SELECT userID, fName, lName FROM User WHERE fName LIKE"Jim%" AND lName
+      LIKE "Stevenson%" AND userID IN (SELECT friendID FROM Friends WHERE
+      userID=100010)
     </code>
     <p>The API would then reply with:</p>
     <code>
-      [100019,"Jim","Stevenson"] (Assuming John is Friends with Jim)
+      [100010,"Jim","Stevenson"] (Assuming John is Friends with Jim)
     </code>
     <br /><br /><br />
 
@@ -181,7 +190,7 @@
       JSON data containing the targeted user's albums that match a given album
       name. It does so with 2 parameters:
     </p>
-    <h4>Parameter 1: uid</h4>
+    <h4>Parameter 1: userID</h4>
     <p>
       This parameter should be the ID of the user whose albums are being
       searched through. If you wish for this to be a user other than the one
@@ -197,7 +206,7 @@
       the User's contribution score contained within it.
     </p>
     <code>
-      axios.get('http://127.0.0.1:5000/contrib', { params: { uid: 100010, name:
+      axios.get('http://127.0.0.1:5000/contrib', { params: { userID: 100010, name:
       'Flowers' } })
     </code>
     <p>Making this request will execute the following query on the Database:</p>
@@ -207,38 +216,6 @@
     </code>
     <p>The API could then reply with:</p>
     <code> [200001, PrettyFlowers] </code>
-    <br /><br /><br />
-
-    <br /><br /><br />
-    <h2 id="Photo_By_Tag">Route: /photobytag</h2>
-    <p>
-      '/photobytag' allows for HTTP GET requests to be made that will return
-      JSON data containing data for Photos that are tagged by the input tag
-      name. It does so with one parameter:
-    </p>
-    <h4>Parameter 1: name</h4>
-    <p>
-      This parameter should be the name of the Tag that photos will be sorted
-      by.
-    </p>
-    <p>
-      Here's an example of a GET request that will return a JSON dictionary with
-      the User's contribution score contained within it.
-    </p>
-    <code>
-      axios.get('http://127.0.0.1:5000/photobytag', { params: { name: 'Friends'
-      } })
-    </code>
-    <p>Making this request will execute the following query on the Database:</p>
-    <code>
-      SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN Tag
-      ON Photo.photoID = Tag.photoID WHERE Tag.name = "Friends"
-    </code>
-    <p>The API could then reply with:</p>
-    <code>
-      [200099, "The caption for a returned photo",
-      "/path/to/the/returned/photo"] ...
-    </code>
     <br /><br /><br />
 
     <br /><br /><br />
@@ -283,6 +260,171 @@
     <br /><br /><br />
 
     <br /><br /><br />
+    <h1 id="Browsing">Browsing</h1>
+
+    <h2 id="Photo_By_Tag">Route: /photobytag</h2>
+    <p>
+      '/photobytag' allows for HTTP GET requests to be made that will return
+      JSON data containing data for Photos that are tagged by the input tag
+      name. It does so with one parameter:
+    </p>
+    <h4>Parameter 1: name</h4>
+    <p>
+      This parameter should be the name of the Tag that photos will be sorted
+      by.
+    </p>
+    <p>
+      Here's an example of a GET request that will return a JSON dictionary with
+      the User's contribution score contained within it.
+    </p>
+    <code>
+      axios.get('http://127.0.0.1:5000/photobytag', { params: { name: 'Friends'
+      } })
+    </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code>
+      SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN Tag
+      ON Photo.photoID = Tag.photoID WHERE Tag.name = "Friends"
+    </code>
+    <p>The API could then reply with:</p>
+    <code>
+      [300099, "The caption for a returned photo",
+      "/path/to/the/returned/photo"] ...
+    </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h2 id="My_Photo_By_Tag">Route: /myphotosbytag</h2>
+    <p>
+      '/myphotosbytag' allows for HTTP GET requests to be made that will return
+      JSON data containing data for Photos from a specific user (namely, the
+      currently logged in one) that are tagged by the input tag name. It does so
+      with two parameters:
+    </p>
+    <h4>Parameter 1: userID</h4>
+    <p>This parameter should be the userID of the logged in user.</p>
+    <h4>Parameter 2: name</h4>
+    <p>
+      This parameter should be the name of the Tag that photos will be sorted
+      by.
+    </p>
+    <p>
+      Here's an example of a GET request that will return a JSON dictionary with
+      the User's contribution score contained within it.
+    </p>
+    <code>
+      axios.get('http://127.0.0.1:5000/myphotosbytag', { params: { userID:
+      100000, name: 'Friends' } })
+    </code>
+    <p>
+      Making this request will execute the following 3 queries on the Database:
+    </p>
+    <code>
+      CREATE VIEW 100000Photos AS (SELECT Photo.photoID AS pid, Photo.caption AS
+      cap, Photo.data AS dat FROM Photo INNER JOIN Album ON Photo.albumID =
+      Album.albumID WHERE Album.userID = 100000);
+    </code>
+    <br />
+    <code>
+      SELECT 100000Photos.pid, 100000Photos.cap, 100000Photos.dat FROM
+      100000Photos INNER JOIN Tag ON 100000Photos.pid = Tag.photoID WHERE
+      Tag.name = "Friends";
+    </code>
+    <code> DROP VIEW 100000Photos; </code>
+    <p>The API could then reply with:</p>
+    <code>
+      [300099, "The caption for a returned photo",
+      "/path/to/the/returned/photo"] ...
+    </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h2 id="Recent_Photos">Route: /recentphotos</h2>
+    <p>
+      '/recentphotos' allows for HTTP GET requests to be made that will return
+      JSON data containing data for the 50 most recently posted Photos.
+    </p>
+    <p>
+      Here's an example of a GET request that will return a JSON dictionary with
+      the User's contribution score contained within it.
+    </p>
+    <code> axios.get('http://127.0.0.1:5000/recentphotos') </code>
+    <p>
+      Making this request will execute the following 3 queries on the Database:
+    </p>
+    <code> SELECT * FROM Photo ORDER BY photoID DESC LIMIT 50; </code>
+    <p>The API could then reply with:</p>
+    <code>
+      [300104, 200099, "The caption for a returned photo",
+      "/path/to/the/returned/photo"] ...
+    </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h2 id="Photo_By_User">Route: /photobyuser</h2>
+    <p>
+      '/photobyuser' allows for HTTP GET requests to be made that will return
+      JSON data containing data for Photos from a specific User. It does so with
+      one parameter:
+    </p>
+    <h4>Parameter 1: userID</h4>
+    <p>
+      This parameter should be the userID of the User whose photos are desired
+      to be shown.
+    </p>
+    <p>
+      Here's an example of a GET request that will return a JSON dictionary with
+      the User's contribution score contained within it.
+    </p>
+    <code>
+      axios.get('http://127.0.0.1:5000/photobyuser', { params: { userID: 100000}
+      })
+    </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code>
+      SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN
+      Album ON Photo.albumID = Album.albumID WHERE Album.userID = 100000;
+    </code>
+    <p>The API could then reply with:</p>
+    <code>
+      [300099, "The caption for a returned photo",
+      "/path/to/the/returned/photo"] ...
+    </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h2 id="Photo_By_Album">Route: /photobyalbum</h2>
+    <p>
+      '/photobyalbum' allows for HTTP GET requests to be made that will return
+      JSON data containing data for Photos in a specific Album. It does so with
+      one parameter:
+    </p>
+    <h4>Parameter 1: albumID</h4>
+    <p>
+      This parameter should be the albumID of the Album that is desired to be
+      browsed through.
+    </p>
+    <p>
+      Here's an example of a GET request that will return a JSON dictionary with
+      the User's contribution score contained within it.
+    </p>
+    <code>
+      axios.get('http://127.0.0.1:5000/photobyalbum', { params: { albumID:
+      200009} })
+    </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code>
+      SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN
+      Album ON Photo.albumID = Album.albumID WHERE Album.albumID = 200009
+    </code>
+    <p>The API could then reply with:</p>
+    <code>
+      [300099, "The caption for a returned photo",
+      "/path/to/the/returned/photo"] ...
+    </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
     <h1 id="Recs">Recommendations</h1>
 
     <h2 id="Friend_Rec">Route: /friendrec</h2>
@@ -292,7 +434,7 @@
       as how many mutual friends they share with the current user. It does so
       with one parameter:
     </p>
-    <h4>Parameter 1: uid</h4>
+    <h4>Parameter 1: userID</h4>
     <p>This parameter should be the ID of the current user.</p>
     <p>
       Here's an example of a GET request that will return either a JSON
@@ -300,7 +442,7 @@
       user, as well as how many mutual friends they share with the user.
     </p>
     <code>
-      axios.get('http://127.0.0.1:5000/friendrec', { params: { uid: 100010 } })
+      axios.get('http://127.0.0.1:5000/friendrec', { params: { userID: 100010 } })
     </code>
     <p>
       Making this request will execute the following 3 queries on the Database:
@@ -326,7 +468,7 @@
       data about photos to recommend to a given User based on that user's own
       Tag usage. It does so with 1 parameter:
     </p>
-    <h4>Parameter 1: uid</h4>
+    <h4>Parameter 1: userID</h4>
     <p>
       This parameter should be the ID of the current user (the user that will be
       recommended photos).
@@ -337,7 +479,7 @@
       user, as well as how many mutual friends they share with the user.
     </p>
     <code>
-      axios.get('http://127.0.0.1:5000/photorec', { params: { uid: 100010 } })
+      axios.get('http://127.0.0.1:5000/photorec', { params: { userID: 100010 } })
     </code>
     <p>
       Making this request will execute the following 5 queries on the Database:
@@ -473,14 +615,14 @@
       data containing the current user's Contribution Score. It does so with 1
       parameter:
     </p>
-    <h4>Parameter 1: uid</h4>
+    <h4>Parameter 1: userID</h4>
     <p>This parameter should be the ID of the current user.</p>
     <p>
       Here's an example of a GET request that will return a JSON dictionary with
       the User's contribution score contained within it.
     </p>
     <code>
-      axios.get('http://127.0.0.1:5000/contrib', { params: { uid: 100010 } })
+      axios.get('http://127.0.0.1:5000/contrib', { params: { userID: 100010 } })
     </code>
     <p>
       Making this request will execute the following 2 queries on the Database:
@@ -497,23 +639,49 @@
     <br /><br /><br />
 
     <br /><br /><br />
-    <h2 id="Recent_Photos">Route: /recentphotos</h2>
+    <h2 id="Num_Like">Route: /numlikes</h2>
     <p>
-      '/recent' allows for HTTP GET requests to be made that will return JSON
-      data containing the 50 most-recently created Photos.
+      '/numlikes' allows for HTTP GET requests to be made that will return JSON
+      data containing the number of likes on a given photo. It does so with one
+      parameter:
     </p>
+    <h4>Parameter 1: photoID</h4>
+    <p>This parameter should be the ID of the photo in question.</p>
     <p>
       Here's an example of a GET request that will return a JSON dictionary with
-      the 50 most-recently created photos.
+      the User's contribution score contained within it.
     </p>
-    <code> axios.get('http://127.0.0.1:5000/recentphotos') </code>
-    <p>Making this request will execute the following query on the Database:</p>
-    <code> SELECT * FROM Photo ORDER BY photoID DESC LIMIT 50 </code>
-    <p>The API would then reply with:</p>
     <code>
-      [300050, 200001, "Photo's caption", "/path/to/photo"], [300049, 200009,
-      "Another Photo's caption", "/path/to/another/photo"], ...
+      axios.get('http://127.0.0.1:5000/numlikes', { params: { photoID: 300040 }
+      })
     </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code> SELECT COUNT(*) FROM Likes WHERE photoID=300040; </code>
+    <p>The API would then reply with:</p>
+    <code> [1738] </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
+    <h2 id="Who_Like">Route: /wholikes</h2>
+    <p>
+      '/wholikes' allows for HTTP GET requests to be made that will return JSON
+      data containing the users that liked a given photo. It does so with one
+      parameter:
+    </p>
+    <h4>Parameter 1: photoID</h4>
+    <p>This parameter should be the ID of the photo in question.</p>
+    <p>
+      Here's an example of a GET request that will return a JSON dictionary with
+      the User's contribution score contained within it.
+    </p>
+    <code>
+      axios.get('http://127.0.0.1:5000/wholikes', { params: { photoID: 300040 }
+      })
+    </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code> SELECT COUNT(*) FROM Likes WHERE photoID=300040; </code>
+    <p>The API would then reply with:</p>
+    <code> [100010,"John","Doe"] ... </code>
     <br /><br /><br />
   </body>
 </html>

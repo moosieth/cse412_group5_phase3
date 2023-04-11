@@ -70,7 +70,7 @@ def searchuser():
 # Search for friends, out of User's _Existing_ friends
 @app.route('/searchfriend', methods=['GET'])
 def searchfriend():
-    uid = request.args.get('uid')
+    uid = request.args.get('userID')
     fName = request.args.get('fName')
     lName = request.args.get('lName')
 
@@ -87,7 +87,7 @@ def searchfriend():
 # Get reccomended friends and sort in descending order by number of mutual friends.
 @app.route('/friendrec', methods=['GET'])
 def friendrec():
-    uid = request.args.get('uid')
+    uid = request.args.get('userID')
 
     con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
     cursor = con.cursor()
@@ -107,7 +107,7 @@ def friendrec():
 # Calculate contribution score for given user
 @app.route('/contrib', methods=['GET'])
 def contrib():
-    uid = request.args.get('uid')
+    uid = request.args.get('userID')
 
     con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
     cursor = con.cursor()
@@ -126,7 +126,7 @@ def contrib():
 # Search for a user's album. Used in ensuring Album exists when posting photo, or when looking through users albums.
 @app.route('/searchalbum', methods=['GET'])
 def searchalbum():
-    uid = request.args.get("uid")
+    uid = request.args.get("userID")
     aName = request.args.get("name")
 
     con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
@@ -153,7 +153,7 @@ def add():
     elif newEntry["target"] == 'likes':
         query = f'INSERT INTO Likes VALUES({newEntry["userID"]}, "{newEntry["photoID"]}")'
     elif newEntry["target"] == 'comment':
-        query = f'INSERT INTO Comment (content, dateCreated, userID, photoID) VALUES({newEntry["content"]}, {newEntry["dateCreated"]}, {newEntry["userID"]}, "{newEntry["photoID"]}")'
+        query = f'INSERT INTO Comment (content, dateCreated, userID, photoID) VALUES("{newEntry["content"]}", "{newEntry["dateCreated"]}", {newEntry["userID"]}, {newEntry["photoID"]})'
     else:
         print("SKILL ISSUE: User provided JSON not of correct format")
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
@@ -215,6 +215,62 @@ def photobytag():
         return jsonify(tuples)
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+
+@app.route('/myphotosbytag', methods=['GET'])
+def myphotobytag():
+    uid = request.args.get("userID")
+    tagName = request.args.get("name")
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    query1 = f'CREATE VIEW {uid}Photos AS (SELECT Photo.photoID AS pid, Photo.caption AS cap, Photo.data AS dat FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = {uid})'
+    query2 = f'SELECT {uid}Photos.pid, {uid}Photos.cap, {uid}Photos.dat FROM {uid}Photos INNER JOIN Tag ON {uid}Photos.pid = Tag.photoID WHERE Tag.name = "{tagName}"'
+
+    cursor.execute(query1)
+    cursor.execute(query2)
+    tuples = cursor.fetchall()
+
+    cursor.execute(f'DROP VIEW {uid}Photos')
+
+    if(tuples):
+        return jsonify(tuples)
+    else:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+
+@app.route('/photobyuser', methods=['GET'])
+def photobyuser():
+    uid = request.args.get("userID")
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    query = f'SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = {uid}'
+
+    cursor.execute(query)
+    tuples = cursor.fetchall()
+
+    if(tuples):
+        return jsonify(tuples)
+    else:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+
+@app.route('/photobyalbum', methods=['GET'])
+def photobyalbum():
+    aid = request.args.get("albumID")
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    query = f'SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.albumID = {aid}'
+
+    cursor.execute(query)
+    tuples = cursor.fetchall()
+
+    if(tuples):
+        return jsonify(tuples)
+    else:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
     
 @app.route('/trendingtags', methods=['GET'])
 def trendingtags():
@@ -253,7 +309,7 @@ def searchcom():
 
 @app.route('/photorec', methods=['GET'])
 def photorec():
-    uid = request.args.get("uid")
+    uid = request.args.get("userID")
 
     con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
     cursor = con.cursor()
@@ -289,6 +345,43 @@ def recentphotos():
         return jsonify(tuples)
     else:
         return json.dumps({'success':False}), 500, {'ContentType':'application/json'}
+
+@app.route('/numlikes', methods=['GET'])
+def numlike():
+    pid = request.args.get("photoID")
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    query = f'SELECT COUNT(*) FROM Likes WHERE photoID={pid}'
+
+    cursor.execute(query)
+
+    tuples = cursor.fetchall()
+
+    if(tuples):
+        return jsonify(tuples)
+    else:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+
+@app.route('/wholikes', methods=['GET'])
+def wholiked():
+    pid = request.args.get("photoID")
+
+    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    cursor = con.cursor()
+
+    query = f'SELECT User.userID, User.fName, User.lName FROM User INNER JOIN Likes ON User.userID = Likes.userID WHERE Likes.photoID={pid}'
+
+    cursor.execute(query)
+
+    tuples = cursor.fetchall()
+
+    if(tuples):
+        return jsonify(tuples)
+    else:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+    
 
 if __name__ == '__main__':
     app.run()
