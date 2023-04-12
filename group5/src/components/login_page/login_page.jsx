@@ -1,6 +1,5 @@
 import React from "react";
 import logo from "../../data/logo.png"
-import Sammy from "../../data/sammy.jpeg";
 import { useNavigate } from "react-router-dom";
 import { createBrowserHistory } from "history"; // install history
 import { useState } from "react";

@@ -61,9 +61,14 @@ export default function CreatePost(props) {
               accept="image/*"
               onChange={handleFileSelect}
             />
-            <p>Drag and drop a photo here, or click to select a file!</p>
-            <img src = {photo} alt="Select Photo" className="select_photo"></img>
-            {file && <img src={URL.createObjectURL(file)} alt="preview" />}
+            {file ? (
+              <img src={URL.createObjectURL(file)} alt="preview" />
+            ) : (
+              <>
+                <p>Drag and drop a photo here, or click to select a file!</p>
+                <img src={photo} alt="Select Photo" className="select_photo"></img>
+              </>
+            )}
           </div>
           <button type="submit">Upload</button>
           <button onClick={handleClose}>Close</button>
