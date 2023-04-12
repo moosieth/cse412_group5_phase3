@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { createBrowserHistory } from "history"; // install history
 import { useState } from "react";
 import axios from "axios";
+import Typewriter from "typewriter-effect";
 import "./login.css";
 
 export default function Welcome() {
@@ -39,9 +40,18 @@ export default function Welcome() {
   return (
     <div className="login">
       <div className="wrapper">
-        <h1>Welcome To My App</h1>
-        <p>Group 5 SNS</p>
-        <img src={logo} alt="Sammy Image" width={200}  />
+        <img src={logo} alt="Sammy Image" width={300}  />
+        {" "}
+        <Typewriter
+          onInit={(typewriter) => {
+            typewriter
+              .typeString("A brand new Group 5 SNS")
+              .pauseFor(1000)
+              .deleteAll()
+              .start()
+          }}
+          options={{ loop: true }}
+        />
       </div>
       <div className="login_form">
         <input type="text" placeholder="Please enter your email." id="email" />
