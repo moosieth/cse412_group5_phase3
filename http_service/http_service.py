@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
+import base64
 import hashlib
 import json
 import mysql.connector
@@ -139,24 +141,33 @@ def searchalbum():
 
 @app.route('/add', methods=['POST'])
 def add():
-    newEntry = request.json
+    target = request.form.get('target') if request.form else request.json.get('target')
 
     con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
     cursor = con.cursor()
-    
-    if newEntry["target"] == 'photo':
-         query = f'INSERT INTO Photo (albumID, caption, data) VALUES({newEntry["albumID"]}, "{newEntry["caption"]}", "{newEntry["data"]}")'
-    elif newEntry["target"] == 'album':
-        query = f'INSERT INTO Album (userID, name, dateCreated) VALUES({newEntry["userID"]}, "{newEntry["name"]}", "{newEntry["dateCreated"]}")'
-    elif newEntry["target"] == 'friend':
-        query = f'INSERT INTO Friends VALUES({newEntry["userID"]}, "{newEntry["friendID"]}", "{newEntry["dateFormed"]}")'
-    elif newEntry["target"] == 'likes':
-        query = f'INSERT INTO Likes VALUES({newEntry["userID"]}, "{newEntry["photoID"]}")'
-    elif newEntry["target"] == 'comment':
-        query = f'INSERT INTO Comment (content, dateCreated, userID, photoID) VALUES("{newEntry["content"]}", "{newEntry["dateCreated"]}", {newEntry["userID"]}, {newEntry["photoID"]})'
+
+    if target == 'photo':
+        albumID = request.form.get('albumID')
+        caption = request.form.get('caption')
+        file = request.files['data']
+        filename = secure_filename(file.filename)
+        file.save(filename)
+        query = f"INSERT INTO Photo (albumID, caption, data) VALUES({albumID}, '{caption}', '{filename}')"
+    elif target == 'album':
+        newEntry = request.json
+        query = f"INSERT INTO Album (userID, name, dateCreated) VALUES({newEntry['userID']}, '{newEntry['name']}', '{newEntry['dateCreated']}')"
+    elif target == 'friend':
+        newEntry = request.json
+        query = f"INSERT INTO Friends VALUES({newEntry['userID']}, '{newEntry['friendID']}', '{newEntry['dateFormed']}')"
+    elif target == 'likes':
+        newEntry = request.json
+        query = f"INSERT INTO Likes VALUES({newEntry['userID']}, '{newEntry['photoID']}')"
+    elif target == 'comment':
+        newEntry = request.json
+        query = f"INSERT INTO Comment (content, dateCreated, userID, photoID) VALUES('{newEntry['content']}', '{newEntry['dateCreated']}', {newEntry['userID']}, {newEntry['photoID']})"
     else:
         print("SKILL ISSUE: User provided JSON not of correct format")
-        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+        return jsonify(success=False), 400
 
     try:
         cursor.execute(query)
@@ -164,10 +175,11 @@ def add():
         cursor.close()
         con.close()
 
-        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+        return jsonify(success=True), 200
     except mysql.connector.Error as e:
         print("MYSQL EXECUTION ERROR: {}".format(e))
-        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+        return jsonify(success=False), 400
+
     
 @app.route('/removebyid', methods=['POST'])
 def removebyid():
@@ -341,10 +353,20 @@ def recentphotos():
     cursor.execute(query)
     tuples = cursor.fetchall()
 
-    if(tuples):
-        return jsonify(tuples)
+    if tuples:
+        # return the tuples with image URL instead of base64-encoded image data
+        encoded_tuples = []
+        for t in tuples:
+            if t[3] is not None:
+                encoded_tuple = list(t)
+                encoded_tuple[3] = f"http://127.0.0.1:5000/images/{encoded_tuple[3]}"
+                encoded_tuples.append(encoded_tuple)
+
+        # return the tuples as a JSON response
+        return jsonify(encoded_tuples)
     else:
         return json.dumps({'success':False}), 500, {'ContentType':'application/json'}
+
 
 @app.route('/numlikes', methods=['GET'])
 def numlike():
@@ -381,7 +403,6 @@ def wholiked():
         return jsonify(tuples)
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
-    
 
 if __name__ == '__main__':
     app.run()

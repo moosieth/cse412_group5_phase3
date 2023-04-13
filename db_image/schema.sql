@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS db.Photo(
 	photoID INTEGER NOT NULL AUTO_INCREMENT, 
 	albumID INTEGER NOT NULL,
 	caption VARCHAR(50),
-	data VARCHAR(50),
+	data VARCHAR(255),
 	PRIMARY KEY (photoID),
 	FOREIGN KEY (albumID) REFERENCES db.Album(albumID) ON DELETE CASCADE
 );
@@ -112,16 +112,16 @@ INSERT INTO db.Friends VALUES
 	(100002,100009,'2023-02-09 00:00:00');
 
 INSERT INTO db.Photo (albumID, caption, data) VALUES 
-	(200000,'This is a caption','/path/to/photo1.jpg'),
-	(200002,'This is another caption','/path/to/photo2.jpg'),
-	(200003,'We''ve got so many captions','/path/to/photo3.jpg'),
-	(200002,'Yet another caption','/path/to/photo4.jpg'),
-	(200004,'Something about captions','/path/to/photo5.jpg'),
-	(200005,'Captions?','/path/to/photo6.jpg'),
-	(200004,'Captions!','/path/to/photo7.jpg'),
-	(200005,'Wowie, another caption!','/path/to/photo8.jpg'),
-	(200006,'Will the captions ever stop?','/path/to/photo9.jpg'),
-	(200007,'Yep. This is the last caption.','/path/to/photo10.jpg');
+	(200000,'This is a caption', 'sample_images/logo.png'),
+	(200002,'This is another caption', 'sample_images/logo.png'),
+	(200003,'We''ve got so many captions', 'sample_images/logo.png'),
+	(200002,'Yet another caption', 'sample_images/logo.png'),
+	(200004,'Something about captions', 'sample_images/logo.png'),
+	(200005,'Captions?', 'sample_images/logo.png'),
+	(200004,'Captions!', 'sample_images/logo.png'),
+	(200005,'Wowie, another caption!', 'sample_images/logo.png'),
+	(200006,'Will the captions ever stop?', 'sample_images/logo.png'),
+	(200007,'Yep. This is the last caption.', 'sample_images/logo.png');
 
 INSERT INTO db.Likes VALUES (100000,300000),
 	(100009,300000),
