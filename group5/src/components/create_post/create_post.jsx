@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./create_post.css";
 import axios from "axios";
 import photo from "../../data/photo.png";
+import xmark from "../../data/xmark.png";
 
 export default function CreatePost(props) {
   const [file, setFile] = useState(null);
@@ -69,6 +70,7 @@ export default function CreatePost(props) {
 
   return (
     <div className="create-post-overlay">
+      <img src={xmark} alt="Close" className="create-post-close" onClick={handleClose} />
       <div className="create-post-backdrop"></div>
       <div className="create-post">
         <div className="create-post_title">Create New Post</div>
