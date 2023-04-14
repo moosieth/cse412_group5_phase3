@@ -33,6 +33,8 @@
     z-index: 11;
     max-width: 600px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
   }  
 
   .create-post_title {
@@ -82,10 +84,45 @@
     color: #000000;
   }
 
-  .dropzone img {
+  .buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .buttons button {
+    margin: 0 5px;
+  }
+
+  .preview {
     max-width: calc(100% - 20px);
-    max-height: calc(100% - 46px);
-    object-fit: cover;
+    max-height: 500px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .post-details {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  
+  .post-details label {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #000000;
+  }
+  
+  .post-details input,
+  .post-details select {
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #cccccc;
+    margin-bottom: 20px;
   }
 
   button[type="submit"],

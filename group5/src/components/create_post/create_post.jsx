@@ -93,8 +93,8 @@ export default function CreatePost(props) {
               </div>
             </>
           ) : (
-            <>
-              <img src={URL.createObjectURL(file)} alt="preview" />
+            <div>
+              <img src={URL.createObjectURL(file)} alt="preview" className="preview"/>
               <div className="post-details">
                 <label htmlFor="caption">Caption:</label>
                 <input
@@ -115,7 +115,7 @@ export default function CreatePost(props) {
                 <button type="submit">Post</button>
                 <button onClick={handleClose}>Cancel</button>
               </div>
-            </>
+            </div>
           )}
         </form>
       </div>
