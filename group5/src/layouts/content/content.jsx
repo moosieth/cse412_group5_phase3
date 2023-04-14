@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Avatar from "@material-ui/core/Avatar";
 import "./content.css"
 
 export default function Content() {
@@ -16,23 +17,27 @@ export default function Content() {
   }, []);
 
   return (
-    <section>
-      <form>
-        <br />
-        <label htmlFor="message">Recent Posts!</label>
-        <ul>
+    <section className="box">
+      <div>
+          <label htmlFor="message">Recent Posts!</label>
           {photos.map(photo => (
-            <li key={photo[0]}>
-              <p>Image:</p>
-              <img src={photo[3]} alt="Recent post" />
-              <p>Caption: {photo[2]}</p>
-              {console.log(photo[3])}
-            </li>
+            <div className="post">
+              <div className="post_header">
+                  {/* Trying to use Avatar */}
+                  <Avatar className="post_avatar">H</Avatar>
+                  <h3>username</h3>
+                </div>
+                {/* Post image */}
+                <img className="post_image" src={photo[3]} alt="Recent post" />
+                {/* Post caption + user name */}
+                <h4 className = "post_text">
+                  <strong>username</strong> {photo[2]}
+                </h4>
+                {console.log(photo[3])}
+            </div>
           ))}
-        </ul>
         <br />
-        <button type="submit">Share</button>
-      </form>
+      </div>
     </section>
   );
 }

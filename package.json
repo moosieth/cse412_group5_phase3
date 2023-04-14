@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@material-ui/core": "^4.12.4",
     "react-datepicker": "^4.11.0"
   }
 }

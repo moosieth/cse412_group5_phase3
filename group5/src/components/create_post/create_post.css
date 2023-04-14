@@ -33,7 +33,7 @@
     z-index: 11;
     max-width: 600px;
     width: 100%;
-  }
+  }  
 
   .create-post_title {
     font-size: 24px;
@@ -41,10 +41,19 @@
     text-align: center;
     padding: 24px 0;
     border-bottom: 1px solid #ccc;
+    color: #000000;
+  }
+
+  .create-post_title span {
+    display: inline-block;
+    padding: 0 12px;
+    background-color: #ffffff;
+    color: #8e8e8e;
   }
   
   .dropzone {
     border: 2px dashed #cccccc;
+    padding: 10px;
     border-radius: 5px;
     height: 200px;
     display: flex;
@@ -70,14 +79,13 @@
     font-size: 18px;
     font-weight: 500;
     margin-bottom: 10px;
-  }  
-  
+    color: #000000;
+  }
+
   .dropzone img {
-    width: 100%;
-    height: auto;
-    max-height: 150px;
-    object-fit: contain;
-    margin-top: 10px;
+    max-width: calc(100% - 20px);
+    max-height: calc(100% - 46px);
+    object-fit: cover;
   }
 
   button[type="submit"],
@@ -106,5 +114,12 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 9;
+  }
+
+  .select_photo {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 100%;
   }
   
