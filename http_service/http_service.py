@@ -4,10 +4,20 @@ from werkzeug.utils import secure_filename
 import base64
 import hashlib
 import json
+import datetime
 import mysql.connector
+import firebase_admin
+from firebase_admin import credentials, storage, exceptions
 
 app = Flask(__name__)
 CORS(app)               # Allows Apps from same origin to access this API
+
+# Initialize Firebase SDK
+cred = credentials.Certificate('./inql-group5-firebase-adminsdk-855k3-c7c7a06e7f.json')
+firebase_app = firebase_admin.initialize_app(cred, {
+    'storageBucket': 'inql-group5.appspot.com'
+})
+firebase_storage = storage.bucket('inql-group5.appspot.com', app=firebase_app)
 
 # Serve HTML instructions
 @app.route('/')
@@ -141,44 +151,69 @@ def searchalbum():
 
 @app.route('/add', methods=['POST'])
 def add():
-    target = request.form.get('target') if request.form else request.json.get('target')
-
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
-    cursor = con.cursor()
-
-    if target == 'photo':
-        albumID = request.form.get('albumID')
-        caption = request.form.get('caption')
-        file = request.files['data']
-        filename = secure_filename(file.filename)
-        file.save(filename)
-        query = f"INSERT INTO Photo (albumID, caption, data) VALUES({albumID}, '{caption}', '{filename}')"
-    elif target == 'album':
-        newEntry = request.json
-        query = f"INSERT INTO Album (userID, name, dateCreated) VALUES({newEntry['userID']}, '{newEntry['name']}', '{newEntry['dateCreated']}')"
-    elif target == 'friend':
-        newEntry = request.json
-        query = f"INSERT INTO Friends VALUES({newEntry['userID']}, '{newEntry['friendID']}', '{newEntry['dateFormed']}')"
-    elif target == 'likes':
-        newEntry = request.json
-        query = f"INSERT INTO Likes VALUES({newEntry['userID']}, '{newEntry['photoID']}')"
-    elif target == 'comment':
-        newEntry = request.json
-        query = f"INSERT INTO Comment (content, dateCreated, userID, photoID) VALUES('{newEntry['content']}', '{newEntry['dateCreated']}', {newEntry['userID']}, {newEntry['photoID']})"
-    else:
-        print("SKILL ISSUE: User provided JSON not of correct format")
-        return jsonify(success=False), 400
-
     try:
-        cursor.execute(query)
-        con.commit()
-        cursor.close()
-        con.close()
+        # DEBUG
+        print(request.headers)
+        # DEBUG
+        print(request.json)
+        target = request.form.get('target') if request.form else request.json.get('target')
+        if target is None:
+            raise ValueError('target not found in request body')
 
-        return jsonify(success=True), 200
-    except mysql.connector.Error as e:
-        print("MYSQL EXECUTION ERROR: {}".format(e))
-        return jsonify(success=False), 400
+        con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+        cursor = con.cursor()
+        
+        # DEBUG
+        print("It's fine 1")
+
+        if target == 'photo':
+            # DEBUG
+            print("It's fine 2")
+            albumID = request.json.get('albumID')
+            # DEBUG
+            print("It's fine 3")
+            caption = request.json.get('caption')
+            # DEBUG
+            print("It's fine 4")
+            data = request.json.get('data')
+
+            # Store the Firebase URL in the MySQL database
+            query = f"INSERT INTO Photo (albumID, caption, data) VALUES({albumID}, '{caption}', '{data}')"
+            # DEBUG
+            print("It's fine 5")
+        elif target == 'album':
+            newEntry = request.json
+            query = f"INSERT INTO Album (userID, name, dateCreated) VALUES({newEntry['userID']}, '{newEntry['name']}', '{newEntry['dateCreated']}')"
+        elif target == 'friend':
+            newEntry = request.json
+            query = f"INSERT INTO Friends VALUES({newEntry['userID']}, '{newEntry['friendID']}', '{newEntry['dateFormed']}')"
+        elif target == 'likes':
+            newEntry = request.json
+            query = f"INSERT INTO Likes VALUES({newEntry['userID']}, '{newEntry['photoID']}')"
+        elif target == 'comment':
+            newEntry = request.json
+            query = f"INSERT INTO Comment (content, dateCreated, userID, photoID) VALUES('{newEntry['content']}', '{newEntry['dateCreated']}', {newEntry['userID']}, {newEntry['photoID']})"
+        else:
+            print("SKILL ISSUE: User provided JSON not of correct format")
+            return jsonify(success=False), 400
+
+        try:
+            cursor.execute(query)
+            con.commit()
+            cursor.close()
+            con.close()
+
+            return jsonify(success=True), 200
+        except mysql.connector.Error as e:
+            # DEBUG
+            print("HERE 2")
+            print("MYSQL EXECUTION ERROR: {}".format(e))
+            return jsonify(success=False, error=str(e)), 400
+    except Exception as e:
+        # DEBUG
+        print("HERE 1")
+        print(f"Error processing request: {e}")
+        return jsonify(success=False, error=str(e)), 400
 
     
 @app.route('/removebyid', methods=['POST'])
@@ -354,12 +389,20 @@ def recentphotos():
     tuples = cursor.fetchall()
 
     if tuples:
-        # return the tuples with image URL instead of base64-encoded image data
+        # return the tuples with image URL from Firebase Storage
         encoded_tuples = []
         for t in tuples:
             if t[3] is not None:
                 encoded_tuple = list(t)
-                encoded_tuple[3] = f"http://127.0.0.1:5000/images/{encoded_tuple[3]}"
+                # Get the download URL of the file from Firebase Storage
+                try:
+                    firebase_storage = storage.bucket().blob(encoded_tuple[3])
+                    firebase_url = firebase_storage.generate_signed_url(datetime.timedelta(seconds=300), method='GET')
+                except exceptions.FirebaseError as e:
+                    print(f"Failed to get download URL from Firebase Storage: {e}")
+                    return jsonify(success=False), 500
+                # Store the Firebase URL in the tuple
+                encoded_tuple[3] = firebase_url
                 encoded_tuples.append(encoded_tuple)
 
         # return the tuples as a JSON response

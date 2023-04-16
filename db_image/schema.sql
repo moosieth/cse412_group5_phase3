@@ -112,16 +112,16 @@ INSERT INTO db.Friends VALUES
 	(100002,100009,'2023-02-09 00:00:00');
 
 INSERT INTO db.Photo (albumID, caption, data) VALUES 
-	(200000,'This is a caption', 'sample_images/logo.png'),
-	(200002,'This is another caption', 'sample_images/logo.png'),
-	(200003,'We''ve got so many captions', 'sample_images/logo.png'),
-	(200002,'Yet another caption', 'sample_images/logo.png'),
-	(200004,'Something about captions', 'sample_images/logo.png'),
-	(200005,'Captions?', 'sample_images/logo.png'),
-	(200004,'Captions!', 'sample_images/logo.png'),
-	(200005,'Wowie, another caption!', 'sample_images/logo.png'),
-	(200006,'Will the captions ever stop?', 'sample_images/logo.png'),
-	(200007,'Yep. This is the last caption.', 'sample_images/logo.png');
+	(200000,'This is a caption', 'https://firebasestorage.googleapis.com/v0/b/inql-group5.appspot.com/o/sample_images%2Fsample.png?alt=media&token=c2628994-2944-422b-a237-63201b97226b'),
+	(200001,'This is another caption', 'https://firebasestorage.googleapis.com/v0/b/inql-group5.appspot.com/o/sample_images%2Fsample.png?alt=media&token=c2628994-2944-422b-a237-63201b97226b'),
+	(200003,'We''ve got so many captions', 'https://firebasestorage.googleapis.com/v0/b/inql-group5.appspot.com/o/sample_images%2Fsample.png?alt=media&token=c2628994-2944-422b-a237-63201b97226b'),
+	(200002,'Yet another caption', 'https://firebasestorage.googleapis.com/v0/b/inql-group5.appspot.com/o/sample_images%2Fsample.png?alt=media&token=c2628994-2944-422b-a237-63201b97226b'),
+	(200004,'Something about captions', 'https://firebasestorage.googleapis.com/v0/b/inql-group5.appspot.com/o/sample_images%2Fsample.png?alt=media&token=c2628994-2944-422b-a237-63201b97226b'),
+	(200005,'Captions?', 'https://firebasestorage.googleapis.com/v0/b/inql-group5.appspot.com/o/sample_images%2Fsample.png?alt=media&token=c2628994-2944-422b-a237-63201b97226b'),
+	(200004,'Captions!', 'https://firebasestorage.googleapis.com/v0/b/inql-group5.appspot.com/o/sample_images%2Fsample.png?alt=media&token=c2628994-2944-422b-a237-63201b97226b'),
+	(200005,'Wowie, another caption!', 'https://firebasestorage.googleapis.com/v0/b/inql-group5.appspot.com/o/sample_images%2Fsample.png?alt=media&token=c2628994-2944-422b-a237-63201b97226b'),
+	(200006,'Will the captions ever stop?', 'https://firebasestorage.googleapis.com/v0/b/inql-group5.appspot.com/o/sample_images%2Fsample.png?alt=media&token=c2628994-2944-422b-a237-63201b97226b'),
+	(200007,'Yep. This is the last caption.', 'https://firebasestorage.googleapis.com/v0/b/inql-group5.appspot.com/o/sample_images%2Fsample.png?alt=media&token=c2628994-2944-422b-a237-63201b97226b');
 
 INSERT INTO db.Likes VALUES (100000,300000),
 	(100009,300000),

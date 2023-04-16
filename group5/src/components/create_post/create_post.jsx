@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./create_post.css";
 import axios from "axios";
+import { storage } from "../../firebaseConfig";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import photo from "../../data/photo.png";
 import xmark from "../../data/xmark.png";
 
@@ -35,37 +37,52 @@ export default function CreatePost(props) {
     setAlbum(event.target.value);
   };
 
+  const uploadImageAndGetUrl = async (file) => {
+    const storageRef = ref(storage, `upload_images/${file.name}`);
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!file) {
       alert("Please select a file to upload");
       return;
     }
-    const data = new FormData();
-    data.append("target", "photo");
-    data.append("albumID", album);
-    data.append("caption", caption);
-    data.append("data", file);
-  
-    console.log("FormData contents:", data.get("albumID"), data.get("caption"), data.get("data"));
   
     try {
-      const response = await axios.post("http://127.0.0.1:5000/add", data, {
+      const firebaseStorageUrl = await uploadImageAndGetUrl(file);
+      console.log("Firebase Storage URL:", firebaseStorageUrl);
+  
+      axios.post("http://127.0.0.1:5000/add", JSON.stringify({
+        target: "photo",
+        albumID: album,
+        caption: caption,
+        data: firebaseStorageUrl,
+      }), {
         headers: {
-          "Content-Type": "multipart/form-data",
-        },
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((response) => {
+        console.log(response.data);
+        alert("Post created successfully!");
+      })
+      .catch((error) => {
+        console.log('Error:', error.response.data);
+        alert("Failed to create post. Please try again later.");
       });
-      console.log(response.data);
-      alert("Post created successfully!");
+  
     } catch (error) {
-      console.error(error);
+      console.error(error.response.data);
       alert("Failed to create post. Please try again later.");
     }
     setFile(null);
     setCaption("");
     setAlbum("");
     setFileSelected(false);
-  };
+  };   
   
 
   return (
