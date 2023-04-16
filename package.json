@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "@material-ui/core": "^4.12.4",
-    "firebase": "^9.19.1",
-    "multer": "^1.4.5-lts.1",
-    "react-datepicker": "^4.11.0"
-  }
-}

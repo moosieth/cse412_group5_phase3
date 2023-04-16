@@ -5,7 +5,7 @@ import house from "../../data/house.png";
 import heart from "../../data/heart.png";
 import person from "../../data/person.png";
 import plus from "../../data/plus.png";
-import Avatar from "@material-ui/core/Avatar";
+import Avatar from "@mui/material/Avatar";
 import "./header.css";
 import CreatePost from "../../components/create_post/create_post";
 
