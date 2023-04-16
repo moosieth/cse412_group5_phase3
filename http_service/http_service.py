@@ -13,11 +13,11 @@ app = Flask(__name__)
 CORS(app)               # Allows Apps from same origin to access this API
 
 # Initialize Firebase SDK
-cred = credentials.Certificate('./inql-group5-firebase-adminsdk-855k3-c7c7a06e7f.json')
+cred = credentials.Certificate('./group5-inql-firebase-adminsdk-qo918-539ca228b3.json')
 firebase_app = firebase_admin.initialize_app(cred, {
-    'storageBucket': 'inql-group5.appspot.com'
+    'storageBucket': 'group5-inql.appspot.com'
 })
-firebase_storage = storage.bucket('inql-group5.appspot.com', app=firebase_app)
+firebase_storage = storage.bucket('group5-inql.appspot.com', app=firebase_app)
 
 # Serve HTML instructions
 @app.route('/')

@@ -29,7 +29,21 @@ header {
     width: 140px;
   }
   .header-icon {
-    width: 30px;
-    height: 30px;
+    width: 34px;
+    height: 34px;
+    margin-right: 2vw;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    background-color: transparent;
+    border-radius: 20%;
+  }
+
+  nav ul li:hover .header-icon {
+    transform: scale(1.2);
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10%;
+  }
+  
+  .avatar {
+    margin-right: 3vw;
   }
   
