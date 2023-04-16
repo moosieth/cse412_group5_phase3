@@ -1,0 +1,120 @@
+.login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f9f9f9;
+  }
+
+  .wrapper {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .wrapper h1 {
+    font-family: 'Roboto', sans-serif; /* replace with desired font */
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .wrapper p {
+    font-family: 'Roboto', sans-serif; /* replace with desired font */
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  .login_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+    background-color: #fff;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+  }
+
+  .login_form input[type="text"],
+  .login_form input[type="password"] {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    border-radius: 0.5rem; /* add rounded corners */
+    border: 1px solid #ccc;
+    outline: none;
+  }
+  
+  .login_form input[type="text"]:focus,
+  .login_form input[type="password"]:focus {
+    border-color: #0080ff;
+  }
+
+  .login_forgot_password {
+    display: block;
+    margin-top: 20px; /* add some margin to match the login button */
+    font-size: 16px; /* set the font size to match the login button */
+    text-align: center;
+    color: #0080ff;
+    cursor: pointer;
+    background-color: transparent; /* remove the background color */
+    border: none; /* remove the border */
+    padding: 16px 32px; /* add padding to match the login button */
+    outline: none; /* remove the outline */
+  }
+  
+  .login_forgot_password:hover {
+    text-decoration: underline;
+  }
+
+  .login_btn {
+    background-color: turquoise;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 0.5rem; /* add rounded corners */
+    width: 100%; /* increase width */
+  }
+  
+  .login_btn:hover {
+    background-color: #008CBA;
+  }
+
+  .login_separator {
+    width: 100%;
+    height: 1px;
+    margin: 20px 0;
+    background-color: #ccc;
+    border: none;
+  }
+  
+  .login_create_account_btn {
+    background-color: #32CD32;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    width: 70%;
+  }
+  
+  .login_create_account_btn:hover {
+    background-color: #27AE1B;
+  }
+  

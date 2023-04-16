@@ -1,0 +1,49 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #dbdbdb;
+  }
+  
+  nav ul {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav img {
+    max-width: 50px;
+  }
+  
+  nav ul li {
+    margin: 0 1rem;
+  }
+  
+  /* Styles for the icon images */
+  .header-logo {
+    width: 140px;
+  }
+  .header-icon {
+    width: 34px;
+    height: 34px;
+    margin-right: 2vw;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    background-color: transparent;
+    border-radius: 20%;
+  }
+
+  nav ul li:hover .header-icon {
+    transform: scale(1.2);
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10%;
+  }
+  
+  .avatar {
+    margin-right: 3vw;
+  }
+  
