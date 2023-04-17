@@ -448,5 +448,5 @@ def wholiked():
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0")
 
