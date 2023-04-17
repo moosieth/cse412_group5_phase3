@@ -29,7 +29,7 @@ def home():
 def register():
     newUser = request.json
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     query = f'INSERT INTO User (fName, lName, town, gender, pw, email, dob) VALUES("{newUser["fName"]}", "{newUser["lName"]}", "{newUser["town"]}", "{newUser["gender"]}", "{newUser["pw"]}", "{newUser["email"]}", "{newUser["dob"]}")'
@@ -52,7 +52,7 @@ def login():
     email = request.args.get('email')
     password = request.args.get('password')
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     cursor.execute(f'SELECT userID FROM User WHERE email="{email}" AND pw="{password}"')
@@ -69,7 +69,7 @@ def searchuser():
     fName = request.args.get('fName')
     lName = request.args.get('lName')
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     query = f'SELECT userID, fName, lName FROM User WHERE fName LIKE"{fName}%" AND lName LIKE "{lName}%"'
@@ -86,7 +86,7 @@ def searchfriend():
     fName = request.args.get('fName')
     lName = request.args.get('lName')
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     query = f'SELECT userID, fName, lName FROM User WHERE fName LIKE"{fName}%" AND lName LIKE "{lName}%" AND userID IN (SELECT friendID FROM Friends WHERE userID={uid})'
@@ -101,7 +101,7 @@ def searchfriend():
 def friendrec():
     uid = request.args.get('userID')
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     #TODO: Needs to ensure that does not reccomend friends that user already has made
@@ -121,7 +121,7 @@ def friendrec():
 def contrib():
     uid = request.args.get('userID')
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     query1 = f'CREATE VIEW {uid}contribution AS (SELECT COUNT(commentID) FROM Comment WHERE Comment.userID = {uid} GROUP BY Comment.commentID UNION (SELECT COUNT(photoID) FROM Photo WHERE albumID IN (SELECT albumID FROM Album WHERE userID = {uid})))'
@@ -141,7 +141,7 @@ def searchalbum():
     uid = request.args.get("userID")
     aName = request.args.get("name")
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     cursor.execute(f'SELECT albumID, name FROM Album WHERE name LIKE "%{aName}%" AND userID = {uid}')
@@ -160,7 +160,7 @@ def add():
         if target is None:
             raise ValueError('target not found in request body')
 
-        con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+        con = mysql.connector.connect(user='root', password='password', host='database', database='db')
         cursor = con.cursor()
         
         # DEBUG
@@ -220,7 +220,7 @@ def add():
 def removebyid():
     data = request.json
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     if data["target"] == 'user':
@@ -250,7 +250,7 @@ def removebyid():
 def photobytag():
     tagName = request.args.get("name")
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     query = f'SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN Tag ON Photo.photoID = Tag.photoID WHERE Tag.name = "{tagName}"'
@@ -268,7 +268,7 @@ def myphotobytag():
     uid = request.args.get("userID")
     tagName = request.args.get("name")
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     query1 = f'CREATE VIEW {uid}Photos AS (SELECT Photo.photoID AS pid, Photo.caption AS cap, Photo.data AS dat FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = {uid})'
@@ -289,7 +289,7 @@ def myphotobytag():
 def photobyuser():
     uid = request.args.get("userID")
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     query = f'SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = {uid}'
@@ -306,7 +306,7 @@ def photobyuser():
 def photobyalbum():
     aid = request.args.get("albumID")
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     query = f'SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.albumID = {aid}'
@@ -321,7 +321,7 @@ def photobyalbum():
     
 @app.route('/trendingtags', methods=['GET'])
 def trendingtags():
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     # TODO: Not getting 10 results, need 2 fix
@@ -337,7 +337,7 @@ def trendingtags():
 def searchcom():
     content = request.args.get("content")
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     query1 = f'CREATE VIEW CommentSearch AS (SELECT userID FROM Comment WHERE content LIKE "%{content}%")'
@@ -358,7 +358,7 @@ def searchcom():
 def photorec():
     uid = request.args.get("userID")
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     query1 = f'CREATE VIEW {uid}Photos AS (SELECT Photo.photoID AS pid FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = {uid})'
@@ -380,7 +380,7 @@ def photorec():
 
 @app.route('/recentphotos', methods=['GET'])
 def recentphotos():
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     query = f'SELECT * FROM Photo ORDER BY photoID DESC LIMIT 50'
@@ -415,7 +415,7 @@ def recentphotos():
 def numlike():
     pid = request.args.get("photoID")
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     query = f'SELECT COUNT(*) FROM Likes WHERE photoID={pid}'
@@ -433,7 +433,7 @@ def numlike():
 def wholiked():
     pid = request.args.get("photoID")
 
-    con = mysql.connector.connect(user='root', password='password', host='localhost', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     query = f'SELECT User.userID, User.fName, User.lName FROM User INNER JOIN Likes ON User.userID = Likes.userID WHERE Likes.photoID={pid}'
