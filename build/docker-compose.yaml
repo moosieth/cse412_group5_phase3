@@ -19,7 +19,7 @@ services:
   react:
     build: ../react_app/
     ports:
-      - 5174:5174
+      - 5174:5173
     stdin_open: true
     tty: true
     depends_on:
