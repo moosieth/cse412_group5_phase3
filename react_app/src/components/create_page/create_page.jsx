@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { createBrowserHistory } from "history";
+import { useNavigate } from "react-router-dom"; 
 import "./create.css";
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+
 
 export default function CreateAccount() {
-  const history = createBrowserHistory();
+  const history = createBrowserHistory(); 
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fName: "",
     lName: "",
@@ -29,7 +35,7 @@ export default function CreateAccount() {
     try {
       await axios.post("http://127.0.0.1:5000/register", formData);
       alert("Account created successfully!");
-      history.push("/login");
+      navigate("/");
     } catch (error) {
       console.error(error);
     }
@@ -69,30 +75,30 @@ export default function CreateAccount() {
         />
 
         <div className="gender_box">
-          <label>
-            <input
-              type="radio"
-              name="gender"
+          <RadioGroup
+            row
+            aria-label="gender"
+            name="gender"
+            value={formData.gender}
+            onChange={handleInputChange}
+            required
+          >
+            <FormControlLabel
               value="M"
-              checked={formData.gender === "M"}
-              onChange={handleInputChange}
-              className="create_input"
-              required
+              control={<Radio color="primary" />}
+              label="Male"
             />
-            <span>Male</span>
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="gender"
+            <FormControlLabel
               value="F"
-              checked={formData.gender === "F"}
-              onChange={handleInputChange}
-              className="create_input"
-              required
+              control={<Radio color="primary" />}
+              label="Female"
             />
-            <span>Female</span>
-          </label>
+            <FormControlLabel
+              value="O"
+              control={<Radio color="primary" />}
+              label="Other"
+            />
+          </RadioGroup>
         </div>
 
         <input
