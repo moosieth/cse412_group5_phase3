@@ -12,7 +12,7 @@ import CreatePost from "../../components/create_post/create_post";
 
 export default function Header() {
   const [showCreate, setShowCreate] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("Search");
+  const [searchQuery, setSearchQuery] = useState("");
   const handleAddPhoto = () => {
     setShowCreate(true);
   };
@@ -37,6 +37,7 @@ export default function Header() {
 
   return (
     <>
+      {/*To apply the stylesheet*/}
       <Helmet>
         <link
           rel="stylesheet"
@@ -54,10 +55,10 @@ export default function Header() {
                   <input
                   id="searchBar"
                   type="text"
+                  placeholder="Search"
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
                   onKeyDown={handleSearch}
-                  placeholder="Search"
                   className="search_input"
                   />
                   <div 

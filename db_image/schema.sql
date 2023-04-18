@@ -86,7 +86,8 @@ INSERT INTO db.User (fName, lName, town, gender, pw, email, dob) VALUES
 	('Natasha','Romanoff','Moscow','F','3yz4ab','n.romano@shield.gov','1992-11-22 00:00:00'),
 	('Scott','Lang','Coral Gables','M','5cd6ef','antman_avenger@gmail.com','1989-10-10 00:00:00'),
 	('Steven','Grant','London','M','7gh8ij','steveng123@gmail.com','1992-09-19 00:00:00'),
-	('Marc','Spector','Cairo','M','9kl0mn','notmarcspector@gmail.com','1992-09-19 00:00:00');
+	('Marc','Spector','Cairo','M','9kl0mn','notmarcspector@gmail.com','1992-09-19 00:00:00'),
+	('Inql','App','Test','O','test','test@test.com','1900-01-01 00:00:00');
 
 INSERT INTO db.Album (userID, name, dateCreated) VALUES 
 	(100009,'Art','2023-01-30 00:00:00'),
@@ -98,7 +99,8 @@ INSERT INTO db.Album (userID, name, dateCreated) VALUES
 	(100002,'Cars','2023-02-02 00:00:00'),
 	(100005,'Asgard','2023-02-02 00:00:00'),
 	(100006,'Retro Tech','2023-02-05 00:00:00'),
-	(100004,'Science','2023-02-05 00:00:00');
+	(100004,'Science','2023-02-05 00:00:00'),
+	(100010,'Test','2023-04-17 00:00:00');
 
 INSERT INTO db.Friends VALUES 
 	(100001,100003,'2023-01-30 00:00:00'),
@@ -109,7 +111,8 @@ INSERT INTO db.Friends VALUES
 	(100007,100005,'2023-02-03 00:00:00'),
 	(100008,100007,'2023-02-07 00:00:00'),
 	(100009,100002,'2023-02-09 00:00:00'),
-	(100002,100009,'2023-02-09 00:00:00');
+	(100002,100009,'2023-02-09 00:00:00'),
+	(100010,100009,'2023-03-09 00:00:00');
 
 INSERT INTO db.Photo (albumID, caption, data) VALUES 
 	(200000,'This is a caption', 'https://firebasestorage.googleapis.com/v0/b/group5-inql.appspot.com/o/sample_images%2Flogo.png?alt=media&token=3aa20ae7-93d5-41bc-b72d-80c2842b38fb'),
@@ -121,9 +124,11 @@ INSERT INTO db.Photo (albumID, caption, data) VALUES
 	(200004,'Captions!', 'https://firebasestorage.googleapis.com/v0/b/group5-inql.appspot.com/o/sample_images%2Flogo.png?alt=media&token=3aa20ae7-93d5-41bc-b72d-80c2842b38fb'),
 	(200005,'Wowie, another caption!', 'https://firebasestorage.googleapis.com/v0/b/group5-inql.appspot.com/o/sample_images%2Flogo.png?alt=media&token=3aa20ae7-93d5-41bc-b72d-80c2842b38fb'),
 	(200006,'Will the captions ever stop?', 'https://firebasestorage.googleapis.com/v0/b/group5-inql.appspot.com/o/sample_images%2Flogo.png?alt=media&token=3aa20ae7-93d5-41bc-b72d-80c2842b38fb'),
-	(200007,'Yep. This is the last caption.', 'https://firebasestorage.googleapis.com/v0/b/group5-inql.appspot.com/o/sample_images%2Flogo.png?alt=media&token=3aa20ae7-93d5-41bc-b72d-80c2842b38fb');
+	(200007,'Yep. This is the last caption.', 'https://firebasestorage.googleapis.com/v0/b/group5-inql.appspot.com/o/sample_images%2Flogo.png?alt=media&token=3aa20ae7-93d5-41bc-b72d-80c2842b38fb'),
+	(200010,'For testing purpose', 'https://firebasestorage.googleapis.com/v0/b/group5-inql.appspot.com/o/sample_images%2Flogo.png?alt=media&token=3aa20ae7-93d5-41bc-b72d-80c2842b38fb');
 
-INSERT INTO db.Likes VALUES (100000,300000),
+INSERT INTO db.Likes VALUES 
+	(100000,300000),
 	(100009,300000),
 	(100001,300002),
 	(100001,300003),
@@ -134,12 +139,13 @@ INSERT INTO db.Likes VALUES (100000,300000),
 	(100002,300007),
 	(100008,300007),
 	(100006,300008),
-	(100000,300009),
-	(100009,300009),
+	(100000,300010),
+	(100009,300010),
 	(100005,300009),
 	(100003,300007);
 
-INSERT INTO db.Tag VALUES ('"friends"',300001),
+INSERT INTO db.Tag VALUES 
+	('"friends"',300001),
 	('food',300000),
 	('fun',300002),
 	('food',300003),
@@ -153,7 +159,9 @@ INSERT INTO db.Tag VALUES ('"friends"',300001),
 	('food',300009),
 	('drinks',300009),
 	('fun',300009),
-	('friends',300007);
+	('friends',300007),
+	('#Test', 300010),
+	('#HopeItWorks', 300010);
 
 INSERT INTO db.Comment (content, dateCreated, userID, photoID) VALUES 
 	('This is a comment','2023-01-31 00:00:00',100002,300003),
@@ -165,4 +173,6 @@ INSERT INTO db.Comment (content, dateCreated, userID, photoID) VALUES
 	('The comments wont ever stop!','2023-02-03 00:00:00',100007,300005),
 	('Nah, there''s only 3 more','2023-02-04 00:00:00',100006,300000),
 	('Well heres another','2023-02-05 00:00:00',100004,300009),
-	('Finally! The last comment!','2023-02-05 00:00:00',100001,300006);
+	('Finally! The last comment!','2023-02-05 00:00:00',100001,300006),
+	('Commenting for testing purposes','2023-03-05 00:00', 100002, 300010),
+	('I like this test post','2023-03-06 00:00', 100004, 300010);
