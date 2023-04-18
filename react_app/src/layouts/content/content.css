@@ -15,6 +15,26 @@
     width: 100%; 
   }
 
+  .post_container {
+    padding-top: 50px;
+    position: relative;
+    overflow-y: scroll;
+    scrollbar-width: none; 
+    -ms-overflow-style: none; 
+  }
+  
+  .post_container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .hide-scrollbar {
+    overflow: hidden;
+  }
+  
+  .show-scrollbar {
+    overflow: auto;
+  }
+  
   .post_image {
     width: 100%;
     object-fit: contain;

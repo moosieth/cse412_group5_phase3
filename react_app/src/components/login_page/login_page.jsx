@@ -21,6 +21,8 @@ export default function Welcome() {
         params: { email, password },
       })
       .then((response) => {
+        const userID = response.data[0][0];
+        document.cookie = `userID=${userID}`;
         setLoginSuccess(true);
         navigate("/social-network-service");
       })

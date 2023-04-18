@@ -79,6 +79,20 @@ def searchuser():
 
     return jsonify(tuples)
 
+@app.route('/userbyid', methods=['GET'])
+def userbyid():
+    uid = request.args.get('userID')
+
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
+    cursor = con.cursor()
+
+    query = f'SELECT * FROM User WHERE userID = "{uid}"'
+
+    cursor.execute(query)
+    tuples = cursor.fetchall()
+
+    return jsonify(tuples)
+
 # Search for friends, out of User's _Existing_ friends
 @app.route('/searchfriend', methods=['GET'])
 def searchfriend():
@@ -248,12 +262,14 @@ def removebyid():
 
 @app.route('/photobytag', methods=['GET'])
 def photobytag():
-    tagName = request.args.get("name")
+    tagNames = request.args.get("names")
 
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    query = f'SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN Tag ON Photo.photoID = Tag.photoID WHERE Tag.name = "{tagName}"'
+    allNames = tagNames.split(" ")
+
+    query = f'SELECT Photo.photoID, Photo.caption, Photo.data, Album.userID FROM (Photo INNER JOIN Tag ON Photo.photoID = Tag.photoID) INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Tag.name = "{tagName}"'
 
     cursor.execute(query)
     tuples = cursor.fetchall()
@@ -262,6 +278,7 @@ def photobytag():
         return jsonify(tuples)
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+
 
 @app.route('/myphotosbytag', methods=['GET'])
 def myphotobytag():
@@ -292,7 +309,7 @@ def photobyuser():
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    query = f'SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = {uid}'
+    query = f'SELECT Photo.photoID, Photo.caption, Photo.data, Album.userID FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = {uid}'
 
     cursor.execute(query)
     tuples = cursor.fetchall()
@@ -309,7 +326,7 @@ def photobyalbum():
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    query = f'SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.albumID = {aid}'
+    query = f'SELECT Photo.photoID, Photo.caption, Photo.data, Album.userID FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.albumID = {aid}'
 
     cursor.execute(query)
     tuples = cursor.fetchall()
@@ -341,7 +358,7 @@ def searchcom():
     cursor = con.cursor()
 
     query1 = f'CREATE VIEW CommentSearch AS (SELECT userID FROM Comment WHERE content LIKE "%{content}%")'
-    query2 = f'SELECTUser.fName, User.lName, COUNT(CommentSearch.userID) FROM User INNER JOIN CommentSearch ON User.userID = CommentSearch.userID GROUP BY fName, lName ORDER BY COUNT(CommentSearch.userID) DESC'
+    query2 = f'SELECT User.fName, User.lName, COUNT(CommentSearch.userID) FROM User INNER JOIN CommentSearch ON User.userID = CommentSearch.userID GROUP BY fName, lName ORDER BY COUNT(CommentSearch.userID) DESC'
 
     cursor.execute(query1)
     cursor.execute(query2)
@@ -363,7 +380,7 @@ def photorec():
 
     query1 = f'CREATE VIEW {uid}Photos AS (SELECT Photo.photoID AS pid FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = {uid})'
     query2 = f'CREATE VIEW {uid}Tags AS (SELECT Tag.name FROM Tag INNER JOIN Photo ON Tag.photoID = Photo.photoID WHERE Photo.photoID IN (SELECT pid FROM {uid}Photos) GROUP BY Tag.name ORDER BY COUNT(*) DESC LIMIT 5)'
-    query3 = f'SELECT * FROM Photo WHERE photoID IN (SELECT Tag.photoID FROM Tag INNER JOIN {uid}Tags ON Tag.name = {uid}Tags.name) AND photoID NOT IN (SELECT pid FROM {uid}Photos) GROUP BY photoID ORDER BY COUNT(*) DESC LIMIT 50'
+    query3 = f'SELECT Photo.photoID, Photo.albumID, Photo.caption, Photo.data, Album.userID FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Photo.photoID IN (SELECT Tag.photoID FROM Tag INNER JOIN {uid}Tags ON Tag.name = {uid}Tags.name) AND Photo.photoID NOT IN (SELECT pid FROM {uid}Photos) GROUP BY photoID ORDER BY COUNT(*) DESC LIMIT 50;'
 
     cursor.execute(query1)
     cursor.execute(query2)
@@ -383,7 +400,7 @@ def recentphotos():
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    query = f'SELECT * FROM Photo ORDER BY photoID DESC LIMIT 50'
+    query = f'SELECT Photo.photoID, Photo.caption, Photo.data, Photo.albumID, Album.userID FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID ORDER BY photoID DESC LIMIT 50'
 
     cursor.execute(query)
     tuples = cursor.fetchall()
@@ -396,7 +413,7 @@ def recentphotos():
                 encoded_tuple = list(t)
                 # Get the download URL of the file from Firebase Storage
                 try:
-                    firebase_storage = storage.bucket().blob(encoded_tuple[3])
+                    firebase_storage = storage.bucket().blob(encoded_tuple[2])
                     firebase_url = firebase_storage.generate_signed_url(datetime.timedelta(seconds=300), method='GET')
                 except exceptions.FirebaseError as e:
                     print(f"Failed to get download URL from Firebase Storage: {e}")

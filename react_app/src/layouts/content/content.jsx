@@ -8,26 +8,81 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function Content() {
   const [photos, setPhotos] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [scrollbarVisible, setScrollbarVisible] = useState(false);
 
-  const fetchPhotos = () => {
-    axios
-      .get("http://127.0.0.1:5000/recentphotos")
-      .then((response) => {
-        setPhotos(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  // Trying to fetch the user if from the photo
+  // and then retrieve the email by calling axios again
+  const fetchPhotos = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:5000/recentphotos");
+      // wait to fetch the email of each photos
+      const photosWithUserEmails = await Promise.all(
+        response.data.map(async (photo) => {
+          const userResponse = await axios.get("http://127.0.0.1:5000/userbyid", {
+            params: { userID: photo[4] },
+          });
+
+          console.log(photo);
+          const userEmail = userResponse.data[0][6];
+          // return a new object with the email
+          return { ...photo, userEmail };
+        })
+      );
+      setPhotos(photosWithUserEmails);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleScroll = () => {
+    setScrollbarVisible(true);
+    clearTimeout(window.scrollTimer);
+    window.scrollTimer = setTimeout(() => {
+      setScrollbarVisible(false);
+    }, 500);
   };
 
   useEffect(() => {
     fetchPhotos();
   }, []);
 
+
+  // Functions for creating an avatar
+  function stringToColor(string) {
+    let hash = 0;
+    let i;
+  
+    /* eslint-disable no-bitwise */
+    for (i = 0; i < string.length; i += 1) {
+      hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    }
+  
+    let color = '#';
+  
+    for (i = 0; i < 3; i += 1) {
+      const value = (hash >> (i * 8)) & 0xff;
+      color += `00${value.toString(16)}`.slice(-2);
+    }
+    /* eslint-enable no-bitwise */
+  
+    return color;
+  }
+  
+  // This will get the first letter of email and the domain as the initial
+  function stringAvatar(email) {
+    const [name, domain] = email.split('@');
+    return {
+      sx: {
+        bgcolor: stringToColor(email),
+      },
+      children: `${name[0]}${domain[0]}`,
+    };
+  }
+
   return (
     <section className="box">
       <div>
-        <div className="post_container">
+        <div className={`post_container ${scrollbarVisible ? "show-scrollbar" : "hide-scrollbar"}`}
+          onScroll={handleScroll}>
           {photos.map((photo) => (
             <motion.div
               className="post"
@@ -36,8 +91,8 @@ export default function Content() {
               onClick={() => setSelectedId(photo[0])}
             >
               <div className="post_header">
-                <Avatar className="post_avatar">H</Avatar>
-                <h3>username</h3>
+                <Avatar className="post_avatar" {...stringAvatar(photo.userEmail)} />
+                <h3>{photo.userEmail}</h3>
               </div>
               <img
                 className="post_image"
@@ -45,10 +100,9 @@ export default function Content() {
                 alt="Recent post"
               />
               <h4 className="post_text">
-                <strong className="user_name">username</strong>{" "}
-                <span className="caption_text">{photo[2]}</span>
+                <strong className="user_name">{photo.userEmail}</strong>{" "}
+                <span className="caption_text">{photo[1]}</span>
               </h4>
-              {console.log(decodeURIComponent(photo[3]))}
             </motion.div>
           ))}
         </div>
@@ -77,8 +131,8 @@ export default function Content() {
               .map((photo) => (
                 <div key={photo[0]} className="enlarged_post_content">
                   <div className="post_header">
-                    <Avatar className="post_avatar">H</Avatar>
-                    <h3>username</h3>
+                    <Avatar className="post_avatar" {...stringAvatar(photo.userEmail)} /> 
+                    <h3>{photo.userEmail}</h3>
                   </div>
                   <img
                     className="post_image"
@@ -86,7 +140,7 @@ export default function Content() {
                     alt="Recent post"
                   />
                   <h4 className="post_text">
-                    <strong className="user_name">username</strong> <span className="caption_text">{photo[2]}</span>
+                    <strong className="user_name">{photo.userEmail}</strong> <span className="caption_text">{photo[1]}</span>
                   </h4>
                 </div>
               ))}

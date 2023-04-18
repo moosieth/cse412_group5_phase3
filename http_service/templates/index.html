@@ -24,6 +24,7 @@
         <li><a href="#Entity_Search">Entity Search</a></li>
         <ul>
           <li><a href="#User_Search">/searchuser</a></li>
+          <li><a href="#User_Search_ID">/userbyid</a></li>
           <li><a href="#Friend_Search">/searchfriend</a></li>
           <li><a href="#Album_Search">/searchalbum</a></li>
           <li><a href="#Com_Search">/searchcom</a></li>
@@ -149,6 +150,30 @@
     <br /><br /><br />
 
     <br /><br /><br />
+    <h2 id="User_Search_ID">Route: /userbyid</h2>
+    <p>
+      '/userbyid' allows for HTTP GET requests to be made that will return JSON
+      data about a user, given only their id. `/usrrtbyid` searches
+      <i>all</i> existing users in the database. It does so with one parameters:
+    </p>
+    <h4>Parameter 1: userID</h4>
+    <p>This parameter should be the ID of the user.</p>
+    <p>
+      Here's an example of a GET request that will return either a JSON
+      dictionary with the desired user's data, OR an empty JSON dictionary,
+      depending on if the provided parameters match an entry in the User table.
+    </p>
+    <code>
+      axios.get('http://127.0.0.1:5000/searchuser', { params: { userID: 100010 }
+      })
+    </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code> SELECT * FROM User WHERE userID = 100010; </code>
+    <p>The API would then reply with:</p>
+    <code> [100010,"John","Doe", "Phoenix", "M", "SHA256HashedPW", ... ] </code>
+    <br /><br /><br />
+
+    <br /><br /><br />
     <h2 id="Friend_Search">Route: /searchfriend</h2>
     <p>
       '/searchfriend' allows for HTTP GET requests to be made that will return
@@ -168,8 +193,8 @@
       depending on if the provided parameters match an entry in the User table.
     </p>
     <code>
-      axios.get('http://127.0.0.1:5000/searchfriend', { params: { userID: 100010,
-      fName: 'Jim', lName: 'Stevenson' } })
+      axios.get('http://127.0.0.1:5000/searchfriend', { params: { userID:
+      100010, fName: 'Jim', lName: 'Stevenson' } })
     </code>
     <p>Making this request will execute the following query on the Database:</p>
     <code>
@@ -206,8 +231,8 @@
       the User's contribution score contained within it.
     </p>
     <code>
-      axios.get('http://127.0.0.1:5000/contrib', { params: { userID: 100010, name:
-      'Flowers' } })
+      axios.get('http://127.0.0.1:5000/contrib', { params: { userID: 100010,
+      name: 'Flowers' } })
     </code>
     <p>Making this request will execute the following query on the Database:</p>
     <code>
@@ -267,6 +292,10 @@
       '/photobytag' allows for HTTP GET requests to be made that will return
       JSON data containing data for Photos that are tagged by the input tag
       name. It does so with one parameter:
+    </p>
+    <p>
+      <b>NOTE:</b> This query is currently not 100% correct. I'm working on
+      fixing it right now. ~ Mitchell
     </p>
     <h4>Parameter 1: name</h4>
     <p>
@@ -349,14 +378,16 @@
       the User's contribution score contained within it.
     </p>
     <code> axios.get('http://127.0.0.1:5000/recentphotos') </code>
-    <p>
-      Making this request will execute the following 3 queries on the Database:
-    </p>
-    <code> SELECT * FROM Photo ORDER BY photoID DESC LIMIT 50; </code>
+    <p>Making this request will execute the following query on the Database:</p>
+    <code>
+      SELECT Photo.photoID, Photo.caption, Photo.data, Photo.albumID,
+      Album.userID FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID
+      ORDER BY photoID DESC LIMIT 50;
+    </code>
     <p>The API could then reply with:</p>
     <code>
       [300104, 200099, "The caption for a returned photo",
-      "/path/to/the/returned/photo"] ...
+      "/path/to/the/returned/photo", 100099] ...
     </code>
     <br /><br /><br />
 
@@ -414,8 +445,9 @@
     </code>
     <p>Making this request will execute the following query on the Database:</p>
     <code>
-      SELECT Photo.photoID, Photo.caption, Photo.data FROM Photo INNER JOIN
-      Album ON Photo.albumID = Album.albumID WHERE Album.albumID = 200009
+      SELECT Photo.photoID, Photo.caption, Photo.data, Album.userID FROM Photo
+      INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.albumID =
+      200009
     </code>
     <p>The API could then reply with:</p>
     <code>
@@ -442,7 +474,8 @@
       user, as well as how many mutual friends they share with the user.
     </p>
     <code>
-      axios.get('http://127.0.0.1:5000/friendrec', { params: { userID: 100010 } })
+      axios.get('http://127.0.0.1:5000/friendrec', { params: { userID: 100010 }
+      })
     </code>
     <p>
       Making this request will execute the following 3 queries on the Database:
@@ -479,7 +512,8 @@
       user, as well as how many mutual friends they share with the user.
     </p>
     <code>
-      axios.get('http://127.0.0.1:5000/photorec', { params: { userID: 100010 } })
+      axios.get('http://127.0.0.1:5000/photorec', { params: { userID: 100010 }
+      })
     </code>
     <p>
       Making this request will execute the following 5 queries on the Database:
@@ -496,16 +530,20 @@
     </code>
     <br />
     <code>
-      SELECT * FROM Photo WHERE photoID IN (SELECT Tag.photoID FROM Tag INNER
-      JOIN 10010Tags ON Tag.name = 10010Tags.name) AND photoID NOT IN (SELECT
-      pid FROM 10010Photos) GROUP BY photoID ORDER BY COUNT(*) DESC LIMIT 50;
+      SELECT Photo.photoID, Photo.albumID, Photo.caption, Photo.data,
+      Album.userID FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID
+      WHERE Photo.photoID IN (SELECT Tag.photoID FROM Tag INNER JOIN 10010Tags
+      ON Tag.name = 10010Tags.name) AND Photo.photoID NOT IN (SELECT pid FROM
+      10010Photos) GROUP BY photoID ORDER BY COUNT(*) DESC LIMIT 50;
     </code>
     <br />
     <code> DROP VIEW 10010Tags; </code>
     <br />
     <code>DROP VIEW 10010Photos; </code>
     <p>The API could then reply with:</p>
-    <code> [300001, 200001, "A Photo Caption", "A Photo Path"] ... </code>
+    <code>
+      [300001, 200001, "A Photo Caption", "A Photo Path", 100002] ...
+    </code>
     <br /><br /><br />
 
     <br /><br /><br />
