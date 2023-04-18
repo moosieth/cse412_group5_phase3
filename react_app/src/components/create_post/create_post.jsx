@@ -107,9 +107,6 @@ export default function CreatePost(props) {
                   className="select_photo"
                 ></img>
               </div>
-              <div className="buttons">
-                <button onClick={handleClose}>Cancel</button>
-              </div>
             </>
           ) : (
             <div>
@@ -132,7 +129,6 @@ export default function CreatePost(props) {
               </div>
               <div className="buttons">
                 <button type="submit">Post</button>
-                <button onClick={handleClose}>Cancel</button>
               </div>
             </div>
           )}

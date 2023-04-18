@@ -54,8 +54,8 @@
   }
 
   .create-post-close {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
     position: fixed;
     top: 100px;
@@ -76,7 +76,7 @@
     border: 2px dashed #cccccc;
     padding: 10px;
     border-radius: 5px;
-    height: 200px;
+    height: 300px;
     display: flex;
     justify-content: center;
     align-items: center;
