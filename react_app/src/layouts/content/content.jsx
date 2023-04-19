@@ -164,7 +164,7 @@ export default function Content() {
             )}
           </AnimatePresence>
         </section>
-        <section className="rec_wrapper">
+        <section className="friend-rec_wrapper">
           <div>
             <Friend_rec />
           </div>
