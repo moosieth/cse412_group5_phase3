@@ -10,12 +10,14 @@ import Avatar from "@mui/material/Avatar";
 import "./header.css";
 import CreatePost from "../../components/create_post/create_post";
 
-export default function Header() {
-  const [showCreate, setShowCreate] = useState(false);
+export default function Header({ setShowCreate, setShowUserPage, handleShowContent }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const handleAddPhoto = () => {
     setShowCreate(true);
+  };
+  const handleAvatarClick = () => {
+    setShowUserPage((prevState) => !prevState);
   };
 
   // useEffect hook to make a request with user ID using cookie
@@ -136,7 +138,7 @@ export default function Header() {
               </div>
             </li>
             <li>
-              <a href="#">
+              <a href="#" onClick={handleShowContent}>
                 <img src={house} alt="house" className="header-icon" />
               </a>
             </li>
@@ -161,13 +163,13 @@ export default function Header() {
                   className="avatar"
                   sx={{ width: 45, height: 45 }}
                   {...stringAvatar(userEmail)}
+                  onClick={handleAvatarClick}
                 />
               )}
             </li>
           </ul>
         </div>
       </nav>
-      {showCreate && <CreatePost setShowCreate={setShowCreate} />}
     </header>
     </>
   );
