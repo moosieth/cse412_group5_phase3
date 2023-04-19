@@ -4,6 +4,8 @@ import Avatar from "@mui/material/Avatar";
 import "./content.css";
 import xmark from "../../data/xmark.png";
 import { motion, AnimatePresence } from "framer-motion";
+import Leaderboard from "../../components/leaderboard/leaderboard";
+import Friend_rec from "../../components/friend_rec/friend_rec";
 
 export default function Content() {
   const [photos, setPhotos] = useState([]);

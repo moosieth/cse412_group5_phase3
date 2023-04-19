@@ -138,14 +138,23 @@ def contrib():
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    query1 = f'CREATE VIEW {uid}contribution AS (SELECT COUNT(commentID) FROM Comment WHERE Comment.userID = {uid} GROUP BY Comment.commentID UNION (SELECT COUNT(photoID) FROM Photo WHERE albumID IN (SELECT albumID FROM Album WHERE userID = {uid})))'
-    query2 = f'SELECT COUNT(*) FROM {uid}contribution'
+    query = f'SELECT userID, SUM(total_count) as contrib_score FROM (SELECT userID, COUNT(*) as total_count FROM Comment  WHERE userID = {uid} GROUP BY userID UNION SELECT Album.userID, COUNT(*) as total_count FROM Photo JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = {uid} GROUP BY Album.userID) as contrib_totals GROUP BY userID'
 
-    cursor.execute(query1)
-    cursor.execute(query2)
+    cursor.execute(query)
     tuples = cursor.fetchall()
 
-    cursor.execute(f'DROP VIEW {uid}contribution')
+    return jsonify(tuples)
+
+@app.route('/topcontrib', methods=['GET'])
+def topcontrib():
+
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
+    cursor = con.cursor()
+
+    query = f'SELECT contrib_totals.userID, User.fName, User.lName, SUM(total_count) as contrib_score, User.email FROM (SELECT userID, COUNT(*) as total_count FROM Comment GROUP BY userID UNION SELECT Album.userID, COUNT(*) as total_count FROM Photo JOIN Album ON Photo.albumID = Album.albumID GROUP BY Album.userID) as contrib_totals JOIN User ON contrib_totals.userID = User.userID GROUP BY contrib_totals.userID ORDER BY contrib_score DESC LIMIT 10'
+
+    cursor.execute(query)
+    tuples = cursor.fetchall()
 
     return jsonify(tuples)
 
@@ -262,14 +271,14 @@ def removebyid():
 
 @app.route('/photobytag', methods=['GET'])
 def photobytag():
-    tagNames = request.args.get("names")
+    tagName = request.args.get("name")
 
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    allNames = tagNames.split(" ")
+    #allNames = tagNames.split(" ")
 
-    query = f'SELECT Photo.photoID, Photo.caption, Photo.data, Album.userID FROM (Photo INNER JOIN Tag ON Photo.photoID = Tag.photoID) INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Tag.name = "{tagName}"'
+    query = f'SELECT Photo.photoID, Photo.caption, Photo.data, Album.userID, User.fName, User.lName FROM (Photo INNER JOIN Tag ON Photo.photoID = Tag.photoID) INNER JOIN (Album INNER JOIN User ON Album.userID = User.userID) ON Photo.albumID = Album.albumID WHERE Tag.name = "{tagName}"'
 
     cursor.execute(query)
     tuples = cursor.fetchall()
@@ -309,7 +318,7 @@ def photobyuser():
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    query = f'SELECT Photo.photoID, Photo.caption, Photo.data, Album.userID FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = {uid}'
+    query = f'SELECT Photo.photoID, Photo.caption, Photo.data, User.fName, User.lName FROM Photo INNER JOIN (Album INNER JOIN User ON Album.userID = User.userID) ON Photo.albumID = Album.albumID WHERE Album.userID = {uid}'
 
     cursor.execute(query)
     tuples = cursor.fetchall()
@@ -326,7 +335,7 @@ def photobyalbum():
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    query = f'SELECT Photo.photoID, Photo.caption, Photo.data, Album.userID FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.albumID = {aid}'
+    query = f'SELECT Photo.photoID, Photo.caption, Photo.data, Album.userID, User.fName, User.lName FROM Photo INNER JOIN (Album INNER JOIN User ON Album.userID = User.userID) ON Photo.albumID = Album.albumID WHERE Album.albumID = {aid}'
 
     cursor.execute(query)
     tuples = cursor.fetchall()
@@ -380,7 +389,7 @@ def photorec():
 
     query1 = f'CREATE VIEW {uid}Photos AS (SELECT Photo.photoID AS pid FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = {uid})'
     query2 = f'CREATE VIEW {uid}Tags AS (SELECT Tag.name FROM Tag INNER JOIN Photo ON Tag.photoID = Photo.photoID WHERE Photo.photoID IN (SELECT pid FROM {uid}Photos) GROUP BY Tag.name ORDER BY COUNT(*) DESC LIMIT 5)'
-    query3 = f'SELECT Photo.photoID, Photo.albumID, Photo.caption, Photo.data, Album.userID FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID WHERE Photo.photoID IN (SELECT Tag.photoID FROM Tag INNER JOIN {uid}Tags ON Tag.name = {uid}Tags.name) AND Photo.photoID NOT IN (SELECT pid FROM {uid}Photos) GROUP BY photoID ORDER BY COUNT(*) DESC LIMIT 50;'
+    query3 = f'SELECT Photo.photoID, Photo.albumID, Photo.caption, Photo.data, Album.userID, User.fName, User.lName FROM Photo INNER JOIN (Album INNER JOIN User ON Album.userID = User.userID) ON Photo.albumID = Album.albumID WHERE Photo.photoID IN (SELECT Tag.photoID FROM Tag INNER JOIN {uid}Tags ON Tag.name = {uid}Tags.name) AND Photo.photoID NOT IN (SELECT pid FROM {uid}Photos) GROUP BY photoID ORDER BY COUNT(*) DESC LIMIT 50'
 
     cursor.execute(query1)
     cursor.execute(query2)
@@ -394,7 +403,7 @@ def photorec():
         return jsonify(tuples)
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
-
+    
 @app.route('/recentphotos', methods=['GET'])
 def recentphotos():
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
