@@ -79,7 +79,7 @@ function stringAvatar(name) {
         <div className="post_container">
             <ListItemText
                 sx={{ my: 0 }}
-                primary="Friend Reccomendations"
+                primary="Friend Recomendations"
                 primaryTypographyProps={{
                   fontSize: 17,
                   fontWeight: 'medium',
