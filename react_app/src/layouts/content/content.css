@@ -6,6 +6,10 @@
     padding: 0 20px; /* add this */
   }
 
+  .user_email {
+    font-size: 16px;
+  }
+
   .post {
     background-color: white;
     border: 1px solid lightgray;

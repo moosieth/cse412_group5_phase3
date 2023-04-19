@@ -92,7 +92,7 @@ export default function Content() {
             >
               <div className="post_header">
                 <Avatar className="post_avatar" {...stringAvatar(photo.userEmail)} />
-                <h3>{photo.userEmail}</h3>
+                <h4>{photo.userEmail}</h4>
               </div>
               <img
                 className="post_image"
@@ -132,7 +132,7 @@ export default function Content() {
                 <div key={photo[0]} className="enlarged_post_content">
                   <div className="post_header">
                     <Avatar className="post_avatar" {...stringAvatar(photo.userEmail)} /> 
-                    <h3>{photo.userEmail}</h3>
+                    <h5 className="user_email">{photo.userEmail}</h5>
                   </div>
                   <img
                     className="post_image"
