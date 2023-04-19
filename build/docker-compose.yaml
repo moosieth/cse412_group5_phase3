@@ -22,6 +22,11 @@ services:
       - 5174:5173
     stdin_open: true
     tty: true
+
+    volumes:
+    - ../react_app/:/react-app
+    - /react-app/node_modules
+
     depends_on:
       - api
     
