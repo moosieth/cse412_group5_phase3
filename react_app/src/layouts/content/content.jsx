@@ -81,60 +81,26 @@ export default function Content() {
   }
 
   return (
-    <section className="box">
-      <div>
-        <div className={`post_container ${scrollbarVisible ? "show-scrollbar" : "hide-scrollbar"}`}
-          onScroll={handleScroll}>
-          {photos.map((photo) => (
-            <motion.div
-              className="post"
-              key={photo[0]}
-              layoutId={photo[0]}
-              onClick={() => setSelectedId(photo[0])}
-            >
-              <div className="post_header">
-                <Avatar className="post_avatar" {...stringAvatar(photo.userEmail)} />
-                <h4>{photo.userEmail}</h4>
-              </div>
-              <img
-                className="post_image"
-                src={decodeURIComponent(photo[3]).replace("https://storage.googleapis.com/group5-inql.appspot.com/", "")}
-                alt="Recent post"
-              />
-              <h4 className="post_text">
-                <strong className="user_name">{photo.userEmail}</strong>{" "}
-                <span className="caption_text">{photo[1]}</span>
-              </h4>
-            </motion.div>
-          ))}
-        </div>
-        <br />
-      </div>
-
-      <AnimatePresence>
-      {selectedId && (
-        <>
-          <motion.div
-            className="blurred_background"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedId(null)}
-          ></motion.div>
-          <motion.div
-            className="enlarged_post"
-            layoutId={selectedId}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-          >
-            {photos
-              .filter((photo) => photo[0] === selectedId)
-              .map((photo) => (
-                <div key={photo[0]} className="enlarged_post_content">
+    <div className="everything_wrapper">
+        <section className="leaderboard_wrapper">
+          <div>
+            <Leaderboard />
+          </div>
+        </section>
+        <section className="box">
+          <div className="content_wrapper" >
+            <div className={`post_container ${scrollbarVisible ? "show-scrollbar" : "hide-scrollbar"}`}
+              onScroll={handleScroll}>
+              {photos.map((photo) => (
+                <motion.div
+                  className="post"
+                  key={photo[0]}
+                  layoutId={photo[0]}
+                  onClick={() => setSelectedId(photo[0])}
+                >
                   <div className="post_header">
-                    <Avatar className="post_avatar" {...stringAvatar(photo.userEmail)} /> 
-                    <h5 className="user_email">{photo.userEmail}</h5>
+                    <Avatar className="post_avatar" {...stringAvatar(photo.userEmail)} />
+                    <h4>{photo.userEmail}</h4>
                   </div>
                   <img
                     className="post_image"
@@ -142,20 +108,67 @@ export default function Content() {
                     alt="Recent post"
                   />
                   <h4 className="post_text">
-                    <strong className="user_name">{photo.userEmail}</strong> <span className="caption_text">{photo[1]}</span>
+                    <strong className="user_name">{photo.userEmail}</strong>{" "}
+                    <span className="caption_text">{photo[1]}</span>
                   </h4>
-                </div>
+                </motion.div>
               ))}
-            <motion.img
-              src={xmark}
-              alt="Close"
-              className="close_button"
-              onClick={() => setSelectedId(null)}
-            />
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </section>
+            </div>
+            <br />
+          </div>
+
+
+          <AnimatePresence>
+          {selectedId && (
+            <>
+              <motion.div
+                className="blurred_background"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setSelectedId(null)}
+              ></motion.div>
+              <motion.div
+                className="enlarged_post"
+                layoutId={selectedId}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+              >
+                {photos
+                  .filter((photo) => photo[0] === selectedId)
+                  .map((photo) => (
+                    <div key={photo[0]} className="enlarged_post_content">
+                      <div className="post_header">
+                        <Avatar className="post_avatar" {...stringAvatar(photo.userEmail)} /> 
+                        <h5 className="user_email">{photo.userEmail}</h5>
+                      </div>
+                      <img
+                        className="post_image"
+                        src={decodeURIComponent(photo[3]).replace("https://storage.googleapis.com/group5-inql.appspot.com/", "")}
+                        alt="Recent post"
+                      />
+                      <h4 className="post_text">
+                        <strong className="user_name">{photo.userEmail}</strong> <span className="caption_text">{photo[1]}</span>
+                      </h4>
+                    </div>
+                  ))}
+                <motion.img
+                  src={xmark}
+                  alt="Close"
+                  className="close_button"
+                  onClick={() => setSelectedId(null)}
+                />
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+        </section>
+        <section className="rec_wrapper">
+          <div>
+            <Friend_rec />
+          </div>
+        </section>
+    </div>
   );
 }

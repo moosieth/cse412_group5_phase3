@@ -1,0 +1,15 @@
+.friend_rec-box{
+    max-width: 530px !important;
+    margin: 0 auto;
+    width: 100%; 
+    padding: 0 20px; 
+}
+
+.user {
+    background-color: white;
+    border: 1px solid lightgray;
+    margin-bottom: 45px;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    width: 100%; 
+}

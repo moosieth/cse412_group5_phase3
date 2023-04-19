@@ -74,7 +74,7 @@ function stringAvatar(name) {
   }
 
   return (
-    <section className={`box ${props.className}`}>
+    <section className={`friend_rec-box ${props.className}`}>
       <div>
         <div className="post_container">
             <ListItemText
