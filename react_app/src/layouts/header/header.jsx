@@ -175,7 +175,6 @@ export default function Header({ setShowCreate, setShowUserPage, handleShowConte
         </div>
       </nav>
     </header>
-    {showUserProfile && <UserProfile friendID={getCookie("userID")} />}
     </>
   );
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from '@mui/material/Button';
 import axios from "axios";
+import "./user_profile.css"
 
 
 export default function UserProfile({ friendID }) {
@@ -11,26 +12,31 @@ export default function UserProfile({ friendID }) {
     const [homeTown, setHomeTown] = useState("");
     const [gender, setGender] = useState("");
     const [isFriend, setIsFriend] = useState(false);
+    const [followMessage, setFollowMessage] = useState("");
+
+    if( !friendID ) {
+        return <></>;
+    }
 
     // useEffect hook to make a request with user ID using cookie
     useEffect(() => {
         const fetchUserEmail = async () => {
-        console.log("current id is " + friendID);
-        if (friendID) {
-            try {
-            const response = await axios.get("http://127.0.0.1:5000/userbyid", {
-                params: { userID: friendID },
-            });
-    
-            setFirstName(response.data[0][1]);
-            setLastName(response.data[0][2]);
-            setHomeTown(response.data[0][3]);
-            setGender(response.data[0][4]);
-            setUserEmail(response.data[0][6]);
-            } catch (error) {
-            console.log(error);
+            console.log("current id is " + friendID);
+            if (friendID) {
+                try {
+                const response = await axios.get("http://127.0.0.1:5000/userbyid", {
+                    params: { userID: friendID },
+                });
+        
+                setFirstName(response.data[0][1]);
+                setLastName(response.data[0][2]);
+                setHomeTown(response.data[0][3]);
+                setGender(response.data[0][4]);
+                setUserEmail(response.data[0][6]);
+                } catch (error) {
+                console.log(error);
+                }
             }
-        }
         };
     
         fetchUserEmail();
@@ -50,17 +56,19 @@ export default function UserProfile({ friendID }) {
     const handleFollow = async () => {
         const userID = getCookie("userID");
         if (userID && friendID) {
+            console.log("user and friend IDs are" + userID + " and" + friendID);
           try {
             await axios.post("http://127.0.0.1:5000/add", {
               target: "friend",
               userID: parseInt(userID),
               friendID: parseInt(friendID),
-              dateFormed: "2023-02-09 00:00:00",
+              dateFormed: "2023-04-20 00:00:00",
             });
-            // Handle success, e.g., show a success message or update the state
+            setFollowMessage("Successfully followed a user!");
+            console.log(followMessage);
+            setIsFriend(true);
           } catch (error) {
-            console.log(error);
-            // Handle error, e.g., show an error message
+                console.log(error);
           }
         }
     };
@@ -124,19 +132,36 @@ export default function UserProfile({ friendID }) {
                 {userEmail && (
                     <Avatar
                     className="avatar"
-                    sx={{ width: 45, height: 45 }}
+                    style={{ width: 130, height: 130, fontSize:"3rem" }}
                     {...stringAvatar(userEmail)}
                     />
                 )}
             </div>
             <div className="user-profile_right">
-                <div className="user-name">
-                    <span>{firstName} {lastName}</span>
-                    {isFriend ? (
-                        <Button variant="contained">Following</Button>
-                        ) : (
-                        <Button variant="outlined" onClick={handleFollow}>Follow</Button>
-                    )}
+            <div className="user-name">
+                    <span className="try">{firstName} {lastName}</span>
+                    <Button
+                        className="user-follow_btn"
+                        variant={isFriend ? "contained" : "outlined"}
+                        color={isFriend ? "primary" : "secondary"}
+                        onClick={!isFriend ? handleFollow : null}
+                    >
+                        {isFriend ? "Following" : "Follow"}
+                    </Button>
+                </div>
+                <div className="user-fame">
+                    <div className="user-fame_item">
+                        <span>Albums</span>
+                        <span className="user-fame_content"> 2</span>
+                    </div>
+                    <div className="user-fame_item">
+                        <span>Posts</span>
+                        <span className="user-fame_content"> 5</span>
+                    </div>
+                    <div className="user-fame_item">
+                        <span>followers</span>
+                        <span className="user-fame_content"> 500</span>
+                    </div>
                 </div>
             </div>
         </div>

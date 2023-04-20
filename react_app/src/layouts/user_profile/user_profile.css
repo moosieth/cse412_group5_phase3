@@ -1,0 +1,54 @@
+.user-profile {
+    display: grid;
+    grid-template-columns: 47% 53%;
+    padding: 2rem 0;
+    padding-top: 35%;
+}
+
+.user-profile_left {
+    padding-left: 11rem;
+    text-align: center;
+}
+
+.user-profile_left .avatar {
+    border-radius: 50%;
+    height: 8rem;
+    object-fit: cover;
+    width: 8rem;
+}
+
+.user-name {
+    align-items: center;
+    display: grid;
+    grid-template-columns: max-content max-content;
+}
+
+.try {
+    padding-right: 4rem;
+}
+
+.user-name span {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+user-follow_btn {
+    padding-left: 10%;
+}
+
+.user-follow_btn:hover {
+    cursor: pointer;
+}
+
+.user-fame {
+    display: grid;
+    grid-gap: 1.5rem;
+    grid-template-columns: max-content max-content max-content;
+    padding: 1rem 0;
+    padding-top: 2rem;
+}
+
+.user-fame_content {
+    font-weight: bold;
+    margin-right: 0.25rem;
+}
