@@ -8,16 +8,20 @@ import person from "../../data/person.png";
 import plus from "../../data/plus.png";
 import Avatar from "@mui/material/Avatar";
 import "./header.css";
+import UserProfile from "../user_profile/user_profile";
 import CreatePost from "../../components/create_post/create_post";
 
-export default function Header({ setShowCreate, setShowUserPage, handleShowContent }) {
+export default function Header({ setShowCreate, setShowUserPage, handleShowContent, setFriendID }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [showUserProfile, setShowUserProfile] = useState(false);
   const handleAddPhoto = () => {
     setShowCreate(true);
   };
   const handleAvatarClick = () => {
     setShowUserPage((prevState) => !prevState);
+    setShowUserProfile((prevState) => !prevState);
+    setFriendID(getCookie("userID"));
   };
 
   // useEffect hook to make a request with user ID using cookie
@@ -171,6 +175,7 @@ export default function Header({ setShowCreate, setShowUserPage, handleShowConte
         </div>
       </nav>
     </header>
+    {showUserProfile && <UserProfile friendID={getCookie("userID")} />}
     </>
   );
 }

@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Leaderboard from "../../components/leaderboard/leaderboard";
 import Friend_rec from "../../components/friend_rec/friend_rec";
 
-export default function Content() {
+export default function Content(props) {
   const [photos, setPhotos] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [scrollbarVisible, setScrollbarVisible] = useState(false);
@@ -99,7 +99,14 @@ export default function Content() {
                   onClick={() => setSelectedId(photo[0])}
                 >
                   <div className="post_header">
-                    <Avatar className="post_avatar" {...stringAvatar(photo.userEmail)} />
+                    <Avatar
+                      className="post_avatar"
+                      {...stringAvatar(photo.userEmail)}
+                      onClick={() => {
+                        props.setFriendID(photo[4]);
+                        props.setShowUserPage(true);
+                      }}
+                    />
                     <h4>{photo.userEmail}</h4>
                   </div>
                   <img

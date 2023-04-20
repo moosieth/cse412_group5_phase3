@@ -9,6 +9,7 @@ import UserPage from "../../layouts/user_page/user_page";
 export default function SNS() {
   const [showCreate, setShowCreate] = useState(false);
   const [showUserPage, setShowUserPage] = useState(false);
+  const [friendID, setFriendID] = useState(null);
 
   const handleShowContent = () => {
     setShowUserPage(false);
@@ -20,8 +21,9 @@ export default function SNS() {
         setShowCreate={setShowCreate} 
         setShowUserPage={setShowUserPage} 
         handleShowContent={handleShowContent}
+        setFriendID={setFriendID}
       />
-      {showUserPage ? <UserPage /> : <Content />}
+      {showUserPage ? <UserPage friendID={friendID}/> : <Content setFriendID={setFriendID} setShowUserPage={setShowUserPage} />}
       <Footer />
       {showCreate && <CreatePost setShowCreate={setShowCreate} />}
     </div>

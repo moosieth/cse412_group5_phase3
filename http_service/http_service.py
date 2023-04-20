@@ -119,8 +119,8 @@ def friendrec():
     cursor = con.cursor()
 
     #TODO: Needs to ensure that does not reccomend friends that user already has made
-    query1 = f'CREATE VIEW {uid}mutuals AS (SELECT friendID FROM Friends WHERE userID IN (SELECT friendID FROM Friends WHERE userID={uid}))'
-    query2 = f'SELECT userID, fName, lName, COUNT({uid}mutuals.friendID) FROM User INNER JOIN {uid}mutuals WHERE User.userID = {uid}mutuals.friendID GROUP BY userID ORDER BY COUNT({uid}mutuals.friendID) DESC;'
+    query1 = f'CREATE VIEW {uid}mutuals AS (SELECT friendID FROM Friends WHERE userID IN (SELECT friendID FROM Friends WHERE userID={uid}) AND friendID != {uid})'
+    query2 = f'SELECT userID, fName, lName, COUNT({uid}mutuals.friendID) FROM User INNER JOIN {uid}mutuals WHERE User.userID = {uid}mutuals.friendID GROUP BY userID ORDER BY COUNT({uid}mutuals.friendID) DESC'
 
     cursor.execute(query1)
     cursor.execute(query2)
@@ -212,7 +212,7 @@ def add():
             query = f"INSERT INTO Friends VALUES({newEntry['userID']}, '{newEntry['friendID']}', '{newEntry['dateFormed']}')"
         elif target == 'likes':
             newEntry = request.json
-            query = f"INSERT INTO Likes VALUES({newEntry['userID']}, '{newEntry['photoID']}')"
+            query = f"INSERT INTO Likes VALUES({newEntry['userID']}, {newEntry['photoID']})"
         elif target == 'comment':
             newEntry = request.json
             query = f"INSERT INTO Comment (content, dateCreated, userID, photoID) VALUES('{newEntry['content']}', '{newEntry['dateCreated']}', {newEntry['userID']}, {newEntry['photoID']})"
@@ -271,16 +271,29 @@ def removebyid():
 
 @app.route('/photobytag', methods=['GET'])
 def photobytag():
-    tagName = request.args.get("name")
+    tagNames = request.args.get("names")
 
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    #allNames = tagNames.split(" ")
+    allNames = tagNames.split()
+    subQueries = [None] * len(allNames)
 
-    query = f'SELECT Photo.photoID, Photo.caption, Photo.data, Album.userID, User.fName, User.lName FROM (Photo INNER JOIN Tag ON Photo.photoID = Tag.photoID) INNER JOIN (Album INNER JOIN User ON Album.userID = User.userID) ON Photo.albumID = Album.albumID WHERE Tag.name = "{tagName}"'
+    for i, name in enumerate(allNames):
+        subQueries[i] = f'SELECT Tag.photoID, COUNT(*) AS num FROM Photo JOIN Tag ON Photo.photoID = Tag.photoID WHERE Tag.name LIKE "%{allNames[i]}%" GROUP BY Tag.photoID'
+        print(subQueries[i])
 
-    cursor.execute(query)
+    masterQuery = f'SELECT total_matches.photoID, Photo.caption, Photo.data, SUM(num) FROM ('
+
+    for i, q in enumerate(subQueries):
+        masterQuery += q
+        if i != len(subQueries) - 1:
+            masterQuery += f' UNION ALL '
+
+
+    masterQuery += f') AS total_matches JOIN Photo ON total_matches.photoID = Photo.photoID GROUP BY total_matches.photoID ORDER BY SUM(num) DESC'
+
+    cursor.execute(masterQuery)
     tuples = cursor.fetchall()
 
     if(tuples):
@@ -403,13 +416,13 @@ def photorec():
         return jsonify(tuples)
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
-    
+
 @app.route('/recentphotos', methods=['GET'])
 def recentphotos():
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    query = f'SELECT Photo.photoID, Photo.caption, Photo.data, Photo.albumID, Album.userID FROM Photo INNER JOIN Album ON Photo.albumID = Album.albumID ORDER BY photoID DESC LIMIT 50'
+    query = f'SELECT Photo.photoID, Photo.caption, Photo.data, Photo.albumID, Album.userID FROM Photo INNER JOIN Album On Photo.albumID = Album.albumID ORDER BY photoID DESC LIMIT 50'
 
     cursor.execute(query)
     tuples = cursor.fetchall()
@@ -472,6 +485,27 @@ def wholiked():
         return jsonify(tuples)
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+    
+# Checks if two users are friends
+@app.route('/isfriend', methods=['GET'])
+def isfriend():
+    uid = request.args.get('userID', type=int)
+    cid = request.args.get('checkID', type=int)
+
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
+    cursor = con.cursor()
+
+    query = f'SELECT * FROM db.Friends WHERE userID = %s AND friendID = %s' 
+    cursor.execute(query, (uid, cid))
+    result = cursor.fetchone()
+
+    cursor.close()
+    con.close()
+
+    if result:
+        return jsonify({"success": True}), 200
+    else:
+        return jsonify({"success": False}), 200
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")

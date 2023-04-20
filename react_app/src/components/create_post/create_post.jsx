@@ -5,12 +5,17 @@ import { storage } from "../../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import photo from "../../data/photo.png";
 import xmark from "../../data/xmark.png";
+import ReactCrop from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 
 export default function CreatePost(props) {
   const [file, setFile] = useState(null);
   const [caption, setCaption] = useState("");
   const [album, setAlbum] = useState("");
   const [fileSelected, setFileSelected] = useState(false);
+  const [crop, setCrop] = useState({ aspect: 1, unit: "%" });
+  const [croppedImageUrl, setCroppedImageUrl] = useState(null);
+  const [imageRef, setImageRef] = useState(null);
 
   const handleClose = () => {
     props.setShowCreate(false);
@@ -37,6 +42,55 @@ export default function CreatePost(props) {
     setAlbum(event.target.value);
   };
 
+  // For croping images
+
+  const handleImageLoaded = (image) => {
+    setImageRef(image);
+  };
+
+  const handleCropComplete = async (crop, percentCrop) => {
+    if (imageRef && crop.width && crop.height) {
+      const croppedImageBlob = await getCroppedImage(
+        imageRef,
+        crop,
+        "newFile.jpeg"
+      );
+      setCroppedImageUrl(URL.createObjectURL(croppedImageBlob));
+    }
+  };
+
+  const getCroppedImage = (image, crop, fileName) => {
+    const canvas = document.createElement("canvas");
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+    canvas.width = crop.width;
+    canvas.height = crop.height;
+    const ctx = canvas.getContext("2d");
+  
+    ctx.drawImage(
+      image,
+      crop.x * scaleX,
+      crop.y * scaleY,
+      crop.width * scaleX,
+      crop.height * scaleY,
+      0,
+      0,
+      crop.width,
+      crop.height
+    );
+  
+    return new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error("Canvas is empty"));
+          return;
+        }
+        blob.name = fileName;
+        resolve(blob);
+      }, "image/jpeg");
+    });
+  };
+
   const uploadImageAndGetUrl = async (file) => {
     const storageRef = ref(storage, `upload_images/${file.name}`);
     await uploadBytes(storageRef, file);
@@ -46,13 +100,15 @@ export default function CreatePost(props) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!file) {
-      alert("Please select a file to upload");
+    if (!file || !croppedImageUrl) {
+      alert("Please select and crop a file to upload");
       return;
     }
   
     try {
-      const firebaseStorageUrl = await uploadImageAndGetUrl(file);
+      const firebaseStorageUrl = await uploadImageAndGetUrl(
+        new File([await (await fetch(croppedImageUrl)).blob()], "cropped_image.jpeg")
+      );
       console.log("Firebase Storage URL:", firebaseStorageUrl);
   
       axios.post("http://127.0.0.1:5000/add", JSON.stringify({
@@ -82,7 +138,9 @@ export default function CreatePost(props) {
     setCaption("");
     setAlbum("");
     setFileSelected(false);
-  };   
+    setCroppedImageUrl(null);
+  };
+  
   
 
   return (
@@ -110,7 +168,23 @@ export default function CreatePost(props) {
             </>
           ) : (
             <div>
-              <img src={URL.createObjectURL(file)} alt="preview" className="preview"/>
+              <ReactCrop
+                src={URL.createObjectURL(file)}
+                crop={crop}
+                onChange={(newCrop) => setCrop(newCrop)}
+                onImageLoaded={handleImageLoaded}
+                onComplete={handleCropComplete}
+              />
+  
+              {/* Preview cropped image */}
+              {croppedImageUrl && (
+                <img
+                  src={croppedImageUrl}
+                  alt="Cropped preview"
+                  className="preview"
+                />
+              )}
+  
               <div className="post-details">
                 <label htmlFor="caption">Caption:</label>
                 <input
@@ -135,5 +209,5 @@ export default function CreatePost(props) {
         </form>
       </div>
     </div>
-  );
+  );  
 }
