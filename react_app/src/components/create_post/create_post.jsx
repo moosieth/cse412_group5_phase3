@@ -51,6 +51,10 @@ export default function CreatePost(props) {
     setCurTag(event.target.value);
   };
 
+  const handleRemoveTag = (tagToRemove) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
+
   const handleAlbumChange = (event) => {
     setAlbumChosen(event.target.value);
   };
@@ -205,13 +209,27 @@ export default function CreatePost(props) {
                   ))}
                 </select>
                 <label htmlFor="tags">Tags:</label>
-                <input
-                  type="text"
-                  id="tag"
-                  value={curTag}
-                  onChange={handleTagChange}
-                  onKeyDown={handleSpace}
-                />
+                <div className="tags-input-container">
+                  {tags.map((tag) => (
+                    <span className="tag">
+                      {tag}
+                      <span
+                        className="remove-tag"
+                        onClick={() => handleRemoveTag(tag)}
+                      >
+                        &times;
+                      </span>
+                    </span>
+                  ))}
+                  <input
+                    type="text"
+                    id="tag"
+                    value={curTag}
+                    onChange={handleTagChange}
+                    onKeyDown={handleSpace}
+                    className="tag-input"
+                  />
+                </div>
               </div>
               <div className="buttons">
                 <button type="submit">Post</button>

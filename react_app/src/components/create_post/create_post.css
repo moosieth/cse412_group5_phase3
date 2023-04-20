@@ -178,4 +178,35 @@
     max-width: 100%;
     max-height: 100%;
   }
+
+  .tags-input-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 5px;
+    min-height: 32px;
+  }
+  
+  .tag {
+    display: flex;
+    align-items: center;
+    background-color: #e0e0e0;
+    border-radius: 12px;
+    padding: 4px 8px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .tag-input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+  }
+  
+  .remove-tag {
+    margin-left: 4px;
+    cursor: pointer;
+  }
+  
   
