@@ -25,6 +25,14 @@ export default function CreatePost(props) {
     }
   };
 
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      return parts.pop().split(";").shift();
+    }
+  };
+
   const handleClose = () => {
     props.setShowCreatePost(false);
   };
@@ -53,6 +61,33 @@ export default function CreatePost(props) {
 
   const handleRemoveTag = (tagToRemove) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
+
+  const handleAlbumChange = (event) => {
+    setAlbumChosen(event.target.value);
+  };
+
+  const handleSpace = (e) => {
+    if (e.keyCode === 32) {
+      setTags(oldTags => [...oldTags, curTag]);
+      console.log(tags);
+      setCurTag("");
+    }
+  }
+
+
+  const fetchAlbums = async () => {
+    const userID = getCookie("userID");
+
+    axios.get("http://127.0.0.1:5000/searchalbum", {
+      params: { userID: userID, name: "" }
+    }).then((response) => {
+      setAlbums(response.data);
+    })
+  };
+
+  const handleTagChange = (event) => {
+    setCurTag(event.target.value);
   };
 
   const handleAlbumChange = (event) => {
@@ -187,6 +222,9 @@ export default function CreatePost(props) {
                   className="select_photo"
                 ></img>
               </div>
+              <div className="buttons">
+                <button onClick={handleClose}>Cancel</button>
+              </div>
             </>
           ) : (
             <div>
@@ -230,6 +268,14 @@ export default function CreatePost(props) {
                     className="tag-input"
                   />
                 </div>
+                <label htmlFor="tags">Caption:</label>
+                <input
+                  type="text"
+                  id="tag"
+                  value={curTag}
+                  onChange={handleTagChange}
+                  onKeyDown={handleSpace}
+                />
               </div>
               <div className="buttons">
                 <button type="submit">Post</button>

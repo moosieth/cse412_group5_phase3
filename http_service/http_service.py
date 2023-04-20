@@ -516,15 +516,14 @@ def isfriend():
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    query = f'SELECT * FROM db.Friends WHERE userID = %s AND friendID = %s' 
-    cursor.execute(query, (uid, cid))
-    result = cursor.fetchone()
+    query = f'SELECT Photo.photoID FROM Photo JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID={uid} GROUP BY Photo.photoID ORDER BY Photo.photoID DESC LIMIT 1'
 
-    cursor.close()
-    con.close()
+    cursor.execute(query)
 
-    if result:
-        return jsonify({"success": True}), 200
+    tuples = cursor.fetchall()
+
+    if(tuples):
+        return jsonify(tuples)
     else:
         return jsonify({"success": False}), 200
     
