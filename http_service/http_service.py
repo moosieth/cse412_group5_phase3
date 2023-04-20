@@ -216,6 +216,9 @@ def add():
         elif target == 'comment':
             newEntry = request.json
             query = f"INSERT INTO Comment (content, dateCreated, userID, photoID) VALUES('{newEntry['content']}', '{newEntry['dateCreated']}', {newEntry['userID']}, {newEntry['photoID']})"
+        elif target == 'tag':
+            newEntry = request.json
+            query = f"INSERT INTO Tag (name, photoID) VALUES ('{newEntry['name']}', {newEntry['photoID']})"
         else:
             print("SKILL ISSUE: User provided JSON not of correct format")
             return jsonify(success=False), 400
@@ -486,6 +489,24 @@ def wholiked():
     else:
         return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
     
+@app.route('/justposted', methods=['GET'])
+def justposted():
+    uid = request.args.get("userID")
+
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
+    cursor = con.cursor()
+
+    query = f'SELECT Photo.photoID FROM Photo JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID={uid} GROUP BY Photo.photoID ORDER BY Photo.photoID DESC LIMIT 1'
+
+    cursor.execute(query)
+
+    tuples = cursor.fetchall()
+
+    if(tuples):
+        return jsonify(tuples)
+    else:
+        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+    
 # Checks if two users are friends
 @app.route('/isfriend', methods=['GET'])
 def isfriend():
@@ -506,7 +527,25 @@ def isfriend():
         return jsonify({"success": True}), 200
     else:
         return jsonify({"success": False}), 200
+    
+@app.route('/combyphoto', methods=['GET'])
+def combyphoto():
+    pid = request.args.get("photoID")
+
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
+    cursor = con.cursor()
+
+    query = f'SELECT Comment.commentID, Comment.content, Comment.userID FROM Comment WHERE Comment.photoID = {pid};'
+
+    cursor.execute(query)
+
+    tuples = cursor.fetchall()
+
+    if(tuples):
+        return jsonify(tuples)
+    else:
+        return json.dumps({'success':False}), 200, {'ContentType':'application/json'}
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", threaded=False)
 

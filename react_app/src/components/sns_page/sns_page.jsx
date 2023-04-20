@@ -4,10 +4,12 @@ import Header from "../../layouts/header/header";
 import Content from "../../layouts/content/content";
 import Footer from "../../layouts/footer/footer";
 import CreatePost from "../create_post/create_post";
+import CreateAlbum from "../create_album/create_album";
 import UserPage from "../../layouts/user_page/user_page";
 
 export default function SNS() {
-  const [showCreate, setShowCreate] = useState(false);
+  const [showCreatePost, setShowCreatePost] = useState(false);
+  const [showCreateAlbum, setShowCreateAlbum] = useState(false);
   const [showUserPage, setShowUserPage] = useState(false);
   const [friendID, setFriendID] = useState(null);
 
@@ -18,14 +20,16 @@ export default function SNS() {
   return (
     <div>
       <Header 
-        setShowCreate={setShowCreate} 
+        setShowCreatePost={setShowCreatePost} 
+        setShowCreateAlbum={setShowCreateAlbum}
         setShowUserPage={setShowUserPage} 
         handleShowContent={handleShowContent}
         setFriendID={setFriendID}
       />
       {showUserPage ? <UserPage friendID={friendID}/> : <Content setFriendID={setFriendID} setShowUserPage={setShowUserPage} />}
       <Footer />
-      {showCreate && <CreatePost setShowCreate={setShowCreate} />}
+      {showCreateAlbum && <CreateAlbum setShowCreateAlbum={setShowCreateAlbum} />}
+      {showCreatePost && <CreatePost setShowCreatePost={setShowCreatePost} />}
     </div>
   );
 }

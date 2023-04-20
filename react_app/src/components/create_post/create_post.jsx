@@ -1,24 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./create_post.css";
 import axios from "axios";
 import { storage } from "../../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import photo from "../../data/photo.png";
 import xmark from "../../data/xmark.png";
-import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
 export default function CreatePost(props) {
   const [file, setFile] = useState(null);
   const [caption, setCaption] = useState("");
-  const [album, setAlbum] = useState("");
+  const [albums, setAlbums] = useState([]);
+  const [albumChosen, setAlbumChosen] = useState("");
+  const [curTag, setCurTag] = useState("");
+  const [tags, setTags] = useState([]);
+  const [pID, setPID] = useState([]);
   const [fileSelected, setFileSelected] = useState(false);
-  const [crop, setCrop] = useState({ aspect: 1, unit: "%" });
-  const [croppedImageUrl, setCroppedImageUrl] = useState(null);
-  const [imageRef, setImageRef] = useState(null);
+
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      return parts.pop().split(";").shift();
+    }
+  };
 
   const handleClose = () => {
-    props.setShowCreate(false);
+    props.setShowCreatePost(false);
+  };
+
+  const handleSpace = (e) => {
+    if (e.keyCode === 32) {
+      setTags(oldTags => [...oldTags, curTag]);
+      console.log(tags);
+      setCurTag("");
+    }
+  }
+
+  const fetchAlbums = async () => {
+    const userID = getCookie("userID");
+
+    axios.get("http://127.0.0.1:5000/searchalbum", {
+      params: { userID: userID, name: "" }
+    }).then((response) => {
+      setAlbums(response.data);
+    })
+  };
+
+  const handleTagChange = (event) => {
+    setCurTag(event.target.value);
+  };
+
+  const handleAlbumChange = (event) => {
+    setAlbumChosen(event.target.value);
   };
 
   const handleDrop = (event) => {
@@ -38,59 +72,6 @@ export default function CreatePost(props) {
     setCaption(event.target.value);
   };
 
-  const handleAlbumChange = (event) => {
-    setAlbum(event.target.value);
-  };
-
-  // For croping images
-
-  const handleImageLoaded = (image) => {
-    setImageRef(image);
-  };
-
-  const handleCropComplete = async (crop, percentCrop) => {
-    if (imageRef && crop.width && crop.height) {
-      const croppedImageBlob = await getCroppedImage(
-        imageRef,
-        crop,
-        "newFile.jpeg"
-      );
-      setCroppedImageUrl(URL.createObjectURL(croppedImageBlob));
-    }
-  };
-
-  const getCroppedImage = (image, crop, fileName) => {
-    const canvas = document.createElement("canvas");
-    const scaleX = image.naturalWidth / image.width;
-    const scaleY = image.naturalHeight / image.height;
-    canvas.width = crop.width;
-    canvas.height = crop.height;
-    const ctx = canvas.getContext("2d");
-  
-    ctx.drawImage(
-      image,
-      crop.x * scaleX,
-      crop.y * scaleY,
-      crop.width * scaleX,
-      crop.height * scaleY,
-      0,
-      0,
-      crop.width,
-      crop.height
-    );
-  
-    return new Promise((resolve, reject) => {
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          reject(new Error("Canvas is empty"));
-          return;
-        }
-        blob.name = fileName;
-        resolve(blob);
-      }, "image/jpeg");
-    });
-  };
-
   const uploadImageAndGetUrl = async (file) => {
     const storageRef = ref(storage, `upload_images/${file.name}`);
     await uploadBytes(storageRef, file);
@@ -98,22 +79,26 @@ export default function CreatePost(props) {
     return downloadURL;
   };
 
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   const handleSubmit = async (event) => {
+    const userID = getCookie("userID");
+
     event.preventDefault();
-    if (!file || !croppedImageUrl) {
-      alert("Please select and crop a file to upload");
+    if (!file) {
+      alert("Please select a file to upload");
       return;
     }
-  
+
     try {
-      const firebaseStorageUrl = await uploadImageAndGetUrl(
-        new File([await (await fetch(croppedImageUrl)).blob()], "cropped_image.jpeg")
-      );
+      const firebaseStorageUrl = await uploadImageAndGetUrl(file);
       console.log("Firebase Storage URL:", firebaseStorageUrl);
-  
-      axios.post("http://127.0.0.1:5000/add", JSON.stringify({
+
+      await axios.post("http://127.0.0.1:5000/add", JSON.stringify({
         target: "photo",
-        albumID: album,
+        albumID: albumChosen,
         caption: caption,
         data: firebaseStorageUrl,
       }), {
@@ -121,27 +106,60 @@ export default function CreatePost(props) {
           'Content-Type': 'application/json'
         }
       })
-      .then((response) => {
-        console.log(response.data);
-        alert("Post created successfully!");
-      })
-      .catch((error) => {
-        console.log('Error:', error.response.data);
-        alert("Failed to create post. Please try again later.");
-      });
-  
+        .then((response) => {
+          console.log(response.data);
+          alert("Post created successfully!");
+        })
+        .catch((error) => {
+          console.log('Error:', error.response.data);
+          alert("Failed to create post. Please try again later.");
+        });
+
     } catch (error) {
       console.error(error.response.data);
       alert("Failed to create post. Please try again later.");
     }
+
+    await sleep(3000);
+
+    const pidRES = await axios.get("http://127.0.0.1:5000/justposted", {
+      params: { userID: userID }
+    });
+
+    console.log(pidRES.data);
+
+    tags.map((tag) => {
+      console.log(pID);
+      axios.post("http://127.0.0.1:5000/add", JSON.stringify({
+        target: "tag",
+        name: tag,
+        photoID: pidRES.data[0][0]
+      }), {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          console.log(response);
+          alert("Post tagged successfully!");
+        })
+        .catch((error) => {
+          /*console.log('Error:', error.response.data);*/
+          alert("Failed to add tags to post. Please try again later.");
+        });
+    })
+
     setFile(null);
     setCaption("");
-    setAlbum("");
+    setAlbumChosen("");
+    setTags([]);
     setFileSelected(false);
-    setCroppedImageUrl(null);
   };
-  
-  
+
+  useEffect(() => {
+    fetchAlbums();
+  }, []);
+
 
   return (
     <div className="create-post-overlay">
@@ -168,23 +186,7 @@ export default function CreatePost(props) {
             </>
           ) : (
             <div>
-              <ReactCrop
-                src={URL.createObjectURL(file)}
-                crop={crop}
-                onChange={(newCrop) => setCrop(newCrop)}
-                onImageLoaded={handleImageLoaded}
-                onComplete={handleCropComplete}
-              />
-  
-              {/* Preview cropped image */}
-              {croppedImageUrl && (
-                <img
-                  src={croppedImageUrl}
-                  alt="Cropped preview"
-                  className="preview"
-                />
-              )}
-  
+              <img src={URL.createObjectURL(file)} alt="preview" className="preview" />
               <div className="post-details">
                 <label htmlFor="caption">Caption:</label>
                 <input
@@ -194,20 +196,31 @@ export default function CreatePost(props) {
                   onChange={handleCaptionChange}
                 />
                 <label htmlFor="album">Album:</label>
-                <select id="album" value={album} onChange={handleAlbumChange}>
+                <select id="album" value={albumChosen} onChange={handleAlbumChange}>
                   <option value="">Select Album</option>
-                  <option value={200000}>Album 1</option>
-                  <option value={200001}>Album 2</option>
-                  <option value={200002}>Album 3</option>
+                  {albums.map(album => (
+                    <option value={album[0]}>
+                      {album[1]}
+                    </option>
+                  ))}
                 </select>
+                <label htmlFor="tags">Tags:</label>
+                <input
+                  type="text"
+                  id="tag"
+                  value={curTag}
+                  onChange={handleTagChange}
+                  onKeyDown={handleSpace}
+                />
               </div>
               <div className="buttons">
                 <button type="submit">Post</button>
+                <button onClick={handleClose}>Cancel</button>
               </div>
             </div>
           )}
         </form>
       </div>
     </div>
-  );  
+  );
 }

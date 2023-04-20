@@ -10,14 +10,36 @@ import Avatar from "@mui/material/Avatar";
 import "./header.css";
 import UserProfile from "../user_profile/user_profile";
 import CreatePost from "../../components/create_post/create_post";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function Header({ setShowCreate, setShowUserPage, handleShowContent, setFriendID }) {
+
+export default function Header({ setShowCreatePost, setShowCreateAlbum, setShowUserPage, handleShowContent, setFriendID }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [showUserProfile, setShowUserProfile] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+
   const handleAddPhoto = () => {
-    setShowCreate(true);
+    setShowDropdown(!showDropdown);
   };
+
+  const dropdownMenuVariants = {
+    hidden: { opacity: 0, scaleY: 0.9, originY: 0 },
+    visible: { opacity: 1, scaleY: 1 },
+    exit: { opacity: 0, scaleY: 0.9 },
+  };
+
+  const handleCreatePost = () => {
+    setShowDropdown(false);
+    setShowCreatePost(true);
+  };
+
+  const handleCreateAlbum = () => {
+    setShowDropdown(false);
+    setShowCreateAlbum(true);
+  };
+
   const handleAvatarClick = () => {
     setShowUserPage((prevState) => !prevState);
     setShowUserProfile((prevState) => !prevState);
@@ -157,9 +179,26 @@ export default function Header({ setShowCreate, setShowUserPage, handleShowConte
               </a>
             </li>
             <li>
-              <a href="#" onClick={handleAddPhoto}>
-                <img src={plus} alt="plus" className="header-icon" />
-              </a>
+              <div className="dropdown-container" onClick={handleAddPhoto}>
+                  <img src={plus} alt="plus" className="header-icon" />
+                  <AnimatePresence>
+                    {showDropdown && (
+                      <motion.div
+                        className="dropdown-menu"
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        variants={dropdownMenuVariants}
+                        transition={{ duration: 0.15 }}
+                      >
+                        <ul>
+                          <li onClick={handleCreatePost}>Create Post</li>
+                          <li onClick={handleCreateAlbum}>Create Album</li>
+                        </ul>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
             </li>
             <li>
               {userEmail && (
