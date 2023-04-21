@@ -6,14 +6,13 @@ import house from "../../data/house.png";
 import heart from "../../data/heart.png";
 import person from "../../data/person.png";
 import plus from "../../data/plus.png";
+import { Button } from "@mui/material";
 
 export default function SearchBar({ searchTerm, setSearchTerm, setShowUserSearch, setShowPhotoSearch, setShowComSearch }) {
 
-    const toggleSearch = (event) => {
-        const searchBar = document.getElementById("searchBar");
-        const searchContainer = searchBar.parentElement; // Get the parent element
-        searchContainer.classList.toggle("show-search");
-    };
+    const handleClearClick = () => {
+        setSearchTerm('');
+    }
 
     const handleUserSearchClick = () => {
         setShowUserSearch(true);
@@ -44,24 +43,25 @@ export default function SearchBar({ searchTerm, setSearchTerm, setShowUserSearch
                 <form>
                     <li>
                         <div className="search_containter">
-                            <div className="search">
+                            <div className="search show-search">
                                 <input
-                                    id="searchBar"
                                     type="text"
                                     placeholder="Search"
                                     value={searchTerm}
                                     onChange={(event) => setSearchTerm(event.target.value)}
                                     className="search_input"
                                 />
-                                <div
-                                    className="search_button"
-                                    onClick={toggleSearch}
-                                >
-                                    <i className='ri-search-2-line search_icon'></i>
-                                    <i className='ri-close-line search_close'></i>
-                                </div>
+                                {searchTerm &&
+                                <Button
+                                    type="button"
+                                    onClick={handleClearClick}
+                                    className="clear-button"
+                                    >
+                                    <i className='ri-close-line clear-button'></i>
+                                </Button>
+                                }                               
                             </div>
-                        </div>
+                        </div>                        
                     </li>
                     <div>
                         <button type="button" onClick={() => handleUserSearchClick()} id="searchUserButton">Search for Users</button>

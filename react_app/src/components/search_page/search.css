@@ -116,36 +116,11 @@ nav ul li {
   width: 170px;
 }
 
-/* Search bar */
-.search_container{
-  height: 100vh;
-  margin-inline: 1.5rem;
-  display: grid;
-  place-items: center;
-}
-
-.search{
-  position: relative;
-  width: 50px;
-  height: 50px;
-  background-color: var(--white-color);
-  border-radius: 3rem;
-  padding: 10px;
-  overflow: hidden;   /*this will remove the overflow*/
-  transition: width .5s cubic-bezier(.9, 0, .3, .9);
-}
-
-.search_button:hover{
-  transform: scale(1.2);
-  background-color: rgba(0, 0, 0, 0.1);
-  border-radius: 50%;
-}
-
 .search_input{
   /* background-color: antiquewhite; */
   border: none;
   outline: none;
-  width: calc(100% - 64px);
+  width: calc(100% - 10px);
   height: 100%;
   border-radius: 3rem;
   padding-left: 10px;
@@ -157,65 +132,42 @@ nav ul li {
   transition: opacity 1.5s;
 }
 
-.search_input:-webkit-autofill{
-  box-shadow: 0 0 0 100px var(--white-color) inset;
+
+.search_containter {
+  display: flex;
+  align-items: center;
 }
 
-.search_button {
-  width: 47px;
-  height: 47px;
-  padding: 3px;
-  background-color: white;
-  border-radius: 50%;
+.search {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.search_input {
+  padding-right: 50px; /* add padding to the right to make space for the button */
+}
+
+.ri-close-line{
+  color: red;
   position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 10px;
-  margin: auto;
-  display: grid;
-  place-items: center;
+  border-radius: 59px;
+  right: 0;
+  height: 250%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  border: none;
+  background-color: #ffffff;
   cursor: pointer;
-  transition: opacity .6s cubic-bezier(.9, 0, .3, .9);
-  transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-.search_icon,
-.search_close {
-  color: black;
-  font-size: 1.4rem;
-  font-weight: 600;
-  position: absolute;
-  transition: opacity .5s cubic-bezier(.9, 0, .3, .9);
+.clear-button:hover {
+  background-color: #e7e7e7;
 }
 
-.search_close{
-  opacity: 0;
-}
-
-.show-search{
-  width: 300px;
-  box-shadow: 0 4px 24px hsla(222, 68%, 12%, .1);
-}
-
-.show-search .search_input{
-  opacity: 1;
-  pointer-events: initial;
-}
-
-.show-search .search_button{
-  transform: rotate(90deg);
-  background-color: black;
-}
-
-.show-search .search_icon{
-  opacity: 0;
-  color: white;
-}
-
-.show-search .search_close{
-  opacity: 1;
-  color: white;
-}
 
 .header-icon {
   width: 34px;
