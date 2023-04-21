@@ -382,8 +382,8 @@ def searchcom():
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    query1 = f'CREATE VIEW CommentSearch AS (SELECT userID FROM Comment WHERE content LIKE "%{content}%")'
-    query2 = f'SELECT User.fName, User.lName, COUNT(CommentSearch.userID) FROM User INNER JOIN CommentSearch ON User.userID = CommentSearch.userID GROUP BY fName, lName ORDER BY COUNT(CommentSearch.userID) DESC'
+    query1 = f'CREATE VIEW CommentSearch AS (SELECT userID FROM Comment WHERE content = "{content}")'
+    query2 = f'SELECT User.userID, User.fName, User.lName, COUNT(CommentSearch.userID) FROM User INNER JOIN CommentSearch ON User.userID = CommentSearch.userID GROUP BY CommentSearch.userID ORDER BY COUNT(CommentSearch.userID) DESC'
 
     cursor.execute(query1)
     cursor.execute(query2)

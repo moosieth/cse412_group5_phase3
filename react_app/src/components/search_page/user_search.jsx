@@ -94,12 +94,9 @@ export default function UserSearch(props) {
                                             props.setShowUserPage(true);
                                         }}
                                     />
-                                    <h4>{user.userEmail}</h4>
+                                    <strong className="username">{user[1]} {user[2]} </strong>
+                                    <span> {user.userEmail}</span>
                                 </div>
-                                <h4 className="post_text">
-                                    <strong className="user_name">{user.userEmail}</strong>{" "}
-                                    <span className="caption_text">{user[1]} {user[2]}</span>
-                                </h4>
                             </motion.div>
                         ))}
                     </div>

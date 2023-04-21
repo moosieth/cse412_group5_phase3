@@ -91,6 +91,7 @@ export default function PhotoSearch(props) {
                                         onClick={() => {
                                             props.setFriendID(photo[4]);
                                             props.setShowUserPage(true);
+                                            console.log("avatar clicked");
                                         }}
                                     />
                                     <h4>{photo.userEmail}</h4>
