@@ -1,8 +1,8 @@
-.album-type {
+.album-type {    
     justify-content: center;
     width: 25rem;
     padding-bottom: 2rem;
-    padding-left: 17rem;
+    padding-left: 16rem;
 }
 
 .profile-type {
@@ -12,6 +12,14 @@
     grid-template-columns: max-content max-content;
     justify-content: center;
     border-top: 1px solid #ccc;
+}
+
+.delete_btn {
+    padding-left: 20px;
+}
+
+.delete_btn:hover {
+    background-color: red;
 }
 
 .profile-type_item {

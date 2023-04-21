@@ -12,9 +12,14 @@ export default function SNS() {
   const [showCreateAlbum, setShowCreateAlbum] = useState(false);
   const [showUserPage, setShowUserPage] = useState(false);
   const [friendID, setFriendID] = useState(null);
+  const [albumDeleted, setAlbumDeleted] = useState(false);
 
   const handleShowContent = () => {
     setShowUserPage(false);
+  };
+
+  const handleAlbumDeletion = (deleted) => {
+    setAlbumDeleted(deleted);
   };
 
   return (
@@ -26,7 +31,12 @@ export default function SNS() {
         handleShowContent={handleShowContent}
         setFriendID={setFriendID}
       />
-      {showUserPage ? <UserPage friendID={friendID}/> : <Content setFriendID={setFriendID} setShowUserPage={setShowUserPage} />}
+      {showUserPage ? <UserPage
+                        friendID={friendID}
+                        onAlbumDeleted={handleAlbumDeletion}
+                        albumDeleted={albumDeleted}
+                      /> 
+                      : <Content setFriendID={setFriendID} setShowUserPage={setShowUserPage} />}
       <Footer />
       {showCreateAlbum && <CreateAlbum setShowCreateAlbum={setShowCreateAlbum} />}
       {showCreatePost && <CreatePost setShowCreatePost={setShowCreatePost} />}

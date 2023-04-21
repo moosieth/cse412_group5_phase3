@@ -8,9 +8,9 @@ import person from "../../data/person.png";
 import plus from "../../data/plus.png";
 import Avatar from "@mui/material/Avatar";
 import "./header.css";
-import UserProfile from "../user_profile/user_profile";
-import CreatePost from "../../components/create_post/create_post";
-import { motion, AnimatePresence } from "framer-motion";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import IconButton from "@mui/material/IconButton";
 
 
 export default function Header({ setShowCreatePost, setShowCreateAlbum, setShowUserPage, handleShowContent, setFriendID }) {
@@ -18,17 +18,15 @@ export default function Header({ setShowCreatePost, setShowCreateAlbum, setShowU
   const [userEmail, setUserEmail] = useState("");
   const [showUserProfile, setShowUserProfile] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
 
-
-  const handleAddPhoto = () => {
-    setShowDropdown(!showDropdown);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
   };
-
-  const dropdownMenuVariants = {
-    hidden: { opacity: 0, scaleY: 0.9, originY: 0 },
-    visible: { opacity: 1, scaleY: 1 },
-    exit: { opacity: 0, scaleY: 0.9 },
-  };
+  
+  const handleClose = () => {
+    setAnchorEl(null);
+  };  
 
   const handleCreatePost = () => {
     setShowDropdown(false);
@@ -179,26 +177,23 @@ export default function Header({ setShowCreatePost, setShowCreateAlbum, setShowU
               </a>
             </li>
             <li>
-              <div className="dropdown-container" onClick={handleAddPhoto}>
-                  <img src={plus} alt="plus" className="header-icon" />
-                  <AnimatePresence>
-                    {showDropdown && (
-                      <motion.div
-                        className="dropdown-menu"
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        variants={dropdownMenuVariants}
-                        transition={{ duration: 0.15 }}
-                      >
-                        <ul>
-                          <li onClick={handleCreatePost}>Create Post</li>
-                          <li onClick={handleCreateAlbum}>Create Album</li>
-                        </ul>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+              <IconButton
+                aria-label="menu"
+                onClick={handleClick}
+              >
+                <img src={plus} alt="plus" className="header-icon" />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-button',
+                }}
+              >
+                <MenuItem onClick={() => { handleClose(); handleCreatePost(); }}>Create Post</MenuItem>
+                <MenuItem onClick={() => { handleClose(); handleCreateAlbum(); }}>Create Album</MenuItem>
+              </Menu>
             </li>
             <li>
               {userEmail && (

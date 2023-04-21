@@ -3,7 +3,7 @@ import Skeleton from "@mui/material/Skeleton"
 import axios from 'axios';
 import "./user_posts.css"
 
-export default function UserPosts({ friendID, selectedAlbum }) {
+export default function UserPosts({ friendID, selectedAlbum, albumDeleted, resetAlbumDeleted }) {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -26,6 +26,16 @@ export default function UserPosts({ friendID, selectedAlbum }) {
         }
     }, [selectedAlbum]);
 
+    // Handle album deletion effect
+    useEffect(() => {
+        console.log("albumDeleted effect triggered");
+        if (albumDeleted) {
+          setImages([]);
+          setLoading(true);
+          // Reset the albumDeleted state
+          resetAlbumDeleted();
+        }
+      }, [albumDeleted]);
 
     return (
         <div className="posts">

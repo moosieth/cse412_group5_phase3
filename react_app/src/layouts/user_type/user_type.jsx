@@ -3,12 +3,14 @@ import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Select from '@mui/material/Select';
 import axios from 'axios';
 import "./user_type.css"
 
 
-const Type = (props) => {
+const UserType = (props) => {
     const [selectedAction, setSelectedAction] = useState(1);
     const [album, setAlbum] = React.useState('');
     const [albums, setAlbums] = React.useState([]);
@@ -35,10 +37,28 @@ const Type = (props) => {
         props.onAlbumSelected(event.target.value);
     };
 
+    const handleDeleteClick = () => {
+        if (album) {
+          if (window.confirm("Are you sure you want to delete this album?")) {
+            axios.post("http://127.0.0.1:5000/removebyid", { target: "album", id: album }).then((response) => {
+              console.log(response);
+              // Refresh the album list
+              setAlbums(albums.filter((a) => a.id !== album));
+              setAlbum('');
+              props.onAlbumDeleted(null);
+            }).catch((error) => {
+              console.error("Error deleting the album:", error);
+            });
+          }
+        } else {
+          alert("Please select an album to delete.");
+        }
+    };
+
     return (
         <div>
             <div className='album-type'>
-                <Box sx={{ minWidth: 50 }}>
+                <Box display="flex" alignItems="center" sx={{ minWidth: 50 }}>
                     <FormControl fullWidth>
                         <InputLabel id="demo-simple-select-label">Album</InputLabel>
                         <Select
@@ -57,6 +77,9 @@ const Type = (props) => {
                             )}
                         </Select>
                     </FormControl>
+                    <IconButton aria-label="delete" onClick={handleDeleteClick}>
+                        <DeleteIcon className='delete_btn' />
+                    </IconButton>
                 </Box>
             </div>
             <div className='profile-type'>
@@ -74,4 +97,4 @@ const Type = (props) => {
     );
 };
 
-export default Type;
+export default UserType;

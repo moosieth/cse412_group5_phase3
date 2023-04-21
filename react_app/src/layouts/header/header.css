@@ -139,7 +139,12 @@
     transition: transform 0.3s ease, background-color 0.3s ease;
     background-color: transparent;
     border-radius: 40%;
+    outline: none;
   }
+
+  .MuiIconButton-root:focus-visible {
+    outline: none;
+  }  
 
   nav ul li:hover .header-icon {
     transform: scale(1.2);
