@@ -21,6 +21,7 @@ export default function SearchBar({ searchTerm, setSearchTerm, setShowUserSearch
         setShowComSearch(false);
     }
     const handlePhotoSearchClick = () => {
+        console.log(searchTerm);
         setShowUserSearch(false);
         setShowPhotoSearch(true);
         setShowComSearch(false);
@@ -63,9 +64,9 @@ export default function SearchBar({ searchTerm, setSearchTerm, setShowUserSearch
                         </div>
                     </li>
                     <div>
-                        <button type="button" onClick={() => handleUserSearchClick} id="searchTitleButton">Search for Users</button>
-                        <button type="button" onClick={() => handlePhotoSearchClick} id="searchAuthorButton">Search for Photos by Tags</button>
-                        <button type="button" onClick={() => handleComSearchClick} id="searchAuthorButton">Search for Comments</button>
+                        <button className="querytype_button" onClick={() => handleUserSearchClick()} id="searchUserButton">Search for Users</button>
+                        <button className="querytype_button" onClick={() => handlePhotoSearchClick()} id="searchPhotoButton">Search for Photos by Tags</button>
+                        <button className="querytype_button" onClick={() => handleComSearchClick()} id="searchComButton">Search for Comments</button>
                     </div>
                 </form>
             </div>

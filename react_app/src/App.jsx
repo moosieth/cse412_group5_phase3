@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Welcome from "./components/login_page/login_page";
 import SNS from "./components/sns_page/sns_page";
 import CreateAccount from "./components/create_page/create_page";
+import SearchResults from "./components/search_page/search";
 
 function withAuthentication(WrappedComponent) {
   return function (props) {
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="/" element={<Welcome />} />
         <Route path="/social-network-service" element={<ProtectedSNS />} />
         <Route path="/create-account" element={<CreateAccount />} />
+        <Route path="/search" element={<SearchResults />} />
       </Routes>
     </Router>
   );

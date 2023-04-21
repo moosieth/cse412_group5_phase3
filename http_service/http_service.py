@@ -286,7 +286,7 @@ def photobytag():
         subQueries[i] = f'SELECT Tag.photoID, COUNT(*) AS num FROM Photo JOIN Tag ON Photo.photoID = Tag.photoID WHERE Tag.name LIKE "%{allNames[i]}%" GROUP BY Tag.photoID'
         print(subQueries[i])
 
-    masterQuery = f'SELECT total_matches.photoID, Photo.caption, Photo.data, SUM(num) FROM ('
+    masterQuery = f'SELECT total_matches.photoID, Photo.caption, Photo.data, SUM(num), Album.userID FROM ('
 
     for i, q in enumerate(subQueries):
         masterQuery += q
@@ -294,7 +294,7 @@ def photobytag():
             masterQuery += f' UNION ALL '
 
 
-    masterQuery += f') AS total_matches JOIN Photo ON total_matches.photoID = Photo.photoID GROUP BY total_matches.photoID ORDER BY SUM(num) DESC'
+    masterQuery += f') AS total_matches JOIN (Photo JOIN Album ON Photo.albumID = Album.albumID) ON total_matches.photoID = Photo.photoID GROUP BY total_matches.photoID ORDER BY SUM(num) DESC'
 
     cursor.execute(masterQuery)
     tuples = cursor.fetchall()
@@ -302,7 +302,7 @@ def photobytag():
     if(tuples):
         return jsonify(tuples)
     else:
-        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+        return json.dumps({'success':False}), 200, {'ContentType':'application/json'}
 
 
 @app.route('/myphotosbytag', methods=['GET'])

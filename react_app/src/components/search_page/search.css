@@ -240,13 +240,27 @@ nav ul li:hover .header-icon {
   transform: scale(1.2);
 }
 
+.querytype_button {
+  font-family: 'Roboto', sans-serif;
+  padding: 10px 20px;
+  margin: 10px;
+  background-color: #000000;
+  border: none;
+  color: #ffffff;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.querytype_buton:hover {
+  background-color: #5c6161;
+}
+
 button {
   font-family: 'Roboto', sans-serif;
   padding: 10px 20px;
   margin: 10px;
   background-color: #1d1313;
   border: none;
-  color: #ffffff;
+  color: #000000;
   border-radius: 20px;
   cursor: pointer;
 }
@@ -262,4 +276,137 @@ select {
   background-color: #ffffff;
   border-radius: 20px;
   outline: none;
+}
+
+.user_email {
+  font-size: 16px;
+}
+
+.box{
+  margin: 0 auto;
+  max-width: 600px !important;
+  width: 100%; /* add this */
+  padding: 0 20px; /* add this */
+  /* height: 100%; */
+}
+
+.everything_wrapper{
+  display: flex;
+  overflow-y: scroll;
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
+  height: 100%;
+}
+
+.everything_wrapper-webkit-scrollbar{
+  display: none;
+}
+
+.leaderboard_wrapper {
+  flex: 0 0 25%;
+  margin-right: 100px;
+}
+
+.friend-rec_wrapper {
+  flex: 0 0 20%;
+  margin-left: 100px;
+}
+
+.post {
+  max-width: 530px !important;
+  background-color: white;
+  border: 1px solid lightgray;
+  margin-bottom: 45px;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  width: 100%; 
+}
+
+.post_container {
+  max-width: 530px !important;
+  padding-top: 50px;
+  position: relative;
+}
+
+.hide-scrollbar {
+  overflow: hidden;
+}
+
+.show-scrollbar {
+  overflow: auto;
+}
+
+.post_image {
+  width: 100%;
+  object-fit: contain;
+  border-top: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
+}
+
+.post_text {
+  font-weight: normal;
+  padding: 15px 20px;
+}
+
+.post_header {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+}
+
+.post_avatar {
+  margin-right: 10px;
+}
+
+/* For the gap between username and the caption */
+.caption_text {
+  margin-left: 7px; 
+}
+
+/* For handeling the enlarged post*/
+.enlarged_post {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.enlarged_post_content {
+  background-color: white;
+  border: 1px solid lightgray;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  width: 60%;
+  max-width: 700px;
+}  
+
+.blurred_background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}
+
+.close_button {
+  position: absolute;
+  top: 100px;
+  right: 20px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+
+section {
+  margin-top: 20px;
+  display: inline-block;
+  vertical-align: top;
 }
