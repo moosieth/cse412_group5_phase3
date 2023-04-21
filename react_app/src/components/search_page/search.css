@@ -107,6 +107,10 @@ nav ul li {
   margin: 0 1rem;
 }
 
+.form-container {
+  padding-top: 175px;
+}
+
 /* Styles for the icon images */
 .header-logo {
   width: 170px;

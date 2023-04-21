@@ -14,7 +14,7 @@ export default function UserSearch(props) {
         console.log(splitTerm[0]);
         console.log(splitTerm[1]);
         const response = await axios.get("http://127.0.0.1:5000/searchuser", { params: { fName: splitTerm[0], lName: splitTerm[1] } });
-        // wait to fetch the email of each photos
+        // wait to fetch the email of each user
         const usersWithUserEmails = await Promise.all(
             response.data.map(async (user) => {
                 const userResponse = await axios.get("http://127.0.0.1:5000/userbyid", {
@@ -73,6 +73,81 @@ export default function UserSearch(props) {
         };
     }
     return (
-        <span> This will be a query run on users</span>
+        <div className="everything_wrapper">
+            <section className="box">
+                <div className="content_wrapper" >
+                    <div className={`post_container ${scrollbarVisible ? "show-scrollbar" : "hide-scrollbar"}`}
+                        onScroll={handleScroll}>
+                        {users.map((user) => (
+                            <motion.div
+                                className="post"
+                                key={user[0]}
+                                layoutId={user[0]}
+                                onClick={() => setSelectedId(user[0])}
+                            >
+                                <div className="post_header">
+                                    <Avatar
+                                        className="post_avatar"
+                                        {...stringAvatar(user.userEmail)}
+                                        onClick={() => {
+                                            props.setFriendID(user[0]);
+                                            props.setShowUserPage(true);
+                                        }}
+                                    />
+                                    <h4>{user.userEmail}</h4>
+                                </div>
+                                <h4 className="post_text">
+                                    <strong className="user_name">{user.userEmail}</strong>{" "}
+                                    <span className="caption_text">{user[1]} {user[2]}</span>
+                                </h4>
+                            </motion.div>
+                        ))}
+                    </div>
+                    <br />
+                </div>
+
+
+                <AnimatePresence>
+                    {selectedId && (
+                        <>
+                            <motion.div
+                                className="blurred_background"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setSelectedId(null)}
+                            ></motion.div>
+                            <motion.div
+                                className="enlarged_post"
+                                layoutId={selectedId}
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                            >
+                                {users
+                                    .filter((user) => user[0] === selectedId)
+                                    .map((user) => (
+                                        <div key={user[0]} className="enlarged_post_content">
+                                            <div className="post_header">
+                                                <Avatar className="post_avatar" {...stringAvatar(user.userEmail)} />
+                                                <h5 className="user_email">{user.userEmail}</h5>
+                                            </div>
+                                            <h4 className="post_text">
+                                                <strong className="user_name">{user.userEmail}</strong> <span className="caption_text">{user[1]} {user[2]}</span>
+                                            </h4>
+                                        </div>
+                                    ))}
+                                <motion.img
+                                    src={xmark}
+                                    alt="Close"
+                                    className="close_button"
+                                    onClick={() => setSelectedId(null)}
+                                />
+                            </motion.div>
+                        </>
+                    )}
+                </AnimatePresence>
+            </section>
+        </div>
     );
 }
