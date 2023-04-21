@@ -10,25 +10,21 @@ export default function PhotoSearch(props) {
     const [scrollbarVisible, setScrollbarVisible] = useState(false);
 
     const fetchPhotos = async () => {
-        try {
-            const response = await axios.get("http://127.0.0.1:5000/photobytag", { params: { names: props.searchTerm } });
-            // wait to fetch the email of each photos
-            const photosWithUserEmails = await Promise.all(
-                response.data.map(async (photo) => {
-                    const userResponse = await axios.get("http://127.0.0.1:5000/userbyid", {
-                        params: { userID: photo[4] },
-                    });
-
-                    console.log(photo);
-                    const userEmail = userResponse.data[0][6];
-                    // return a new object with the email
-                    return { ...photo, userEmail };
-                })
-            );
-            setPhotos(photosWithUserEmails);
-        } catch (error) {
-            console.log(error);
-        }
+        console.log(props.searchTerm);
+        const response = await axios.get("http://127.0.0.1:5000/photobytag", { params: { names: props.searchTerm } });
+        // wait to fetch the email of each photos
+        const photosWithUserEmails = await Promise.all(
+            response.data.map(async (photo) => {
+                const userResponse = await axios.get("http://127.0.0.1:5000/userbyid", {
+                    params: { userID: photo[4] },
+                });
+                console.log(photo);
+                const userEmail = userResponse.data[0][6];
+                // return a new object with the email
+                return { ...photo, userEmail };
+            })
+        );
+        setPhotos(photosWithUserEmails);
     };
     const handleScroll = () => {
         setScrollbarVisible(true);
