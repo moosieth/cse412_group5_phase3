@@ -25,14 +25,6 @@ export default function CreatePost(props) {
     }
   };
 
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) {
-      return parts.pop().split(";").shift();
-    }
-  };
-
   const handleClose = () => {
     props.setShowCreatePost(false);
   };
@@ -44,16 +36,6 @@ export default function CreatePost(props) {
       setCurTag("");
     }
   }
-
-  const fetchAlbums = async () => {
-    const userID = getCookie("userID");
-
-    axios.get("http://127.0.0.1:5000/searchalbum", {
-      params: { userID: userID, name: "" }
-    }).then((response) => {
-      setAlbums(response.data);
-    })
-  };
 
   const handleTagChange = (event) => {
     setCurTag(event.target.value);
@@ -67,14 +49,6 @@ export default function CreatePost(props) {
     setAlbumChosen(event.target.value);
   };
 
-  const handleSpace = (e) => {
-    if (e.keyCode === 32) {
-      setTags(oldTags => [...oldTags, curTag]);
-      console.log(tags);
-      setCurTag("");
-    }
-  }
-
 
   const fetchAlbums = async () => {
     const userID = getCookie("userID");
@@ -84,14 +58,6 @@ export default function CreatePost(props) {
     }).then((response) => {
       setAlbums(response.data);
     })
-  };
-
-  const handleTagChange = (event) => {
-    setCurTag(event.target.value);
-  };
-
-  const handleAlbumChange = (event) => {
-    setAlbumChosen(event.target.value);
   };
 
   const handleDrop = (event) => {
