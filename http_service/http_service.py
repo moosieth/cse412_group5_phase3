@@ -8,6 +8,7 @@ import datetime
 import mysql.connector
 import firebase_admin
 from firebase_admin import credentials, storage, exceptions
+import bcrypt
 
 app = Flask(__name__)
 CORS(app)               # Allows Apps from same origin to access this API
@@ -28,11 +29,13 @@ def home():
 @app.route('/register', methods=['POST'])
 def register():
     newUser = request.json
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(newUser["pw"].encode(), salt)
 
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    query = f'INSERT INTO User (fName, lName, town, gender, pw, email, dob) VALUES("{newUser["fName"]}", "{newUser["lName"]}", "{newUser["town"]}", "{newUser["gender"]}", "{newUser["pw"]}", "{newUser["email"]}", "{newUser["dob"]}")'
+    query = f'INSERT INTO User (fName, lName, town, gender, pw, email, dob) VALUES("{newUser["fName"]}", "{newUser["lName"]}", "{newUser["town"]}", "{newUser["gender"]}", "{hashed_password.decode()}", "{newUser["email"]}", "{newUser["dob"]}")'
     print(query)
 
     try:
@@ -51,15 +54,23 @@ def register():
 def login():
     email = request.args.get('email')
     password = request.args.get('password')
+    byte_password = password.encode()
 
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    cursor.execute(f'SELECT userID FROM User WHERE email="{email}" AND pw="{password}"')
-    tuples = cursor.fetchall()
+    try:
+        cursor.execute(f'SELECT pw FROM User WHERE email="{email}"')
+    except mysql.connector.Error as e:
+        return json.dumps({'success':False}), 400, {'ContentTYpe':'application/json'}
+    
+    stored_password_tuple = cursor.fetchone()
+    stored_password = stored_password_tuple[0]
 
-    if(tuples):
-        return jsonify(tuples)
+
+    if(bcrypt.checkpw(byte_password, stored_password.encode())):
+        cursor.execute(f'SELECT userID FROM User WHERE email="{email}" AND pw="{stored_password}"')
+        return jsonify(cursor.fetchall())
     else:
         return json.dumps({'success':False}), 401, {'ContentType':'application/json'}
 
@@ -286,7 +297,7 @@ def photobytag():
         subQueries[i] = f'SELECT Tag.photoID, COUNT(*) AS num FROM Photo JOIN Tag ON Photo.photoID = Tag.photoID WHERE Tag.name LIKE "%{allNames[i]}%" GROUP BY Tag.photoID'
         print(subQueries[i])
 
-    masterQuery = f'SELECT total_matches.photoID, Photo.caption, Photo.data, SUM(num) FROM ('
+    masterQuery = f'SELECT total_matches.photoID, Photo.caption, Photo.data, SUM(num), Album.userID FROM ('
 
     for i, q in enumerate(subQueries):
         masterQuery += q
@@ -294,7 +305,7 @@ def photobytag():
             masterQuery += f' UNION ALL '
 
 
-    masterQuery += f') AS total_matches JOIN Photo ON total_matches.photoID = Photo.photoID GROUP BY total_matches.photoID ORDER BY SUM(num) DESC'
+    masterQuery += f') AS total_matches JOIN (Photo JOIN Album ON Photo.albumID = Album.albumID) ON total_matches.photoID = Photo.photoID GROUP BY total_matches.photoID ORDER BY SUM(num) DESC'
 
     cursor.execute(masterQuery)
     tuples = cursor.fetchall()
@@ -302,7 +313,7 @@ def photobytag():
     if(tuples):
         return jsonify(tuples)
     else:
-        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+        return json.dumps({'success':False}), 200, {'ContentType':'application/json'}
 
 
 @app.route('/myphotosbytag', methods=['GET'])
@@ -382,8 +393,8 @@ def searchcom():
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    query1 = f'CREATE VIEW CommentSearch AS (SELECT userID FROM Comment WHERE content LIKE "%{content}%")'
-    query2 = f'SELECT User.fName, User.lName, COUNT(CommentSearch.userID) FROM User INNER JOIN CommentSearch ON User.userID = CommentSearch.userID GROUP BY fName, lName ORDER BY COUNT(CommentSearch.userID) DESC'
+    query1 = f'CREATE VIEW CommentSearch AS (SELECT userID FROM Comment WHERE content = "{content}")'
+    query2 = f'SELECT User.userID, User.fName, User.lName, COUNT(CommentSearch.userID) FROM User INNER JOIN CommentSearch ON User.userID = CommentSearch.userID GROUP BY CommentSearch.userID ORDER BY COUNT(CommentSearch.userID) DESC'
 
     cursor.execute(query1)
     cursor.execute(query2)
@@ -548,4 +559,3 @@ def combyphoto():
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", threaded=False)
-

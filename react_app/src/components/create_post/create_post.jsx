@@ -37,16 +37,6 @@ export default function CreatePost(props) {
     }
   }
 
-  const fetchAlbums = async () => {
-    const userID = getCookie("userID");
-
-    axios.get("http://127.0.0.1:5000/searchalbum", {
-      params: { userID: userID, name: "" }
-    }).then((response) => {
-      setAlbums(response.data);
-    })
-  };
-
   const handleTagChange = (event) => {
     setCurTag(event.target.value);
   };
@@ -57,6 +47,17 @@ export default function CreatePost(props) {
 
   const handleAlbumChange = (event) => {
     setAlbumChosen(event.target.value);
+  };
+
+
+  const fetchAlbums = async () => {
+    const userID = getCookie("userID");
+
+    axios.get("http://127.0.0.1:5000/searchalbum", {
+      params: { userID: userID, name: "" }
+    }).then((response) => {
+      setAlbums(response.data);
+    })
   };
 
   const handleDrop = (event) => {
@@ -187,6 +188,9 @@ export default function CreatePost(props) {
                   className="select_photo"
                 ></img>
               </div>
+              <div className="buttons">
+                <button onClick={handleClose}>Cancel</button>
+              </div>
             </>
           ) : (
             <div>
@@ -230,6 +234,14 @@ export default function CreatePost(props) {
                     className="tag-input"
                   />
                 </div>
+                <label htmlFor="tags">Caption:</label>
+                <input
+                  type="text"
+                  id="tag"
+                  value={curTag}
+                  onChange={handleTagChange}
+                  onKeyDown={handleSpace}
+                />
               </div>
               <div className="buttons">
                 <button type="submit">Post</button>
