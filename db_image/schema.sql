@@ -77,17 +77,17 @@ ALTER TABLE db.Photo AUTO_INCREMENT=300000;
 ALTER TABLE db.Comment AUTO_INCREMENT=400000;
 
 INSERT INTO db.User (fName, lName, town, gender, pw, email, dob) VALUES 
-	('Stephen','Strange','Manhattan','M','1ab2cd','s.strange@kamertaj.org','1987-02-15 00:00:00'),
-	('Tony','Stark','Miami','M','3ef4gh','stark@stark.com','1988-05-27 00:00:00'),
-	('Steve','Rogers','Brooklyn','M','steve','steve@gmail.com','1925-03-13 00:00:00'),
-	('Bruce','Banner','Dayton','M','bruce','bruce@gmail.com','1979-07-17 00:00:00'),
-	('Thor','Odinson','Asgard','M','thor','thor@gmail.com','1990-09-30 00:00:00'),
-	('Peter','Parker','Queens','M','peter','peter@gmail.com','2001-01-15 00:00:00'),
-	('Natasha','Romanoff','Moscow','F','nat','nat@gmail.com','1992-11-22 00:00:00'),
-	('Scott','Lang','Coral Gables','M','scott','scott@gmail.com','1989-10-10 00:00:00'),
-	('Steven','Grant','London','M','grant','steveng123@gmail.com','1992-09-19 00:00:00'),
-	('Marc','Spector','Cairo','M','spector','marc@gmail.com','1992-09-19 00:00:00'),
-	('Inql','App','Test','O','test','test@test.com','1900-01-01 00:00:00');
+	('Stephen','Strange','Manhattan','M','$2b$12$d8pobJahbuM9x2siX2HC6.GUvlzTzTpZ6pk.2AdYQLR0CjYZCYdFC','s.strange@kamertaj.org','1987-02-15 00:00:00'),
+	('Tony','Stark','Miami','M','$2b$12$r1If2.6fUqsKLKKLTkEdJOKZUiZWJf691H1ppxHFIe6FunqHWIhbC','stark@stark.com','1988-05-27 00:00:00'),
+	('Steve','Rogers','Brooklyn','M','$2b$12$St6VryAsA9YQYDU6rlLbauciDXRHbh6ayjTQUxORbWDwdzch21D/W','steve@gmail.com','1925-03-13 00:00:00'),
+	('Bruce','Banner','Dayton','M','$2b$12$DYJSoKKw3xT7UwXdzdL/w.DDfQD0CXB5QEATBksgtfrM89nILhlqi','bruce@gmail.com','1979-07-17 00:00:00'),
+	('Thor','Odinson','Asgard','M','$2b$12$AsWLriPbEX/LQzMldZ2G4.z2/CKM2JwBauzQyKevrNdgLhUjbv9.i','thor@gmail.com','1990-09-30 00:00:00'),
+	('Peter','Parker','Queens','M','$2b$12$mfOPCMTQLz61SdhR3efeVuXHRFE0pL033FbqV2WKHXsT0HPFXmyrm','peter@gmail.com','2001-01-15 00:00:00'),
+	('Natasha','Romanoff','Moscow','F','$2b$12$s2Vt.SaXLNKUhPWDXDJ0mOuCR3eHG7PqzZjL9WI7U12mfGwWzaeGG','nat@gmail.com','1992-11-22 00:00:00'),
+	('Scott','Lang','Coral Gables','M','$2b$12$h.10UambJqZ2aO/kvBY0BuOf0IDKCF2kBkDOY1T6C8JS5SRh9htoG','scott@gmail.com','1989-10-10 00:00:00'),
+	('Steven','Grant','London','M','$2b$12$J.xkE8IREQVqL54JPoQ8d.px04rnEeB2msJN5a1tT9/0MZRn1Yz9K','steveng123@gmail.com','1992-09-19 00:00:00'),
+	('Marc','Spector','Cairo','M','$2b$12$9zZ/JKA7xZ.gDcWWLaBLOO8n2m31/.5z3ZGdtgSe2OVlBCnbCSxlK','marc@gmail.com','1992-09-19 00:00:00'),
+	('Inql','App','Test','O','$2b$12$yMOwIBZr6X9eRIzJ0S3DZ.RPmPSofAekZYM8Ku6GEVOHk4fN6WSGW','test@test.com','1900-01-01 00:00:00');
 
 INSERT INTO db.Album (userID, name, dateCreated) VALUES 
 	(100009,'Art','2023-01-30 00:00:00'),

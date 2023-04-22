@@ -8,6 +8,7 @@ import datetime
 import mysql.connector
 import firebase_admin
 from firebase_admin import credentials, storage, exceptions
+import bcrypt
 
 app = Flask(__name__)
 CORS(app)               # Allows Apps from same origin to access this API
@@ -28,11 +29,13 @@ def home():
 @app.route('/register', methods=['POST'])
 def register():
     newUser = request.json
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(newUser["pw"].encode(), salt)
 
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    query = f'INSERT INTO User (fName, lName, town, gender, pw, email, dob) VALUES("{newUser["fName"]}", "{newUser["lName"]}", "{newUser["town"]}", "{newUser["gender"]}", "{newUser["pw"]}", "{newUser["email"]}", "{newUser["dob"]}")'
+    query = f'INSERT INTO User (fName, lName, town, gender, pw, email, dob) VALUES("{newUser["fName"]}", "{newUser["lName"]}", "{newUser["town"]}", "{newUser["gender"]}", "{hashed_password.decode()}", "{newUser["email"]}", "{newUser["dob"]}")'
     print(query)
 
     try:
@@ -51,15 +54,23 @@ def register():
 def login():
     email = request.args.get('email')
     password = request.args.get('password')
+    byte_password = password.encode()
 
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
-    cursor.execute(f'SELECT userID FROM User WHERE email="{email}" AND pw="{password}"')
-    tuples = cursor.fetchall()
+    try:
+        cursor.execute(f'SELECT pw FROM User WHERE email="{email}"')
+    except mysql.connector.Error as e:
+        return json.dumps({'success':False}), 400, {'ContentTYpe':'application/json'}
+    
+    stored_password_tuple = cursor.fetchone()
+    stored_password = stored_password_tuple[0]
 
-    if(tuples):
-        return jsonify(tuples)
+
+    if(bcrypt.checkpw(byte_password, stored_password.encode())):
+        cursor.execute(f'SELECT userID FROM User WHERE email="{email}" AND pw="{stored_password}"')
+        return jsonify(cursor.fetchall())
     else:
         return json.dumps({'success':False}), 401, {'ContentType':'application/json'}
 
@@ -548,4 +559,3 @@ def combyphoto():
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", threaded=False)
-
