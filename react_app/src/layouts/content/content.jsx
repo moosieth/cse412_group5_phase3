@@ -27,6 +27,7 @@ export default function Content(props) {
   const [scrollbarVisible, setScrollbarVisible] = useState(false);
   const [likedUsers, setLikedUsers] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [focusedTags, setFocusedTags] = useState([]);
 
 
 
@@ -82,23 +83,23 @@ export default function Content(props) {
   function stringToColor(string) {
     let hash = 0;
     let i;
-  
+
     /* eslint-disable no-bitwise */
     for (i = 0; i < string.length; i += 1) {
       hash = string.charCodeAt(i) + ((hash << 5) - hash);
     }
-  
+
     let color = '#';
-  
+
     for (i = 0; i < 3; i += 1) {
       const value = (hash >> (i * 8)) & 0xff;
       color += `00${value.toString(16)}`.slice(-2);
     }
     /* eslint-enable no-bitwise */
-  
+
     return color;
   }
-  
+
   // This will get the first letter of email and the domain as the initial
   function stringAvatar(email) {
     const [name, domain] = email.split('@');
@@ -178,10 +179,9 @@ export default function Content(props) {
       console.error("Error fetching likes: ", error);
     }
   }
-   
+
   async function fetchUsersWhoLikedPhoto(thePhotoID) {
     try {
-      console.log("Your are at fetchUsersWhoLikedPhoto");
       const response = await axios.get('http://127.0.0.1:5000/wholikes', { params: { photoID: thePhotoID } });
       const users = response.data;
       if (Array.isArray(users)) {
@@ -195,19 +195,34 @@ export default function Content(props) {
       console.error("Error fetching likes: ", error);
     }
   }
-  
-  
+
+  async function fetchTagsForPhoto(photoID) {
+    try {
+      const response = await axios.get('http://127.0.0.1:5000/istaggedby', { params: { photoID: photoID } });
+      const tags = response.data
+      if (Array.isArray(tags)) {
+        console.log(tags);
+        setFocusedTags(tags);
+      } else {
+        console.log("Response is not an array: ", tags);
+      }
+    } catch (error) {
+      console.error("Error fetching likes: ", error);
+    }
+  }
+
+
   function renderUsersAvatars(users) {
     if (!Array.isArray(users) || users.length === 0) {
       return;
     }
-  
+
     const avatars = users.map(user => (
       <Avatar key={user[0]} className="post_avatar" {...stringAvatar(user[3])} />
     ));
-  
+
     const container = document.getElementById('liked_users_avatars');
-  
+
     if (unstable_createRoot) {
       const root = unstable_createRoot(container);
       root.render(
@@ -224,14 +239,14 @@ export default function Content(props) {
       );
     }
   }
-  
+
 
   // Add a new function to handle comment submission
   async function handleCommentSubmit(e) {
     e.preventDefault();
     const theUserID = parseInt(getCookie("userID"));
     const dateCreated = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    
+
     await axios.post('http://127.0.0.1:5000/add', {
       target: "comment",
       content: commentText,
@@ -241,12 +256,12 @@ export default function Content(props) {
     });
 
     // Update the local state with the new comment
-  if (Array.isArray(photoComments)) {
-    setPhotoComments([...photoComments, [null, commentText, theUserID]]);
-  } else {
-    setPhotoComments([[null, commentText, theUserID]]);
-  }
-    
+    if (Array.isArray(photoComments)) {
+      setPhotoComments([...photoComments, [null, commentText, theUserID]]);
+    } else {
+      setPhotoComments([[null, commentText, theUserID]]);
+    }
+
     // Clear the comment input
     setCommentText('');
   }
@@ -254,7 +269,7 @@ export default function Content(props) {
   // For deleting a photo(post)
   async function handleDeletePost(photoID, ownerID) {
     const loggedInUserID = parseInt(getCookie("userID"));
-  
+
     // Compare the photo owner's userID with the userID saved in the cookie
     if (loggedInUserID === ownerID) {
       // If the userIDs match, ask for confirmation before deleting the post
@@ -277,11 +292,11 @@ export default function Content(props) {
   const handleAvatarClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
+
 
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -293,54 +308,55 @@ export default function Content(props) {
 
   return (
     <div className="everything_wrapper">
-        <section className="leaderboard_wrapper">
-          <div>
-            <Leaderboard />
-          </div>
-        </section>
-        <section className="box">
-          <div className="content_wrapper" >
-            <div className={`post_container ${scrollbarVisible ? "show-scrollbar" : "hide-scrollbar"}`}
-              onScroll={handleScroll}>
-              {photos.map((photo) => (
-                <motion.div
-                  className="post"
-                  key={photo[0]}
-                  layoutId={photo[0]}
-                  onClick={() => {
-                    setSelectedId(photo[0]);
-                    getLikes(photo[0]);
-                    didUserLike(photo[0]);
-                    viewComments(photo[0]);
-                  }}
-                >
-                  <div className="post_header">
-                    <Avatar
-                      className="post_avatar"
-                      {...stringAvatar(photo.userEmail)}
-                      onClick={() => {
-                        props.setFriendID(photo[4]);
-                        props.setShowUserPage(true);
-                      }}
-                    />
-                    <h4>{photo.userEmail}</h4>
-                  </div>
-                  <img
-                    className="post_image"
-                    src={decodeURIComponent(photo[3]).replace("https://storage.googleapis.com/group5-inql.appspot.com/", "")}
-                    alt="Recent post"
+      <section className="leaderboard_wrapper">
+        <div>
+          <Leaderboard />
+        </div>
+      </section>
+      <section className="box">
+        <div className="content_wrapper" >
+          <div className={`post_container ${scrollbarVisible ? "show-scrollbar" : "hide-scrollbar"}`}
+            onScroll={handleScroll}>
+            {photos.map((photo) => (
+              <motion.div
+                className="post"
+                key={photo[0]}
+                layoutId={photo[0]}
+                onClick={() => {
+                  setSelectedId(photo[0]);
+                  getLikes(photo[0]);
+                  fetchTagsForPhoto(photo[0]);
+                  didUserLike(photo[0]);
+                  viewComments(photo[0]);
+                }}
+              >
+                <div className="post_header">
+                  <Avatar
+                    className="post_avatar"
+                    {...stringAvatar(photo.userEmail)}
+                    onClick={() => {
+                      props.setFriendID(photo[4]);
+                      props.setShowUserPage(true);
+                    }}
                   />
-                  <h4 className="post_text">
-                    <strong className="user_name">{photo.userEmail}</strong>{" "}
-                    <span className="caption_text">{photo[1]}</span>
-                  </h4>
-                </motion.div>
-              ))}
-            </div>
-            <br />
+                  <h4>{photo.userEmail}</h4>
+                </div>
+                <img
+                  className="post_image"
+                  src={decodeURIComponent(photo[3]).replace("https://storage.googleapis.com/group5-inql.appspot.com/", "")}
+                  alt="Recent post"
+                />
+                <h4 className="post_text">
+                  <strong className="user_name">{photo.userEmail}</strong>{" "}
+                  <span className="caption_text">{photo[1]}</span>
+                </h4>
+              </motion.div>
+            ))}
           </div>
+          <br />
+        </div>
 
-          <AnimatePresence>
+        <AnimatePresence>
           {selectedId && (
             <>
               <motion.div
@@ -380,7 +396,7 @@ export default function Content(props) {
                                     props.setFriendID(photo[4]);
                                     props.setShowUserPage(true);
                                   }}
-                                /> 
+                                />
                                 <h5 className="user_email">{photo.userEmail}</h5>
                               </div>
                               <div className="detail-post_caption">
@@ -392,7 +408,7 @@ export default function Content(props) {
                                 <ul className="commentObj">
                                   {photoComments && Array.isArray(photoComments) && photoComments.map((comment, index) => (
                                     <li key={index}>
-                                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start'}}>
+                                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                                         {commentors[index] && (
                                           <Avatar className="post_avatar" {...stringAvatar(commentors[index])} />
                                         )}
@@ -402,6 +418,14 @@ export default function Content(props) {
                                   ))}
                                 </ul>
                               </motion.div>
+                            </div>
+                            <div className="detail-post_wrap"> Tags
+                              {focusedTags.map((tag) => (
+                                <span className="tag" onClick={() => {
+                                  props.setSelectedTag(tag[0]);
+                                  props.setShowTagPage(true);
+                                }}>{tag[0]}</span>
+                              ))}
                             </div>
                             <div className="detail-post_wrap">
                               <div className="detail-post_function">
@@ -454,7 +478,7 @@ export default function Content(props) {
                             </div>
                           </div>
                         </div>
-                      </div> 
+                      </div>
                     </div>
                   ))}
                 <motion.img
@@ -463,19 +487,19 @@ export default function Content(props) {
                   className="close_button"
                   onClick={() => setSelectedId(null)}
                 />
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>
-        </section>
-        <section className="friend-rec_wrapper">
-          <div>
-            <Friend_rec />
-          </div>
-          <div>
-            <TrendTags setSelectedTag={props.setSelectedTag} setShowTagPage={props.setShowTagPage}/>
-          </div>
-        </section>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+      </section>
+      <section className="friend-rec_wrapper">
+        <div>
+          <Friend_rec />
+        </div>
+        <div>
+          <TrendTags setSelectedTag={props.setSelectedTag} setShowTagPage={props.setShowTagPage} />
+        </div>
+      </section>
     </div>
   );
 }
