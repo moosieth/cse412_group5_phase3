@@ -20,7 +20,7 @@ To run:
    1. Navigate to build folder
    2. Make sure there are no docker images active on your Docker dashboard
          - if so delete any that are showing
-   3. Run command below to start container and application
+   3. Run command below to start container and application in detach mode
    ```sh 
    docker-compose up -d
    ```
