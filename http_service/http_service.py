@@ -47,7 +47,7 @@ def register():
             return (
                 json.dumps({"success": False}),
                 403,
-                {"ContentTYpe": "application/json"},
+                {"ContentType": "application/json"},
             )
     except:
         return json.dumps({"success": False}), 402, {"ContentTYpe": "application/json"}
@@ -166,7 +166,7 @@ def friendrec():
 
     # TODO: Needs to ensure that does not reccomend friends that user already has made
     query1 = f"CREATE VIEW {uid}mutuals AS (SELECT friendID FROM Friends WHERE userID IN (SELECT friendID FROM Friends WHERE userID={uid}) AND friendID != {uid})"
-    query2 = f"SELECT userID, fName, lName, COUNT({uid}mutuals.friendID) FROM User INNER JOIN {uid}mutuals WHERE User.userID = {uid}mutuals.friendID GROUP BY userID ORDER BY COUNT({uid}mutuals.friendID) DESC"
+    query2 = f"SELECT userID, fName, lName, COUNT({uid}mutuals.friendID) FROM User INNER JOIN {uid}mutuals WHERE User.userID = {uid}mutuals.friendID AND userID NOT IN (SELECT friendID FROM Friends WHERE userID = {uid}) GROUP BY userID ORDER BY COUNT({uid}mutuals.friendID) DESC"
 
     cursor.execute(query1)
     cursor.execute(query2)
