@@ -410,6 +410,25 @@ def photobytag():
         return jsonify(tuples)
     else:
         return json.dumps({"success": False}), 200, {"ContentType": "application/json"}
+    
+@app.route("/istaggedby", methods=["GET"])
+def istaggedby():
+    pid = request.args.get("photoID")
+
+    con = mysql.connector.connect(
+        user="root", password="password", host="database", database="db"
+    )
+    cursor = con.cursor()
+
+    query = f'SELECT Tag.name FROM Tag WHERE Tag.photoID = {pid}'
+
+    cursor.execute(query)
+    tuples = cursor.fetchall()
+
+    if tuples:
+        return jsonify(tuples)
+    else:
+        return json.dumps({"success": False}), 200, {"ContentType": "application/json"}
 
 
 @app.route("/myphotosbytag", methods=["GET"])

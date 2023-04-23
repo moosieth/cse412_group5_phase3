@@ -290,3 +290,14 @@
     display: inline-block;
     vertical-align: top;
   }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e0e0e0;
+    border-radius: 16px;
+    padding: 4px 12px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
