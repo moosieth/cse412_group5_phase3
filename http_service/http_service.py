@@ -557,5 +557,21 @@ def combyphoto():
     else:
         return json.dumps({'success':False}), 200, {'ContentType':'application/json'}
 
+@app.route('/getfollowing', methods=['GET'])
+def getfollowing():
+    userId = request.args.get("userId")
+
+    con = mysql.connector.connect(user='root', passoword='password', host='database', database='db')
+    cursor = con.cursor()
+
+    query = f'SELECT friendID FROM Friends WHERE userID="{userId}"'
+    cursor.execute(query)
+    tuples = cursor.fetchall()
+
+    if(tuples):
+        return jsonify(tuples)
+    else:
+        return json.dumps({'success':False}), 200, {'ContentType':'application/json'}
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", threaded=False)
