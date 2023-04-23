@@ -39,7 +39,7 @@ export default function SNS() {
                         onAlbumDeleted={handleAlbumDeletion}
                         albumDeleted={albumDeleted}
                       /> 
-                      : showTagPage ? <TagPage selectedTag={selectedTag} setSelectedTag={setSelectedTag} setShowTagPage={setShowTagPage} />
+                      : showTagPage ? <TagPage setFriendID={setFriendID} setShowUserPage={setShowUserPage} selectedTag={selectedTag} setSelectedTag={setSelectedTag} setShowTagPage={setShowTagPage} />
                       : <Content setFriendID={setFriendID} setShowUserPage={setShowUserPage} setSelectedTag={setSelectedTag} setShowTagPage={setShowTagPage} />}
       <Footer />
       {showCreateAlbum && <CreateAlbum setShowCreateAlbum={setShowCreateAlbum} />}
