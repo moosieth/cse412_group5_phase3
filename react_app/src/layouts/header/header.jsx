@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from 'react-helmet';
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import axios from "axios";
 import logo from "../../data/logo.png";
 import house from "../../data/house.png";
@@ -10,9 +11,6 @@ import plus from "../../data/plus.png";
 import Avatar from "@mui/material/Avatar";
 import search from "../../data/search.png";
 import "./header.css";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import IconButton from "@mui/material/IconButton";
 
 
 export default function Header({ setShowCreatePost, setShowCreateAlbum, setShowUserPage, handleShowContent, setFriendID }) {
@@ -83,6 +81,10 @@ export default function Header({ setShowCreatePost, setShowCreateAlbum, setShowU
 
   const handleFollowList = (event) => {
     navigate("/view-followed-friends");
+  };
+
+  const handleDropdownClick = (event) => {
+    setShowDropdown((prevState) => !prevState);
   };
 
   // Functions for creating an avatar
@@ -167,23 +169,22 @@ export default function Header({ setShowCreatePost, setShowCreateAlbum, setShowU
                 </a>
               </li>
               <li>
-                <IconButton
-                  aria-label="menu"
-                  onClick={handleClick}
-                >
+                <a href="#" onClick={handleDropdownClick}>
                   <img src={plus} alt="plus" className="header-icon" />
-                </IconButton>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                  MenuListProps={{
-                    'aria-labelledby': 'basic-button',
-                  }}
+                </a>
+                <motion.div
+                  className={`dropdown-menu${showDropdown ? " show" : ""}`}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={showDropdown ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  <MenuItem onClick={() => { handleClose(); handleCreatePost(); }}>Create Post</MenuItem>
-                  <MenuItem onClick={() => { handleClose(); handleCreateAlbum(); }}>Create Album</MenuItem>
-                </Menu>
+                  <a href="#" onClick={handleCreatePost}>
+                    Create Post
+                  </a>
+                  <a href="#" onClick={handleCreateAlbum}>
+                    Create Album
+                  </a>  
+                </motion.div>
               </li>
               <li>
                 {userEmail && (

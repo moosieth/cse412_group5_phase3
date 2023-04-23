@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Select from '@mui/material/Select';
 import axios from 'axios';
+import trash from "../../data/trash.png"
 import "./user_type.css"
 
 
@@ -91,9 +92,15 @@ const UserType = (props) => {
                             )}
                         </Select>
                     </FormControl>
-                    {isCurUser ? <IconButton aria-label="delete" onClick={handleDeleteClick}>
-                        <DeleteIcon className='delete_btn' />
-                    </IconButton> : <div></div>}
+                    {isCurUser ? 
+                    <div className="trash_wrapper">
+                        <img
+                        src={trash}
+                        alt="trash icon"
+                        className="trash_delete"
+                        onClick={handleDeleteClick}
+                        />
+                    </div> : <div></div>}
                 </Box>
             </div>
             <div className='profile-type'>

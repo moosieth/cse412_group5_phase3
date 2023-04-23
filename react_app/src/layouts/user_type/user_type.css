@@ -14,12 +14,8 @@
     border-top: 1px solid #ccc;
 }
 
-.delete_btn {
-    padding-left: 20px;
-}
-
-.delete_btn:hover {
-    background-color: red;
+.trash_wrapper {
+    width: 1%;
 }
 
 .profile-type_item {
