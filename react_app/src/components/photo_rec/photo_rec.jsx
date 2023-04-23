@@ -105,6 +105,7 @@ export default function PhotoRecs(props) {
         return (
             <div className="everything_wrapper">
                 <section className="box">
+                    <p style={{fontSize: 20, fontWeight: 'large'}}><b>Photo Recommendations</b></p>
                     <div className="content_wrapper" >
                         <div className={`post_container ${scrollbarVisible ? "show-scrollbar" : "hide-scrollbar"}`}
                             onScroll={handleScroll}>
