@@ -205,7 +205,7 @@ INSERT INTO db.Comment (content, dateCreated, userID, photoID) VALUES
 	('Well heres another','2023-02-05 00:00:00',100004,300009),
 	('Finally! The last comment!','2023-02-05 00:00:00',100001,300006),
 	('Commenting for testing purposes','2023-03-05 00:00', 100002, 300010),
-	('I like this test post','2023-03-06 00:00', 100004, 300010)
+	('I like this test post','2023-03-06 00:00', 100004, 300010),
 	('righteous', '2023-04-23', 100002, 300032),
 	('righteous', '2023-04-23', 100002, 300032),
 	('righteous', '2023-04-23', 100002, 300032),
