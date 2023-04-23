@@ -15,6 +15,7 @@ const UserType = (props) => {
     const [album, setAlbum] = React.useState('');
     const [albums, setAlbums] = React.useState([]);
     const [selectedAlbum, setSelectedAlbum] = useState(null);
+    const [isCurUser, setIsCurUser] = useState(false);
     const { friendID, onItemClicked } = props;
 
     useEffect(() => {
@@ -36,24 +37,37 @@ const UserType = (props) => {
         setAlbum(event.target.value);
         props.onAlbumSelected(event.target.value);
     };
+    const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+            return parts.pop().split(";").shift();
+        }
+    };
 
     const handleDeleteClick = () => {
         if (album) {
-          if (window.confirm("Are you sure you want to delete this album?")) {
-            axios.post("http://127.0.0.1:5000/removebyid", { target: "album", id: album }).then((response) => {
-              console.log(response);
-              // Refresh the album list
-              setAlbums(albums.filter((a) => a.id !== album));
-              setAlbum('');
-              props.onAlbumDeleted(null);
-            }).catch((error) => {
-              console.error("Error deleting the album:", error);
-            });
-          }
+            if (window.confirm("Are you sure you want to delete this album?")) {
+                axios.post("http://127.0.0.1:5000/removebyid", { target: "album", id: album }).then((response) => {
+                    console.log(response);
+                    // Refresh the album list
+                    setAlbums(albums.filter((a) => a.id !== album));
+                    setAlbum('');
+                    props.onAlbumDeleted(null);
+                }).catch((error) => {
+                    console.error("Error deleting the album:", error);
+                });
+            }
         } else {
-          alert("Please select an album to delete.");
+            alert("Please select an album to delete.");
         }
     };
+
+    useEffect(() => {
+        if (getCookie("userID") === friendID) {
+            setIsCurUser(true);
+        }
+    });
 
     return (
         <div>
@@ -77,9 +91,9 @@ const UserType = (props) => {
                             )}
                         </Select>
                     </FormControl>
-                    <IconButton aria-label="delete" onClick={handleDeleteClick}>
+                    {isCurUser ? <IconButton aria-label="delete" onClick={handleDeleteClick}>
                         <DeleteIcon className='delete_btn' />
-                    </IconButton>
+                    </IconButton> : <div></div>}
                 </Box>
             </div>
             <div className='profile-type'>
