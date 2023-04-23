@@ -561,7 +561,7 @@ def combyphoto():
 def getfollowing():
     userId = request.args.get("userId")
 
-    con = mysql.connector.connect(user='root', passoword='password', host='database', database='db')
+    con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
     query = f'SELECT friendID FROM Friends WHERE userID="{userId}"'
