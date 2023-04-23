@@ -13,3 +13,14 @@ In short, this project contains:
 
 We're still developing, though! Come back later to see what it looks like once
 its finished!
+
+
+
+To run:
+   1. Navigate to build folder
+   2. Make sure there are no docker images active on your Docker dashboard
+         - if so delete any that are showing
+   3. Run command "docker-compose up -d" to start container and application
+   4. Make sure ports 5174, 5000, and 3306 are available to use
+   5. Navigate to localhost:5174
+   6. Once you are done to stop running run command "docker-compose down"
