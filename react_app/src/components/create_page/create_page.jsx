@@ -76,7 +76,6 @@ export default function CreateAccount() {
           value={formData.town}
           onChange={handleInputChange}
           className="create_input"
-          required
         />
 
         <div className="gender_box">
