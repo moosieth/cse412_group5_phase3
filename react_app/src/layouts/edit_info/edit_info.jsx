@@ -63,7 +63,6 @@ export default function EditInfo() {
             await axios.post("http://127.0.0.1:5000/updateinfo", requestData)
                 .then((reponse) => {
                     alert("Account Information Updated");
-                    navigate("/");
                 })
                 .catch((error) => {
                     alert("Something went wrong. Try again later");
@@ -72,6 +71,10 @@ export default function EditInfo() {
             console.error(error);
         }
     };
+
+    const handleReturn = () => {
+        navigate("/social-network-service")
+    }
 
     useEffect(() => {
         fetchInfo();
@@ -95,6 +98,7 @@ export default function EditInfo() {
                     requestData.changed = formData.fName;
                     handleSubmit();
                 }}>Change First Name</button>
+
                 <input
                     type="text"
                     placeholder={user[2]}
@@ -104,7 +108,11 @@ export default function EditInfo() {
                     className="create_input"
                     required
                 />
-                <button type="submit">Create Account</button>
+                <button onClick={() => {
+                    requestData.target = "lName";
+                    requestData.changed = formData.lName;
+                    handleSubmit();
+                }}>Change Last Name</button>
 
                 <input
                     type="text"
@@ -114,7 +122,11 @@ export default function EditInfo() {
                     onChange={handleInputChange}
                     className="create_input"
                 />
-                <button type="submit">Create Account</button>
+                <button onClick={() => {
+                    requestData.target = "town";
+                    requestData.changed = formData.town;
+                    handleSubmit();
+                }}>Change Town</button>
 
                 <div className="gender_box">
                     <RadioGroup
@@ -142,11 +154,15 @@ export default function EditInfo() {
                         />
                     </RadioGroup>
                 </div>
-                <button type="submit">Create Account</button>
+                <button onClick={() => {
+                    requestData.target = "gender";
+                    requestData.changed = formData.gender;
+                    handleSubmit();
+                }}>Change Gender</button>
 
                 <input
                     type="date"
-                    placeholder="Date of Birth"
+                    placeholder={user[7]}
                     name="dob"
                     value={formData.dob.slice(0, 10)}
                     onChange={handleInputChange}
@@ -155,7 +171,11 @@ export default function EditInfo() {
                     max={new Date().toISOString().slice(0, 10)}
                     step="1"
                 />
-                <button type="submit">Create Account</button>
+                <button onClick={() => {
+                    requestData.target = "dob";
+                    requestData.changed = formData.dob;
+                    handleSubmit();
+                }}>Change Date of Birth</button>
 
                 <input
                     type="password"
@@ -166,8 +186,15 @@ export default function EditInfo() {
                     className="create_input"
                     required
                 />
-                <button type="submit">Create Account</button>
+                <button onClick={() => {
+                    requestData.target = "pw";
+                    requestData.changed = formData.pw;
+                    handleSubmit();
+                }}>Change First Name</button>
             </form>
+            <button onClick={() => {
+                    handleReturn();
+                }}>Go Back</button>
         </div>
     );
 }
