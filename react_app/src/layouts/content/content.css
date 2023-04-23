@@ -108,6 +108,8 @@
     background-color: #fff;
     align-items: center;
     justify-content: center;
+    border-top-left-radius: 5%;
+    border-bottom-left-radius: 5%;
   }
 
   .detail-post_left img {
@@ -254,30 +256,6 @@
     cursor: pointer;
     outline: none;
   }
-
-
-
-  /* For handeling the enlarged post*/
-  /* .enlarged_post {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .enlarged_post_content {
-    background-color: white;
-    border: 1px solid lightgray;
-    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
-    border-radius: 0.5rem;
-    width: 60%;
-    max-width: 700px;
-  }   */
   
   .blurred_background {
     position: fixed;
