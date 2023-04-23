@@ -81,6 +81,10 @@ export default function Header({ setShowCreatePost, setShowCreateAlbum, setShowU
     navigate("/youmaylike");
   };
 
+  const handleFollowList = (event) => {
+    navigate("/view-followed-friends");
+  };
+
   // Functions for creating an avatar
   function stringToColor(string) {
     let hash = 0;
@@ -158,7 +162,7 @@ export default function Header({ setShowCreatePost, setShowCreateAlbum, setShowU
                 </a>
               </li>
               <li>
-                <a href="#">
+                <a href="#" onClick={handleFollowList}>
                   <img src={person} alt="person" className="header-icon" />
                 </a>
               </li>
