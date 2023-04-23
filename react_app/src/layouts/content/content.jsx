@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import ReactDOM, { unstable_createRoot } from 'react-dom';
 import axios from "axios";
 import Avatar from "@mui/material/Avatar";
+import AvatarGroup from "@mui/material/AvatarGroup";
 import "./content.css";
 import xmark from "../../data/xmark.png";
 import heart from "../../data/heart.png";
@@ -10,6 +12,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import Leaderboard from "../../components/leaderboard/leaderboard";
 import Friend_rec from "../../components/friend_rec/friend_rec";
 import TrendTags from "../../components/trending_tags/trending_tags";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+
 
 export default function Content(props) {
   const [numLikes, setNumLikes] = useState(null);
@@ -20,6 +25,9 @@ export default function Content(props) {
   const [photos, setPhotos] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [scrollbarVisible, setScrollbarVisible] = useState(false);
+  const [likedUsers, setLikedUsers] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
+
 
 
   useEffect(() => {
@@ -141,8 +149,11 @@ export default function Content(props) {
 
   async function didUserLike(thePhotoID) {
     try {
+      console.log("Your are at didUserLike");
+      console.log(thePhotoID);
       const theUserID = parseInt(getCookie("userID"));
       const response = await axios.get('http://127.0.0.1:5000/wholikes', { params: { photoID: thePhotoID } });
+      console.log("Check");
       const users = response.data;
       console.log("The userID is " + theUserID + " iterating through photo " + thePhotoID);
       let photoLiked = false;
@@ -161,12 +172,58 @@ export default function Content(props) {
       }
       setLikedPhoto(photoLiked);
       console.log("Liked photo is " + photoLiked);
+      fetchUsersWhoLikedPhoto(thePhotoID);
       return photoLiked;
     } catch (error) {
       console.error("Error fetching likes: ", error);
     }
   }
    
+  async function fetchUsersWhoLikedPhoto(thePhotoID) {
+    try {
+      console.log("Your are at fetchUsersWhoLikedPhoto");
+      const response = await axios.get('http://127.0.0.1:5000/wholikes', { params: { photoID: thePhotoID } });
+      const users = response.data;
+      if (Array.isArray(users)) {
+        setLikedUsers(users); // Set the likedUsers state
+        renderUsersAvatars(users);
+      } else {
+        console.log("Response is not an array: ", users);
+        renderUsersAvatars([]); // Set users to an empty array if it's not an array
+      }
+    } catch (error) {
+      console.error("Error fetching likes: ", error);
+    }
+  }
+  
+  
+  function renderUsersAvatars(users) {
+    if (!Array.isArray(users) || users.length === 0) {
+      return;
+    }
+  
+    const avatars = users.map(user => (
+      <Avatar key={user[0]} className="post_avatar" {...stringAvatar(user[3])} />
+    ));
+  
+    const container = document.getElementById('liked_users_avatars');
+  
+    if (unstable_createRoot) {
+      const root = unstable_createRoot(container);
+      root.render(
+        <AvatarGroup max={2}>
+          {avatars}
+        </AvatarGroup>
+      );
+    } else {
+      ReactDOM.render(
+        <AvatarGroup max={2}>
+          {avatars}
+        </AvatarGroup>,
+        container
+      );
+    }
+  }
   
 
   // Add a new function to handle comment submission
@@ -216,6 +273,15 @@ export default function Content(props) {
       alert("You can only delete your own posts.");
     }
   }
+
+  const handleAvatarClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  
 
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -344,6 +410,18 @@ export default function Content(props) {
                                 ) : (
                                   <img src={heart} alt="heart icon" className="heart_icon likeHeart" style={{ height: 40, width: 40, marginLeft: 0 }} onClick={() => handleLikeClick(selectedId)} />
                                 )}
+                                <div id="liked_users_avatars" onClick={handleAvatarClick}></div>
+                                <Menu
+                                  anchorEl={anchorEl}
+                                  open={Boolean(anchorEl)}
+                                  onClose={handleClose}
+                                >
+                                  {likedUsers.map(user => (
+                                    <MenuItem key={user[0]} onClick={handleClose}>
+                                      {user[1]} {user[2]}
+                                    </MenuItem>
+                                  ))}
+                                </Menu>
                                 <div className="trash_wrapper">
                                   <img
                                     src={trash}

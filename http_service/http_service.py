@@ -9,6 +9,7 @@ import mysql.connector
 import firebase_admin
 from firebase_admin import credentials, storage, exceptions
 import bcrypt
+from traceback import print_exc
 
 app = Flask(__name__)
 CORS(app)  # Allows Apps from same origin to access this API
@@ -634,16 +635,19 @@ def wholiked():
     )
     cursor = con.cursor()
 
-    query = f"SELECT User.userID, User.fName, User.lName FROM User INNER JOIN Likes ON User.userID = Likes.userID WHERE Likes.photoID={pid}"
+    try:
+        query = "SELECT User.userID, User.fName, User.lName, User.email FROM User INNER JOIN Likes ON User.userID = Likes.userID WHERE Likes.photoID=%s"
+        cursor.execute(query, (pid,))
 
-    cursor.execute(query)
+        tuples = cursor.fetchall()
 
-    tuples = cursor.fetchall()
-
-    if tuples:
-        return jsonify(tuples)
-    else:
-        return jsonify([])  # Return an empty array if there are no likes
+        if tuples:
+            return jsonify(tuples)
+        else:
+            return jsonify([])  # Return an empty array if there are no likes
+    except Exception as e:
+        print_exc()
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/justposted", methods=["GET"])
