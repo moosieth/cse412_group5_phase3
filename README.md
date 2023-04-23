@@ -26,4 +26,8 @@ To run:
    ```
    4. Make sure ports 5174, 5000, and 3306 are available to use
    5. Navigate to localhost:5174
-   6. Once you are done to stop running run command "docker-compose down"
+   6. Once you are done to stop running run command below
+```sh
+docker-compose down
+```
+
