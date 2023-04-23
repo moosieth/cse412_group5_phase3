@@ -4,22 +4,31 @@ import Header from "../../layouts/header/header";
 import Footer from "../../layouts/footer/footer";
 import axios from "axios";
 
-export default function FollowList({ userId }) {
+export default function FollowList() {
     const [showCreatePost, setShowCreatePost] = useState(false);
     const [showCreateAlbum, setShowCreateAlbum] = useState(false);
     const [showUserPage, setShowUserPage] = useState(false);
     const [friendID, setFriendID] = useState(null);
     const [numbers, setNumbers] = useState([]);
-
     const navigate = useNavigate();
 
     const handleShowContent = () => {
         navigate("/social-network-service");
     };
 
+    const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+            return parts.pop().split(";").shift();
+        }
+    };
+
+    const userID = getCookie("userID");
+
     useEffect(() => {
         axios.get('http://127.0.0.1:5000/getfollowing', {
-            params: { userId: 100001 }
+            params: { userId: userID }
         })
         .then(response => {
             setNumbers(response.data);
@@ -27,7 +36,7 @@ export default function FollowList({ userId }) {
         .catch(error => {
             console.error('There was a problem fetching the data:', error);
         });
-    }, [userId]);
+    }, [userID]);
 
     return (
         <div>
