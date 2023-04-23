@@ -304,6 +304,43 @@ def add():
         print(f"Error processing request: {e}")
         return jsonify(success=False, error=str(e)), 400
 
+@app.route("/updateinfo", methods=["POST"])
+def updateinfo():
+    data = request.json
+
+    salt = bcrypt.gensalt()
+    #hashed_password = bcrypt.hashpw(newUser["pw"].encode(), salt)
+
+    con = mysql.connector.connect(
+        user="root", password="password", host="database", database="db"
+    )
+    cursor = con.cursor()
+
+    if data["target"] == "fName":
+        query = f'UPDATE User SET fName = "{data["changed"]}" WHERE userID = {data["userID"]}'
+    elif data["target"] == "lName":
+        query = f'UPDATE User SET lName = "{data["changed"]}" WHERE userID = {data["userID"]}'
+    elif data["target"] == "town":
+        query = f'UPDATE User SET town = "{data["changed"]}" WHERE userID = {data["userID"]}'
+    elif data["target"] == "pw":
+        hashed_pw = bcrypt.hashpw(data["changed"].encode(), salt)
+        query = f'UPDATE User SET pw = "{hashed_pw}" WHERE userID = {data["userID"]}'
+    elif data["target"] == "dob":
+        query = f'UPDATE User SET dob = "{data["changed"]}" WHERE userID = {data["userID"]}'
+    else:
+        return json.dumps({"success": False}), 400, {"ContentType": "application/json"}
+
+    try:
+        cursor.execute(query)
+        con.commit()
+        cursor.close()
+        con.close()
+
+        return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
+    except mysql.connector.Error as e:
+        print("MYSQL EXECUTION ERROR: {}".format(e))
+        return json.dumps({"success": False}), 200, {"ContentType": "application/json"}
+
 
 @app.route("/removebyid", methods=["POST"])
 def removebyid():
