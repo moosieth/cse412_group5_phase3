@@ -582,7 +582,7 @@ def getfollowing():
     if(tuples):
         return jsonify(tuples)
     else:
-        return json.dumps({'success':False}), 200, {'ContentType':'application/json'}
+        return jsonify({'success': False, 'message': 'No data provided'}), 400
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", threaded=False)

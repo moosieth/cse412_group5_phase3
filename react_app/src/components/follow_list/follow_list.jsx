@@ -34,7 +34,7 @@ export default function FollowList() {
             setNumbers(response.data);
         })
         .catch(error => {
-            console.error('There was a problem fetching the data:', error);
+            alert("You do not follow anyone");
         });
     }, [userID]);
 
