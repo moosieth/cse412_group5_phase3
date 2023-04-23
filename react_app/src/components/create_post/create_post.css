@@ -181,25 +181,30 @@
 
   .tags-input-container {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    flex-direction: row; /* change to column */
     border: 1px solid #ccc;
     padding: 5px;
     min-height: 32px;
   }
   
-  .tag {
+  .tags-list {
     display: flex;
-    align-items: center;
-    background-color: #e0e0e0;
-    border-radius: 12px;
-    padding: 4px 8px;
-    margin-right: 5px;
+    flex-wrap: wrap;
     margin-bottom: 5px;
   }
   
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e0e0e0;
+    border-radius: 16px;
+    padding: 4px 12px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  
   .tag-input {
-    flex-grow: 1;
     border: none;
     outline: none;
   }
@@ -207,6 +212,8 @@
   .remove-tag {
     margin-left: 4px;
     cursor: pointer;
+    font-size: 12px;
   }
+  
   
   

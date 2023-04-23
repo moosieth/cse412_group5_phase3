@@ -188,9 +188,6 @@ export default function CreatePost(props) {
                   className="select_photo"
                 ></img>
               </div>
-              <div className="buttons">
-                <button onClick={handleClose}>Cancel</button>
-              </div>
             </>
           ) : (
             <div>
@@ -214,17 +211,19 @@ export default function CreatePost(props) {
                 </select>
                 <label htmlFor="tags">Tags:</label>
                 <div className="tags-input-container">
-                  {tags.map((tag) => (
-                    <span className="tag">
-                      {tag}
-                      <span
-                        className="remove-tag"
-                        onClick={() => handleRemoveTag(tag)}
-                      >
-                        &times;
+                  <div className="tags-list">
+                    {tags.map((tag) => (
+                      <span className="tag">
+                        {tag}
+                        <span
+                          className="remove-tag"
+                          onClick={() => handleRemoveTag(tag)}
+                        >
+                          &times;
+                        </span>
                       </span>
-                    </span>
-                  ))}
+                    ))}
+                  </div>
                   <input
                     type="text"
                     id="tag"
@@ -234,14 +233,6 @@ export default function CreatePost(props) {
                     className="tag-input"
                   />
                 </div>
-                <label htmlFor="tags">Caption:</label>
-                <input
-                  type="text"
-                  id="tag"
-                  value={curTag}
-                  onChange={handleTagChange}
-                  onKeyDown={handleSpace}
-                />
               </div>
               <div className="buttons">
                 <button type="submit">Post</button>

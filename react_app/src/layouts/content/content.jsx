@@ -25,6 +25,9 @@ export default function Content(props) {
   useEffect(() => {
     // Fetch commentors' email addresses when the component mounts
     const fetchCommentors = async () => {
+      if (!Array.isArray(photoComments)) {
+        return;
+      }
       const commentorEmails = await Promise.all(photoComments.map(comment => getCommentorEmail(comment[2])));
       setCommentors(commentorEmails);
     };
@@ -137,23 +140,34 @@ export default function Content(props) {
   }
 
   async function didUserLike(thePhotoID) {
-    const theUserID = parseInt(getCookie("userID"));
-    const response = await axios.get('http://127.0.0.1:5000/wholikes', { params: { photoID: thePhotoID } });
-    const users = response.data;
-    console.log("The userID is " + theUserID + " iterating through photo " + thePhotoID);
-    let photoLiked = false;
-    for (let i = 0; i < users.length; i++) {
-      console.log("Photo is liked by " + users[i][0]);
-      if (parseInt(users[i][0]) === theUserID) {
-        photoLiked = true;
-        console.log("Liked photo is " + photoLiked);
-        break;
+    try {
+      const theUserID = parseInt(getCookie("userID"));
+      const response = await axios.get('http://127.0.0.1:5000/wholikes', { params: { photoID: thePhotoID } });
+      const users = response.data;
+      console.log("The userID is " + theUserID + " iterating through photo " + thePhotoID);
+      let photoLiked = false;
+      if (Array.isArray(users)) {
+        for (let i = 0; i < users.length; i++) {
+          console.log("Photo is liked by " + users[i][0]);
+          if (parseInt(users[i][0]) === theUserID) {
+            photoLiked = true;
+            console.log("Liked photo is " + photoLiked);
+            break;
+          }
+        }
+      } else {
+        console.log("Response is not an array: ", users);
+        users = []; // Set users to an empty array if it's not an array
       }
+      setLikedPhoto(photoLiked);
+      console.log("Liked photo is " + photoLiked);
+      return photoLiked;
+    } catch (error) {
+      console.error("Error fetching likes: ", error);
     }
-    setLikedPhoto(photoLiked);
-    console.log("Liked photo is " + photoLiked);
-    return photoLiked;
   }
+   
+  
 
   // Add a new function to handle comment submission
   async function handleCommentSubmit(e) {
@@ -170,8 +184,11 @@ export default function Content(props) {
     });
 
     // Update the local state with the new comment
+  if (Array.isArray(photoComments)) {
     setPhotoComments([...photoComments, [null, commentText, theUserID]]);
-    setCommentors([...commentors, getCookie('email')]);
+  } else {
+    setPhotoComments([[null, commentText, theUserID]]);
+  }
     
     // Clear the comment input
     setCommentText('');
@@ -345,14 +362,16 @@ export default function Content(props) {
                             </div>
                             <div className="writing-comment">
                               <form onSubmit={handleCommentSubmit} className="comment_form">
-                                <input
-                                  type="text"
-                                  className="comment_input"
-                                  placeholder="Write a comment..."
-                                  value={commentText}
-                                  onChange={(e) => setCommentText(e.target.value)}
-                                />
-                                <button type="submit" className="comment_submit">Post</button>
+                                <div className="form-wrapper">
+                                  <input
+                                    type="text"
+                                    className="comment_input"
+                                    placeholder="Write a comment..."
+                                    value={commentText}
+                                    onChange={(e) => setCommentText(e.target.value)}
+                                  />
+                                  <button type="submit" className="comment_submit">Post</button>
+                                </div>
                               </form>
                             </div>
                           </div>

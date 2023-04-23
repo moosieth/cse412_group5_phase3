@@ -606,7 +606,7 @@ def wholiked():
     if tuples:
         return jsonify(tuples)
     else:
-        return json.dumps({"success": False}), 400, {"ContentType": "application/json"}
+        return jsonify([])  # Return an empty array if there are no likes
 
 
 @app.route("/justposted", methods=["GET"])

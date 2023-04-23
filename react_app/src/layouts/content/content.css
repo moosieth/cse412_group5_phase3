@@ -217,7 +217,42 @@
   }
 
   .writing-comment {
-    border-top: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .comment_form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .form-wrapper {
+    padding-bottom: 10px;
+  }
+  
+  .comment_input {
+    align-items: center;
+    flex-grow: 1;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    outline: none;
+    background-color: rgba(0, 0, 0, 0.1);
+    margin-right: 8px;
+  }
+  
+  .comment_submit {
+    background-color: transparent;
+    border: none;
+    color: #3897f0;
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
   }
 
 
