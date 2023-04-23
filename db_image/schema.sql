@@ -146,7 +146,7 @@ INSERT INTO db.Likes VALUES
 	(100003,300007);
 
 INSERT INTO db.Tag VALUES 
-	('"friends"',300001),
+	('friends',300001),
 	('food',300000),
 	('fun',300002),
 	('food',300003),

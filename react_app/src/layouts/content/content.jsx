@@ -6,6 +6,7 @@ import xmark from "../../data/xmark.png";
 import { motion, AnimatePresence } from "framer-motion";
 import Leaderboard from "../../components/leaderboard/leaderboard";
 import Friend_rec from "../../components/friend_rec/friend_rec";
+import TrendTags from "../../components/trending_tags/trending_tags";
 
 export default function Content(props) {
   const [photos, setPhotos] = useState([]);
@@ -174,6 +175,9 @@ export default function Content(props) {
         <section className="friend-rec_wrapper">
           <div>
             <Friend_rec />
+          </div>
+          <div>
+            <TrendTags setSelectedTag={props.setSelectedTag} setShowTagPage={props.setShowTagPage}/>
           </div>
         </section>
     </div>

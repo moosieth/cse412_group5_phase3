@@ -6,6 +6,7 @@ import Footer from "../../layouts/footer/footer";
 import CreatePost from "../create_post/create_post";
 import CreateAlbum from "../create_album/create_album";
 import UserPage from "../../layouts/user_page/user_page";
+import TagPage from "../tag_page/tag_page";
 
 export default function SNS() {
   const [showCreatePost, setShowCreatePost] = useState(false);
@@ -13,6 +14,8 @@ export default function SNS() {
   const [showUserPage, setShowUserPage] = useState(false);
   const [friendID, setFriendID] = useState(null);
   const [albumDeleted, setAlbumDeleted] = useState(false);
+  const [selectedTag, setSelectedTag] = useState("");
+  const [showTagPage, setShowTagPage] = useState(false);
 
   const handleShowContent = () => {
     setShowUserPage(false);
@@ -36,7 +39,8 @@ export default function SNS() {
                         onAlbumDeleted={handleAlbumDeletion}
                         albumDeleted={albumDeleted}
                       /> 
-                      : <Content setFriendID={setFriendID} setShowUserPage={setShowUserPage} />}
+                      : showTagPage ? <TagPage setFriendID={setFriendID} setShowUserPage={setShowUserPage} selectedTag={selectedTag} setSelectedTag={setSelectedTag} setShowTagPage={setShowTagPage} />
+                      : <Content setFriendID={setFriendID} setShowUserPage={setShowUserPage} setSelectedTag={setSelectedTag} setShowTagPage={setShowTagPage} />}
       <Footer />
       {showCreateAlbum && <CreateAlbum setShowCreateAlbum={setShowCreateAlbum} />}
       {showCreatePost && <CreatePost setShowCreatePost={setShowCreatePost} />}
