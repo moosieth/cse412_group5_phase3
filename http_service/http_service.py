@@ -688,6 +688,17 @@ def getfollowing():
     cursor.execute(query)
     tuples = cursor.fetchall()
 
+    if len(tuples) > 0:
+        if len(tuples) == 1:
+            query2 = f'SELECT fName, lName FROM User WHERE userID="{tuples[0][0]}"'
+        else:
+            query2 = 'SELECT fName, lName FROM User WHERE userID="{}"'.format(tuples[0][0])
+            for i in range(1, len(tuples)):
+                query2 += f' OR userID="{tuples[i][0]}"' 
+    
+        cursor.execute(query2)
+        tuples = cursor.fetchall()
+
     if tuples:
         return jsonify(tuples)
     else:
