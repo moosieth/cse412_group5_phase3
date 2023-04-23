@@ -150,6 +150,10 @@
     border-bottom: 1px solid #ccc;
   }
 
+  .caption_text {
+    width: 340px;
+  }
+
   .detail-post_function {
     padding: 0.5rem 1.5rem;
     padding-bottom: 0;
@@ -210,7 +214,8 @@
   }
 
   .detail-post_comments {
-    height: 410px;
+    max-height: 410px;
+    min-height: 380px;
     overflow-y: auto;
     border-bottom: 1px solid #ccc;
   }
