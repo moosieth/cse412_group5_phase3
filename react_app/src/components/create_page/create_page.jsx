@@ -33,9 +33,14 @@ export default function CreateAccount() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://127.0.0.1:5000/register", formData);
-      alert("Account created successfully!");
-      navigate("/");
+      await axios.post("http://127.0.0.1:5000/register", formData)
+      .then((reponse) => {
+        alert("Account created successfully!");
+        navigate("/");
+      })
+      .catch((error) => {
+        alert("User with that email already exists");
+      })
     } catch (error) {
       console.error(error);
     }

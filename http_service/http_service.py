@@ -35,8 +35,19 @@ def register():
     con = mysql.connector.connect(user='root', password='password', host='database', database='db')
     cursor = con.cursor()
 
+    try:
+        query2 = f'SELECT * FROM db.User WHERE email="{newUser["email"]}"'
+        cursor.execute(query2)
+        cursor.fetchall()
+        if(cursor.rowcount > 0):
+            return json.dumps({'success':False}), 403, {'ContentTYpe':'application/json'}
+    except:
+        return json.dumps({'success':False}), 402, {'ContentTYpe':'application/json'}
+
     query = f'INSERT INTO User (fName, lName, town, gender, pw, email, dob) VALUES("{newUser["fName"]}", "{newUser["lName"]}", "{newUser["town"]}", "{newUser["gender"]}", "{hashed_password.decode()}", "{newUser["email"]}", "{newUser["dob"]}")'
     print(query)
+
+    cursor.clear_attributes()
 
     try:
         cursor.execute(query)
@@ -47,7 +58,7 @@ def register():
         return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
     except mysql.connector.Error as e:
         print("MYSQL EXECUTION ERROR: {}".format(e))
-        return json.dumps({'success':False}), 400, {'ContentType':'application/json'}
+        return json.dumps({'success':False}), 401, {'ContentType':'application/json'}
         
 # Send email and password to DB to see if desired user exists, and that credentials are valid
 @app.route('/login', methods=['GET'])
