@@ -324,7 +324,7 @@ def updateinfo():
         query = f'UPDATE User SET town = "{data["changed"]}" WHERE userID = {data["userID"]}'
     elif data["target"] == "pw":
         hashed_pw = bcrypt.hashpw(data["changed"].encode(), salt)
-        query = f'UPDATE User SET pw = "{hashed_pw}" WHERE userID = {data["userID"]}'
+        query = f'UPDATE User SET pw = "{hashed_pw.decode()}" WHERE userID = {data["userID"]}'
     elif data["target"] == "dob":
         query = f'UPDATE User SET dob = "{data["changed"]}" WHERE userID = {data["userID"]}'
     else:

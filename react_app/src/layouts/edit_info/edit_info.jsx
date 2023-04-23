@@ -190,7 +190,7 @@ export default function EditInfo() {
                     requestData.target = "pw";
                     requestData.changed = formData.pw;
                     handleSubmit();
-                }}>Change First Name</button>
+                }}>Change Password</button>
             </form>
             <button onClick={() => {
                     handleReturn();
