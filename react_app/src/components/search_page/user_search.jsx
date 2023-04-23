@@ -4,6 +4,8 @@ import "./search.css";
 import Avatar from "@mui/material/Avatar";
 import xmark from "../../data/xmark.png";
 import { motion, AnimatePresence } from "framer-motion";
+import ListItemText from "@mui/material/ListItemText";
+
 export default function UserSearch(props) {
     const [users, setUsers] = useState([]);
     const [selectedId, setSelectedId] = useState(null);

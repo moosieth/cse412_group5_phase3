@@ -8,7 +8,7 @@ import person from "../../data/person.png";
 import plus from "../../data/plus.png";
 import { Button } from "@mui/material";
 
-export default function SearchBar({ searchTerm, setSearchTerm, setShowUserSearch, setShowPhotoSearch, setShowComSearch }) {
+export default function SearchBar({ searchTerm, setSearchTerm, setShowUserSearch, setShowPhotoSearch, setShowComSearch, setShowMyPhotoSearch }) {
 
     const handleClearClick = () => {
         setSearchTerm('');
@@ -18,17 +18,25 @@ export default function SearchBar({ searchTerm, setSearchTerm, setShowUserSearch
         setShowUserSearch(true);
         setShowPhotoSearch(false);
         setShowComSearch(false);
+        setShowMyPhotoSearch(false);
     }
     const handlePhotoSearchClick = () => {
-        console.log(searchTerm);
         setShowUserSearch(false);
         setShowPhotoSearch(true);
         setShowComSearch(false);
+        setShowMyPhotoSearch(false);
     }
     const handleComSearchClick = () => {
         setShowUserSearch(false);
         setShowPhotoSearch(false);
         setShowComSearch(true);
+        setShowMyPhotoSearch(false);
+    }
+    const handleMyPhotoSearchClick = () => {
+        setShowUserSearch(false);
+        setShowPhotoSearch(false);
+        setShowComSearch(false);
+        setShowMyPhotoSearch(true);
     }
 
     return (
@@ -66,7 +74,8 @@ export default function SearchBar({ searchTerm, setSearchTerm, setShowUserSearch
                     <div>
                         <button type="button" onClick={() => handleUserSearchClick()} id="searchUserButton">Search for Users</button>
                         <button type="button" onClick={() => handlePhotoSearchClick()} id="searchPhotoButton">Search for Photos by Tags</button>
-                        <button type="button" onClick={() => handleComSearchClick()} id="searchComButton">Search for Comments</button>
+                        <button type="button" onClick={() => handleComSearchClick()} id="searchComButton">Search for Users by Comment</button>
+                        <button type="button" onClick={() => handleMyPhotoSearchClick()} id="searchComButton">Search for My Photos by Tags</button>
                     </div>
                 </form>
             </div>

@@ -7,6 +7,7 @@ import SearchBar from "./searchbar_holder";
 import PhotoSearch from "./photo_search";
 import UserSearch from "./user_search";
 import ComSearch from "./com_search";
+import MyPhotoSearch from "./my_photo_search";
 import UserPage from "../../layouts/user_page/user_page";
 import { useNavigate } from "react-router-dom";
 
@@ -17,6 +18,7 @@ export default function SearchResults(props) {
   const [showUserSearch, setShowUserSearch] = useState(false);
   const [showPhotoSearch, setShowPhotoSearch] = useState(false);
   const [showComSearch, setShowComSearch] = useState(false);
+  const [showMyPhotoSearch, setShowMyPhotoSearch] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [showUserPage, setShowUserPage] = useState(false);
   const [friendID, setFriendID] = useState(null);
@@ -41,12 +43,14 @@ export default function SearchResults(props) {
         setShowUserSearch={setShowUserSearch}
         setShowPhotoSearch={setShowPhotoSearch}
         setShowComSearch={setShowComSearch}
+        setShowMyPhotoSearch={setShowMyPhotoSearch}
       />
       {showUserPage ? <UserPage friendID={friendID} /> :
         showPhotoSearch ? <PhotoSearch searchTerm={searchTerm} setShowUserPage={setShowUserPage} setFriendID={setFriendID} /> :
           showUserSearch ? <UserSearch searchTerm={searchTerm} setShowUserPage={setShowUserPage} setFriendID={setFriendID} /> :
             showComSearch ? <ComSearch searchTerm={searchTerm} setShowUserPage={setShowUserPage} setFriendID={setFriendID} /> :
-              <div></div>
+              showMyPhotoSearch ? <MyPhotoSearch searchTerm={searchTerm} setShowUserPage={setShowUserPage} setFriendID={setFriendID} /> :
+                <div></div>
       }
       <Footer />
     </div>

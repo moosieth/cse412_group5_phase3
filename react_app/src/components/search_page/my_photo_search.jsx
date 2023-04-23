@@ -6,26 +6,28 @@ import xmark from "../../data/xmark.png";
 import { motion, AnimatePresence } from "framer-motion";
 import ListItemText from "@mui/material/ListItemText";
 
-export default function ComSearch(props) {
-    const [users, setUsers] = useState([]);
+export default function MyPhotoSearch(props) {
+    const [photos, setPhotos] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
     const [scrollbarVisible, setScrollbarVisible] = useState(false);
 
-    const fetchUsers = async () => {
-        const response = await axios.get("http://127.0.0.1:5000/searchcom", { params: { content: props.searchTerm } });
-        // wait to fetch the email of each user
-        const usersWithUserEmails = await Promise.all(
-            response.data.map(async (user) => {
+    const fetchPhotos = async () => {
+        console.log(props.searchTerm);
+        const userID = getCookie("userID");
+        const response = await axios.get("http://127.0.0.1:5000/myphotosbytag", { params: { userID: userID, names: props.searchTerm } });
+        // wait to fetch the email of each photos
+        const photosWithUserEmails = await Promise.all(
+            response.data.map(async (photo) => {
                 const userResponse = await axios.get("http://127.0.0.1:5000/userbyid", {
-                    params: { userID: user[0] },
+                    params: { userID: photo[4] },
                 });
-                console.log(user);
+                console.log(photo);
                 const userEmail = userResponse.data[0][6];
                 // return a new object with the email
-                return { ...user, userEmail };
+                return { ...photo, userEmail };
             })
         );
-        setUsers(usersWithUserEmails);
+        setPhotos(photosWithUserEmails);
     };
     const handleScroll = () => {
         setScrollbarVisible(true);
@@ -35,8 +37,16 @@ export default function ComSearch(props) {
         }, 500);
     };
 
+    const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+            return parts.pop().split(";").shift();
+        }
+    };
+
     useEffect(() => {
-        fetchUsers();
+        fetchPhotos();
     }, []);
 
 
@@ -71,34 +81,43 @@ export default function ComSearch(props) {
             children: `${name[0]}${domain[0]}`,
         };
     }
+
     return (
         <div className="everything_wrapper">
             <section className="box">
                 <div className="content_wrapper" >
                     <div className={`post_container ${scrollbarVisible ? "show-scrollbar" : "hide-scrollbar"}`}
                         onScroll={handleScroll}>
-                        {users.map((user) => (
+                        {photos.map((photo) => (
                             <motion.div
                                 className="post"
-                                key={user[0]}
-                                layoutId={user[0]}
-                                onClick={() => setSelectedId(user[0])}
+                                key={photo[0]}
+                                layoutId={photo[0]}
+                                onClick={() => setSelectedId(photo[0])}
                             >
                                 <div className="post_header">
                                     <Avatar
                                         className="post_avatar"
-                                        {...stringAvatar(user.userEmail)}
+                                        {...stringAvatar(photo.userEmail)}
                                         onClick={() => {
-                                            props.setFriendID(user[0]);
+                                            props.setFriendID(photo[4]);
                                             props.setShowUserPage(true);
+                                            console.log("avatar clicked");
                                         }}
                                     />
-                                    <strong className="username">{user[1]} {user[2]} </strong>
-                                    <span> {user.userEmail}</span>
+                                    <h4>{photo.userEmail}</h4>
                                 </div>
-                                <h4 className="post-text">
-                                        <strong className="caption_text">This user posted {user[3]} comment(s) that match your search.</strong>
-                                    </h4>
+                                <img
+                                    className="post_image"
+                                    src={photo[2]}
+                                    alt="Recent post"
+                                />
+                                <h4 className="post_text">
+                                    <strong className="user_name">{photo.userEmail}</strong>{" "}
+                                    <span className="caption_text">{photo[1]}</span>
+                                    <br></br> <br></br>
+                                    <strong className="caption_text">This post contains {photo[3]} of the tags you're looking for</strong>
+                                </h4>
                             </motion.div>
                         ))}
                     </div>
@@ -123,16 +142,21 @@ export default function ComSearch(props) {
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.8 }}
                             >
-                                {users
-                                    .filter((user) => user[0] === selectedId)
-                                    .map((user) => (
-                                        <div key={user[0]} className="enlarged_post_content">
+                                {photos
+                                    .filter((photo) => photo[0] === selectedId)
+                                    .map((photo) => (
+                                        <div key={photo[0]} className="enlarged_post_content">
                                             <div className="post_header">
-                                                <Avatar className="post_avatar" {...stringAvatar(user.userEmail)} />
-                                                <h5 className="user_email">{user.userEmail}</h5>
+                                                <Avatar className="post_avatar" {...stringAvatar(photo.userEmail)} />
+                                                <h5 className="user_email">{photo.userEmail}</h5>
                                             </div>
+                                            <img
+                                                className="post_image"
+                                                src={photo[2]}
+                                                alt="Recent post"
+                                            />
                                             <h4 className="post_text">
-                                                <strong className="user_name">{user.userEmail}</strong> <span className="caption_text">{user[1]} {user[2]}</span>
+                                                <strong className="user_name">{photo.userEmail}</strong> <span className="caption_text">{photo[1]}</span>
                                             </h4>
                                         </div>
                                     ))}
