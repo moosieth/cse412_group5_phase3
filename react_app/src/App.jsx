@@ -5,6 +5,7 @@ import SNS from "./components/sns_page/sns_page";
 import CreateAccount from "./components/create_page/create_page";
 import SearchResults from "./components/search_page/search";
 import PhotoRecLanding from "./components/photo_rec/photo_rec_landing";
+import FollowList from "./components/follow_list/follow_list";
 
 function withAuthentication(WrappedComponent) {
   return function (props) {
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/create-account" element={<CreateAccount />} />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/youmaylike" element={<PhotoRecLanding />} />
+        <Route path="/view-followed-friends" element={<FollowList />} />
       </Routes>
     </Router>
   );
