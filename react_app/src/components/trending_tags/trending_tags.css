@@ -1,10 +1,10 @@
-.friend_rec-box{
+.trending-tags-box{
     max-width: 530px !important;
     margin: 0 auto;
-    width: 100%;  
+    width: 100%; 
 }
 
-.user {
+.tag {
     background-color: white;
     border: 1px solid lightgray;
     margin-bottom: 45px;

@@ -16,20 +16,20 @@ export default function friend_rec(props) {
 
   useEffect(() => {
     const fetchUsers = async () => {
-        const userID = getCookie("userID");
-        console.log("Cookie is " + userID);
-        if (userID) {
-          try {
-            const response = await axios.get("http://127.0.0.1:5000/friendrec", {
-              params: { userID: userID },
-            });
-    
-            setUsers(response.data);
-            console.log(response.data);
-          } catch (error) {
-            console.log(error);
-          }
+      const userID = getCookie("userID");
+      console.log("Cookie is " + userID);
+      if (userID) {
+        try {
+          const response = await axios.get("http://127.0.0.1:5000/friendrec", {
+            params: { userID: userID },
+          });
+
+          setUsers(response.data);
+          console.log(response.data);
+        } catch (error) {
+          console.log(error);
         }
+      }
     };
     fetchUsers();
   }, []);
@@ -43,28 +43,28 @@ export default function friend_rec(props) {
     }
   };
 
-    // Functions for creating an avatar
-    function stringToColor(string) {
+  // Functions for creating an avatar
+  function stringToColor(string) {
     let hash = 0;
     let i;
-    
+
     /* eslint-disable no-bitwise */
     for (i = 0; i < string.length; i += 1) {
-        hash = string.charCodeAt(i) + ((hash << 5) - hash);
+      hash = string.charCodeAt(i) + ((hash << 5) - hash);
     }
-    
+
     let color = '#';
-    
+
     for (i = 0; i < 3; i += 1) {
-        const value = (hash >> (i * 8)) & 0xff;
-        color += `00${value.toString(16)}`.slice(-2);
+      const value = (hash >> (i * 8)) & 0xff;
+      color += `00${value.toString(16)}`.slice(-2);
     }
     /* eslint-enable no-bitwise */
-    
-    return color;
-}
 
-function stringAvatar(name) {
+    return color;
+  }
+
+  function stringAvatar(name) {
     return {
       sx: {
         bgcolor: stringToColor(name),
@@ -74,39 +74,37 @@ function stringAvatar(name) {
   }
 
   return (
-    <section className={`friend_rec-box ${props.className}`}>
-      <div>
-        <div className="post_container">
-            <ListItemText
-                sx={{ my: 0 }}
-                primary="Friend Recomendations"
+    <div>
+      <div className="post_container">
+        <ListItemText
+          sx={{ my: 0 }}
+          primary="Friend Recomendations"
+          primaryTypographyProps={{
+            fontSize: 17,
+            fontWeight: 'medium',
+            letterSpacing: 0,
+            paddingLeft: 1
+          }}
+        />
+        {users.map((user) => (
+          <List sx={{ width: "100%", maxWidth: 270, height: 54, bgcolor: "background.paper" }} key={user[0]}>
+            <ListItem alignItems="flex-start" sx={{ py: 0.1 }}>
+              <ListItemAvatar>
+                <Avatar {...stringAvatar(`${user[1]} ${user[2]}`)} />
+              </ListItemAvatar>
+              <ListItemText
+                primary={`${user[1]} ${user[2]}`}
                 primaryTypographyProps={{
-                  fontSize: 17,
-                  fontWeight: 'medium',
-                  letterSpacing: 0,
-                  paddingLeft: 1
+                  fontSize: 13
                 }}
-            />
-            {users.map((user) => (
-                <List sx={{ width: "100%", maxWidth: 270, height: 54 , bgcolor: "background.paper" }} key={user[0]}>
-                    <ListItem alignItems="flex-start" sx={{ py: 0.1 }}>
-                    <ListItemAvatar>
-                        <Avatar {...stringAvatar(`${user[1]} ${user[2]}`)} />
-                    </ListItemAvatar>
-                    <ListItemText
-                        primary={`${user[1]} ${user[2]}`}
-                        primaryTypographyProps={{
-                            fontSize: 13
-                        }}
-                    />
-                    <h3>{user[3]}</h3>
-                    </ListItem>
-                    <Divider variant="inset" component="li" />
-                </List>
-            ))}
-        </div>
-        <br />
+              />
+              <h3>{user[3]}</h3>
+            </ListItem>
+            <Divider variant="inset" component="li" />
+          </List>
+        ))}
       </div>
-    </section>
+      <br />
+    </div>
   );
 }
