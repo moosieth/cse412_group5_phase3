@@ -203,7 +203,7 @@ def topcontrib():
     )
     cursor = con.cursor()
 
-    query = f"SELECT contrib_totals.userID, User.fName, User.lName, SUM(total_count) as contrib_score, User.email FROM (SELECT userID, COUNT(*) as total_count FROM Comment GROUP BY userID UNION SELECT Album.userID, COUNT(*) as total_count FROM Photo JOIN Album ON Photo.albumID = Album.albumID GROUP BY Album.userID) as contrib_totals JOIN User ON contrib_totals.userID = User.userID GROUP BY contrib_totals.userID ORDER BY contrib_score DESC LIMIT 10"
+    query = f"SELECT contrib_totals.userID, User.fName, User.lName, SUM(total_count) as contrib_score, User.email FROM (SELECT userID, COUNT(*) as total_count FROM Comment GROUP BY userID UNION ALL SELECT Album.userID, COUNT(*) as total_count FROM Photo JOIN Album ON Photo.albumID = Album.albumID GROUP BY Album.userID) as contrib_totals JOIN User ON contrib_totals.userID = User.userID GROUP BY contrib_totals.userID ORDER BY contrib_score DESC LIMIT 10"
 
     cursor.execute(query)
     tuples = cursor.fetchall()
