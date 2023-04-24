@@ -188,7 +188,7 @@ def contrib():
     )
     cursor = con.cursor()
 
-    query = f"SELECT userID, SUM(total_count) as contrib_score FROM (SELECT userID, COUNT(*) as total_count FROM Comment  WHERE userID = {uid} GROUP BY userID UNION SELECT Album.userID, COUNT(*) as total_count FROM Photo JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = {uid} GROUP BY Album.userID) as contrib_totals GROUP BY userID"
+    query = f"SELECT userID, SUM(total_count) as contrib_score FROM (SELECT userID, COUNT(*) as total_count FROM Comment WHERE userID = {uid} GROUP BY userID UNION ALL SELECT Album.userID, COUNT(*) as total_count FROM Photo JOIN Album ON Photo.albumID = Album.albumID WHERE Album.userID = {uid} GROUP BY Album.userID) as contrib_totals GROUP BY userID"
 
     cursor.execute(query)
     tuples = cursor.fetchall()
