@@ -1,0 +1,38 @@
+.album-type {    
+    justify-content: center;
+    width: 25rem;
+    padding-bottom: 2rem;
+    padding-left: 16rem;
+}
+
+.profile-type {
+    align-items: center;
+    display: grid;
+    grid-gap: 1.5rem;
+    grid-template-columns: max-content max-content;
+    justify-content: center;
+    border-top: 1px solid #ccc;
+}
+
+.trash_wrapper {
+    width: 1%;
+}
+
+.profile-type_item {
+    text-transform: uppercase;
+    padding: 1rem 0;
+    font-size: 0.83175rem;
+}
+
+.profile-type_item svg {
+    margin-right: 0.5rem;
+}
+
+.profile-type_item:hover {
+    cursor: pointer;
+}
+
+.profile-type_item--active {
+    font-weight: bold;
+    border-top: 1px solid #000;
+}

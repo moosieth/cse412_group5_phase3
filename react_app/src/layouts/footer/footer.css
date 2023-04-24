@@ -1,0 +1,13 @@
+    .logout {
+        position: relative;
+        display: inline-block;
+        border-radius: 30%;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+        padding: 15px; /* Add some padding to create space for the background color */
+    }
+
+    .logout:hover {
+        transform: scale(1.2);
+        background-color: rgba(0, 0, 0, 0.1);
+        cursor: pointer; 
+    }

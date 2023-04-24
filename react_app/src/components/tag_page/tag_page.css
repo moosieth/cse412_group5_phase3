@@ -1,0 +1,9 @@
+.close_button {
+    position: absolute;
+    top: 100px;
+    right: 20px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    border-color: #000000;
+  }

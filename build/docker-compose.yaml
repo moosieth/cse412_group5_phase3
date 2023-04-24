@@ -9,6 +9,24 @@ services:
     build: ../http_service/
     ports:
       - 5000:5000
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /app/inql-group5-firebase-adminsdk-855k3-c7c7a06e7f.json
+    volumes:
+      - ./inql-group5-firebase-adminsdk-855k3-c7c7a06e7f.json:/app/inql-group5-firebase-adminsdk-855k3-c7c7a06e7f.json
     links:
       - "database"
+
+  react:
+    build: ../react_app/
+    ports:
+      - 5174:5173
+    stdin_open: true
+    tty: true
+
+    volumes:
+    - ../react_app/:/react-app
+    - /react-app/node_modules
+
+    depends_on:
+      - api
     
