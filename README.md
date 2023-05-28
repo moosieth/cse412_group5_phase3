@@ -63,3 +63,8 @@ that networking functions within Docker containers).
 If you are unable to use Docker to test our project, please see the demo video
 [here](https://drive.google.com/file/d/1LtTDmcfhVniaOfdyL-KGJR8d5h6hphKB/view?usp=sharing)
 for a full walkthrough of our project.
+
+## UPDATE AS OF 05/28/2023
+
+This project remains public for the sake of archival / resumes. However, it is
+now missing Firebase credentials. In order for this project to fully function, Firebase API credentials are needed to access images.
